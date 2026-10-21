@@ -217,6 +217,57 @@ table.t th{font-size:13px;letter-spacing:.03em;border-bottom:1.5px solid var(--l
 .lab{font-size:14px;color:var(--muted)}
 footer{border-top:1px solid var(--line);padding-top:18px}
 @media (prefers-reduced-motion:reduce){.door:hover,.fcard:hover,.insb:hover{transform:none}}
+
+/* ---- 平板優先 & 手機大字 ---- */
+.quick button{min-height:38px}
+.insb,.fi,.door,.fcard{touch-action:manipulation}
+input[type=range]{height:28px}
+.res3,.scen{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+@media (min-width:700px) and (max-width:1366px){
+  body{font-size:17px}
+  main,.mast .in,nav.tabs .in,footer{max-width:1100px}
+  nav.tabs .in{justify-content:space-between}
+  nav.tabs button{flex:1 1 auto;font-size:16px;padding:16px 10px 13px;text-align:center}
+  .quick button{min-height:44px;font-size:15px;padding:6px 16px}
+  .calc{grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:20px}
+  .calc>.card:first-child{position:sticky;top:calc(env(safe-area-inset-top,0px) + 64px);max-height:calc(100vh - 80px);overflow-y:auto}
+  .note{font-size:14px}.small,.chip,.codes,.legend{font-size:14px}
+  table.t{font-size:15.5px}
+  .door{padding:28px}.door .t{font-size:28px}
+  .insgrid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .insb{padding:14px 16px}.insb b{font-size:17px}
+  .fi{padding:12px 14px}.fi .fn{font-size:16px}
+  .flist{max-height:600px}
+  svg text{font-size:13px}
+}
+@media (max-width:900px) and (min-width:700px){.calc{grid-template-columns:minmax(0,1fr)}.calc>.card:first-child{position:static;max-height:none;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px}.calc>.card:first-child>h3,.calc>.card:first-child>details{grid-column:1/-1}}
+@media (max-width:699px){
+  body{font-size:18px;line-height:1.75}
+  .lead{font-size:19px}
+  h2{font-size:clamp(25px,7vw,30px)}
+  h3{font-size:20px}
+  .note{font-size:15.5px;line-height:1.7}
+  .small,.chip,.codes,.legend,.muted.small{font-size:15px}
+  .codes b{font-size:15px}
+  .res3 span,.scen span,.scen em,.facts span{font-size:15px}
+  .big{font-size:clamp(30px,9vw,38px)}
+  #dOut .big,.scen b{font-size:30px}
+  table.t{font-size:16px}
+  .bar{font-size:16px;grid-template-columns:minmax(0,1fr) 62px}.bar b{font-size:15px}
+  .quick button{min-height:44px;font-size:16px;padding:6px 14px}
+  input[type=text],input[type=search],input[type=number]{font-size:20px;padding:10px 12px}
+  .ctrl label,.lab{font-size:16px}
+  nav.tabs button{font-size:16px;padding:15px 12px 12px}
+  .mast .brand{font-size:22px}.mast .sub{font-size:13.5px}
+  .door .t{font-size:28px}.door .muted{font-size:17px}
+  .insb b{font-size:18px}.insb span{font-size:15px}.insb em{font-size:14px}
+  .fi .fn{font-size:16.5px}.fi .fy,.fi .fc{font-size:14px}.fi .fs{font-size:16px}
+  .fcard .nm{font-size:18px}.fcard .row{font-size:16px}
+  .warn,.good,.emwarn{font-size:16px}
+  .rr{font-size:13.5px}
+  svg text{font-size:17px}
+  footer{font-size:14px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 
