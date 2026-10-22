@@ -488,6 +488,14 @@ body.present table.t{font-size:18px}
 .gltip{background:var(--jade-soft);border-radius:12px;padding:12px 14px}
 .glrel{display:flex;flex-wrap:wrap;gap:8px}
 @media (max-width:699px){.glgrid{grid-template-columns:minmax(0,1fr)}}
+
+.tbar{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:0 0 8px}
+nav.tabs .tbar .tarr{flex:0 0 38px;width:38px;min-width:0;height:30px;font-size:20px;text-align:center;border-radius:9px;border:1px solid var(--line);background:linear-gradient(180deg,var(--paper),var(--soft));box-shadow:0 2px 0 var(--edge);color:var(--jade);font:900 20px/1 var(--body);cursor:pointer;display:grid;place-items:center;padding:0}
+nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .tbar .tarr:disabled{opacity:.35;cursor:default}
+#tR{flex:1;-webkit-appearance:none;appearance:none;height:10px;border-radius:99px;background:var(--soft);border:1px solid var(--line);margin:0;cursor:grab}
+#tR::-webkit-slider-thumb{-webkit-appearance:none;width:var(--tw,80px);height:18px;border-radius:99px;background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 80%,#fff),var(--gold));border:1px solid var(--gold-deep);box-shadow:0 2px 0 var(--gold-deep)}
+#tR::-moz-range-thumb{width:var(--tw,80px);height:18px;border-radius:99px;background:var(--gold);border:1px solid var(--gold-deep)}
+#tR:active{cursor:grabbing}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -506,6 +514,7 @@ body.present table.t{font-size:18px}
     <button role="tab" data-tab="best" aria-selected="false"><b>08</b>精選標的</button>
     <button role="tab" data-tab="gloss" aria-selected="false"><b>09</b>專有名詞</button>
   </div>
+  <div class="tbar" id="tBar" hidden><button type="button" class="tarr" id="tL" aria-label="分頁往左">‹</button><input type="range" id="tR" min="0" max="1000" step="1" value="0" aria-label="左右拉動切換分頁"><button type="button" class="tarr" id="tRt" aria-label="分頁往右">›</button></div>
 </nav>
 
 <main class="gut">
@@ -902,7 +911,7 @@ function go(tab,push=true){
   if(tab==='loan') mInit();
   if(tab==='gloss') glInit();
   TABS.forEach(t=>{$('#p-'+t).hidden=t!==tab;});
-  $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+  $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab)); if(window.tabIntoView) tabIntoView();
   if(push){try{history.replaceState(null,'','#'+tab);}catch(e){}}
   window.scrollTo({top:0});
 }
@@ -2187,6 +2196,19 @@ $('#dkShare').addEventListener('click',()=>{ const u=SITE+(location.hash||'');
   const ok=()=>toast('網址已複製，可以貼到 LINE 傳給客戶');
   try{navigator.clipboard.writeText(u).then(ok,()=>{toast('請長按複製：'+u);});}catch(e){toast('請長按複製：'+u);}});
 
+
+/* 分頁列左右拉霸 */
+(function(){ const sc=$('nav.tabs .in'), r=$('#tR'), bar=$('#tBar');
+  const max=()=>sc.scrollWidth-sc.clientWidth;
+  const sync=()=>{ const m=max(); bar.hidden=m<4; if(m<4) return; r.value=Math.round(sc.scrollLeft/m*1000); $('#tL').disabled=sc.scrollLeft<4; $('#tRt').disabled=sc.scrollLeft>m-4;
+    r.style.setProperty('--tw',Math.max(48,Math.round(r.clientWidth*sc.clientWidth/sc.scrollWidth))+'px'); };
+  r.addEventListener('input',()=>{ sc.scrollLeft=r.value/1000*max(); });
+  sc.addEventListener('scroll',sync,{passive:true}); window.addEventListener('resize',sync);
+  $('#tL').addEventListener('click',()=>sc.scrollBy({left:-sc.clientWidth*0.6,behavior:'smooth'}));
+  $('#tRt').addEventListener('click',()=>sc.scrollBy({left:sc.clientWidth*0.6,behavior:'smooth'}));
+  window.tabIntoView=()=>{ const a=$('nav.tabs button[aria-selected="true"]'); if(a&&max()>4){ sc.scrollTo({left:a.offsetLeft-sc.offsetLeft-(sc.clientWidth-a.offsetWidth)/2,behavior:'smooth'}); } };
+  setTimeout(()=>{sync(); tabIntoView();},50); if(document.fonts) document.fonts.ready.then(sync);
+})();
 /* init */
 calcRun(); growRun();
 (function(){ let h=''; try{h=location.hash.slice(1);}catch(e){}
