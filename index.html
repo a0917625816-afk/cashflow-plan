@@ -433,28 +433,28 @@ body.present table.t{font-size:18px}
 .deck{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:10px;scrollbar-width:thin}
 .slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:16/9;container-type:inline-size;border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(135deg,#fbf8f2,#f1eadc);color:#18201d;box-shadow:var(--shadow);border:1px solid #e3dccd}
 .slide .in{position:absolute;inset:0;padding:4.6cqw 6cqw 7.6cqw;display:flex;flex-direction:column;gap:2cqw}
-.slide .kick{font:700 1.7cqw/1 var(--body);letter-spacing:.2em;color:#a8844f}
-.slide h4{font:900 4cqw/1.25 var(--display);margin:0;color:#163a31;text-wrap:balance}
-.slide p{font:400 2.1cqw/1.6 var(--body);margin:0;color:#3a443f}
-.slide .num{white-space:nowrap;font:600 6.2cqw/1 var(--num);color:#24594c;letter-spacing:-.02em}
-.slide .num small{font-size:2.2cqw;margin-left:.6cqw;color:#626b67}
+.slide .kick{font:800 2cqw/1 var(--body);letter-spacing:.2em;color:#a8844f}
+.slide h4{font:900 4.7cqw/1.22 var(--display);margin:0;color:#163a31;text-wrap:balance}
+.slide p{font:600 2.5cqw/1.5 var(--body);margin:0;color:#3a443f}
+.slide .num{white-space:nowrap;font:700 6.6cqw/1 var(--num);color:#24594c;letter-spacing:-.02em}
+.slide .num small{font-size:2.6cqw;font-weight:800;margin-left:.6cqw;color:#626b67}
 .slide .row{display:grid;gap:2.4cqw;flex:1;align-items:center}
-.slide .pane{background:#fff;border:1px solid #e6dfd0;border-radius:2cqw;padding:2.4cqw;display:flex;flex-direction:column;gap:1cqw}
-.slide .pane b{font:800 2.5cqw/1.3 var(--body);color:#163a31}
-.slide .pane span{font:400 1.8cqw/1.5 var(--body);color:#4a544f}
+.slide .pane{background:#fff;border:1px solid #e6dfd0;border-radius:2cqw;padding:2cqw 2.2cqw;display:flex;flex-direction:column;gap:1cqw}
+.slide .pane b{font:900 2.9cqw/1.25 var(--body);color:#163a31}
+.slide .pane span{font:600 2.15cqw/1.45 var(--body);color:#4a544f}
 .slide .ico{width:6cqw;height:6cqw;border-radius:1.6cqw;display:grid;place-items:center;background:#e3ece7;color:#24594c}
 .slide .ico svg{width:3.6cqw;height:3.6cqw}
 .slide .ico.g{background:#f3ede2;color:#7f6135}
-.slide .foot{position:absolute;left:6cqw;right:6cqw;bottom:2.6cqw;display:flex;justify-content:space-between;font:400 1.35cqw var(--body);color:#8a8f8a}
+.slide .foot{position:absolute;left:6cqw;right:6cqw;bottom:2.4cqw;display:flex;justify-content:space-between;font:600 1.5cqw var(--body);color:#8a8f8a}
 .slide.dark{background:linear-gradient(135deg,#13211d,#1f4a3f);color:#f1ede4;border-color:#13211d}
 .slide.dark h4{color:#f6f1e6}.slide .in[style*='--n'] .num{font-size:var(--n)}.slide.dark p{color:#d7d2c6}.slide.dark .num{color:#e2c48f}.slide.dark .kick{color:#d6b680}.slide.dark .foot{color:#9fb3ab}
 .life{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.2cqw}
 .life>div{background:#fff;border-radius:1.6cqw;padding:.9cqw 1.3cqw;border:1px solid #e6dfd0;display:flex;flex-direction:column;gap:.6cqw;align-items:flex-start}
 .life>div.off{opacity:.38;background:transparent;border-style:dashed}
-.life>div b{font:700 1.9cqw/1.3 var(--body);color:#163a31}.life div span{font:500 1.6cqw var(--num);color:#24594c}
+.life>div b{font:900 2.2cqw/1.25 var(--body);color:#163a31}.life>div>span{font:700 1.9cqw var(--num);color:#24594c}
 .stair{display:flex;align-items:flex-end;gap:2cqw;flex:1;padding-top:2cqw}
 .stair div{flex:1;background:linear-gradient(180deg,#2f6b5c,#163a31);border-radius:1.4cqw 1.4cqw 0 0;color:#fff;display:flex;flex-direction:column;justify-content:flex-start;align-items:center;padding:1.2cqw .6cqw;gap:.4cqw;text-align:center}
-.stair div b{font:600 2.3cqw var(--num)}.stair div span{font:400 1.45cqw/1.3 var(--body);opacity:.9}
+.stair div b{font:700 2.9cqw var(--num)}.stair div span{font:700 1.75cqw/1.3 var(--body);opacity:.9}
 .stair div.s0{background:linear-gradient(180deg,#c9b48b,#a8844f)}
 .deck:fullscreen{background:#0b100e;align-items:center;padding:0 3vw;gap:3vw}
 .deck:fullscreen .slide{flex-basis:94vw;max-height:94vh;max-width:calc(94vh*16/9);margin:auto}
@@ -1373,10 +1373,9 @@ function makeDeck(){
    `<div class="slide dark"><div class="in" style="justify-content:center;max-width:58%"><span class="kick">CASH FLOW PLAN</span><h4 style="font-size:5.2cqw">${who}<br>印鈔機計畫</h4><p style="font-size:2.3cqw">讓配息幫本金長大，本金再生出更多配息</p>
      <div style="display:flex;gap:4.5cqw;margin-top:2.6cqw"><div><p>起始本金</p><div class="num">${(P0/10000).toLocaleString()}<small>萬</small></div></div><div><p>${yrs} 年後每月配息</p><div class="num">${(d1/10000).toFixed(1)}<small>萬</small></div></div></div></div>
      <div class="art" style="right:2cqw;bottom:6cqw;width:44cqw">${ART.machine}</div>${foot(1)}</div>`,
-   `<div class="slide"><div class="in" style="max-width:56%"><span class="kick">STEP 1・起點</span><h4>${(P0/10000).toLocaleString()} 萬放進月配息保單，每個月就有現金流</h4>
+   `<div class="slide"><div class="in" style="max-width:56%"><span class="kick">STEP 1・起點</span><h4>放進月配息保單，每月就有現金流</h4>
      <div style="display:flex;flex-direction:column;gap:1.6cqw;margin-top:1cqw"><div class="pane" style="flex-direction:row;align-items:center;gap:2cqw"><b style="min-width:13cqw">本金</b><div class="num">${(P0/10000).toLocaleString()}<small>萬</small></div></div>
-     <div class="pane" style="flex-direction:row;align-items:center;gap:2cqw"><b style="min-width:13cqw">每月配息<br><span>年化 ${(y*100).toFixed(1)}%</span></b><div class="num">${money(d0)}<small>元</small></div></div></div>
-     <p style="font-size:1.9cqw">本金不動，每月固定領配息。關鍵是：配息怎麼分。</p></div>
+     <div class="pane" style="flex-direction:row;align-items:center;gap:2cqw"><b style="min-width:13cqw">每月配息<br><span>年化 ${(y*100).toFixed(1)}%</span></b><div class="num">${money(d0)}<small>元</small></div></div></div></div>
      <div class="art" style="right:3cqw;top:9cqw;width:38cqw">${ART.piggy}</div>${foot(2)}</div>`,
    `<div class="slide"><div class="in"><span class="kick">STEP 2・配息怎麼分</span><h4>每月 ${money(d0)} 元，分成兩個口袋</h4><p>${cut>=0.6?'偏重讓本金長大：大部分配息存進六年期，本金升級更快。':cut>=0.4?'存錢和生活各一半：現在有生活費，本金也穩穩長大。':'偏重現在的生活品質：大部分配息拿來用，一小部分持續幫本金加碼。'}</p>
      <div class="row" style="grid-template-columns:1fr 1.15fr 1fr">
@@ -1388,24 +1387,24 @@ function makeDeck(){
        <div class="pane spot"><div class="sp">${ART.umbrella}</div><b>抗跌</b><span>以約 ${(six*100).toFixed(1)}% 年化穩定累積，不跟著市場淨值上下波動，是整個計畫的穩定器。</span></div>
        <div class="pane spot"><div class="sp">${ART.lockpig}</div><b>不讓自己亂花</b><span>配息直接撥走、鎖六年，不會被順手花掉，等於幫自己強迫儲蓄。</span></div>
        <div class="pane spot"><div class="sp">${ART.refill}</div><b>六年後回填本金</b><span>到期整筆約 ${wan(A.R[0].back)} 回到本金，之後每個月的配息也跟著變多。</span></div></div></div>${foot(4)}</div>`,
-   `<div class="slide"><div class="in"><span class="kick">STEP 4・花用的那一份（生活開銷為一般家庭參考值）</span><h4 style="max-width:72%;font-size:3.6cqw">每月 ${money(s0)} 元，可以支付這些生活開銷</h4>
+   `<div class="slide"><div class="in"><span class="kick">STEP 4・花用的那一份（生活開銷為一般家庭參考值）</span><h4 style="max-width:76%;font-size:4.2cqw">每月 ${money(s0)} 元，能付這些開銷</h4>
      <div class="life">${items.map(x=>`<div class="${x.ok?'':'off'}"><div class="lic" style="--c:${LCOL[x.ic]}">${ICO[x.ic]}</div><b>${x.n}</b><span>${x.ok?'✓ ':''}約 ${x.v.toLocaleString()} 元</span></div>`).join('')}</div>
-     <p>${coveredN?`可以支付其中 ${coveredN} 項${left>=1000?`，還剩約 ${money(left)} 元`:''}。`:'這個金額還不足以支付一項固定開銷，可以提高本金或花用比例。'}跑完 ${rn} 輪後，每月花用升到約 ${money(s1)} 元。</p></div>
+     <p>${coveredN?`可支付 ${coveredN} 項${left>=1000?`，還剩約 ${money(left)} 元`:''}；${rn} 輪後每月可花約 ${money(s1)} 元。`:'還不足以支付一項固定開銷，可提高本金或花用比例。'}</p></div>
      <div class="art" style="right:5cqw;top:3cqw;width:17cqw">${ART.family}</div>${foot(5)}</div>`,
    `<div class="slide"><div class="in"><span class="kick">STEP 5・一輪一輪升級</span><h4>每六年回填一次，本金與配息一起往上走</h4>
      <div class="stair"><div class="s0" style="height:${(P0/maxP*74).toFixed(0)}%"><span>起點</span><b>${wan(P0)}</b><span>月配 ${money(d0)}</span></div>${A.R.map((r,k)=>`<div style="height:${(r.end/maxP*74).toFixed(0)}%">${k===A.R.length-1?`<div class="climb">${ART.climber}</div>`:''}<span>第 ${r.n} 輪後・第 ${r.n*6} 年</span><b>${wan(r.end)}</b><span>月配 ${money(r.div1)}</span></div>`).join('')}</div></div>${foot(6)}</div>`,
-   `<div class="slide dark"><div class="in" style="max-width:62%;--n:5.2cqw"><span class="kick">${yrs} 年後</span><h4>本金變大了，每月現金流也變多了</h4>
+   `<div class="slide dark"><div class="in" style="max-width:64%;--n:5.2cqw"><span class="kick">${yrs} 年後</span><h4 style="font-size:4.3cqw">本金變大，<br>每月現金流也變多</h4>
      <div style="display:flex;flex-direction:column;gap:1.8cqw;margin-top:1cqw">
-       <div style="display:flex;align-items:baseline;gap:2cqw"><p style="min-width:15cqw">本金</p><div class="num">${(A.P/10000).toLocaleString(undefined,{maximumFractionDigits:0})}<small>萬</small></div><p>起始 ${(P0/10000).toLocaleString()} 萬</p></div>
+       <div style="display:flex;align-items:baseline;gap:2cqw"><p style="min-width:15cqw">本金</p><div class="num">${(A.P/10000).toLocaleString(undefined,{maximumFractionDigits:0})}<small>萬</small></div><p style="white-space:nowrap">起始 ${(P0/10000).toLocaleString()} 萬</p></div>
        <div style="display:flex;align-items:baseline;gap:2cqw"><p style="min-width:15cqw">每月配息</p><div class="num">${(d1/10000).toFixed(1)}<small>萬</small></div><p>升級 ${Math.round((d1/d0-1)*100)}%</p></div>
        <div style="display:flex;align-items:baseline;gap:2cqw"><p style="min-width:15cqw">期間領來花用</p><div class="num">${(A.spent/10000).toLocaleString(undefined,{maximumFractionDigits:0})}<small>萬</small></div></div></div></div>
      <div class="art" style="right:2cqw;bottom:5cqw;width:40cqw">${ART.tree}</div>${foot(7)}</div>`,
    `<div class="slide"><div class="in"><span class="kick">提醒</span><h4 style="max-width:68%">規劃前，請一起了解這些事</h4>
-     <div class="row" style="grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;max-width:76%;flex:0;gap:1.6cqw">
-       <div class="pane"><b>配息不是保證</b><span>配息率會依市場與基金公司調整，配息來源可能包含本金；淨值也會漲跌。</span></div>
-       <div class="pane"><b>六年期保單提早解約可能不划算</b><span>試算以年化 ${(six*100).toFixed(1)}% 估算，實際以保單條款與宣告利率為準。</span></div>
-       <div class="pane"><b>本試算未扣費用與稅負</b><span>保單相關費用、匯率與稅負會影響實際結果。</span></div>
-       <div class="pane"><b>依自身狀況調整</b><span>保留足夠緊急預備金，並依風險承受度調整撥入比例。</span></div></div></div>
+     <div class="row" style="grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;max-width:78%;flex:0;gap:1.4cqw">
+       <div class="pane"><b>配息不是保證</b><span>配息率會調整，來源可能包含本金；淨值也會漲跌。</span></div>
+       <div class="pane"><b>六年期提早解約不划算</b><span>以年化 ${(six*100).toFixed(1)}% 估算，實際以保單條款為準。</span></div>
+       <div class="pane"><b>未扣費用與稅負</b><span>保單費用、匯率與稅負會影響實際結果。</span></div>
+       <div class="pane"><b>依自身狀況調整</b><span>保留緊急預備金，依風險承受度調整比例。</span></div></div></div>
      <div class="art" style="right:3cqw;top:8cqw;width:19cqw">${ART.check}</div><div class="foot"><span>本簡報為試算說明，不代表未來實際報酬，投資前請詳閱保單條款與投資標的說明書。</span><span>8 / 8</span></div></div>`
   ];
   $('#deck').innerHTML=S.join(''); $('#deckWrap').hidden=false; $('#deck').scrollLeft=0; dkPage();
