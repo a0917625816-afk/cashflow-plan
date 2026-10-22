@@ -1756,8 +1756,8 @@ function dRun(){
      <div class="scen">${sc.map(([l,rr,s])=>`<div class="${l==='樂觀'?'up':l==='保守'?'dn':''}"><span>${l}・年化 ${pct(rr*100)}</span><b>${wan(s.total)}</b><em>${s.gain>=0?'賺':'賠'} ${wan(Math.abs(s.gain))}（${pct(s.gain/s.cum*100)}）</em></div>`).join('')}</div>
      <p class="note" style="margin-top:8px">以「依過往績效」為中間值，樂觀與保守為八成機率區間的上下緣（約十次中有一次會比樂觀更好、一次比保守更差）。跟客戶說明時，三個數字請一起呈現。</p></div>
    <div class="card"><h3>帳戶價值預估（年化 ${(rate*100).toFixed(1)}%）</h3>
-     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="未來帳戶價值預估">${ticks.map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}${area}${ln(P,z=>z.cum,'var(--muted)',1.5,'4 4')}${ln(P,z=>z.plain,'var(--navy)',1.5,'2 4')}${ln(P,z=>z.av+z.cash,'var(--jade)',3)}<circle cx="${x(n-1)}" cy="${y(L.av+r.cash)}" r="5" fill="var(--jade)"/>${yl}</svg>
-     <div class="legend" style="margin-top:6px"><span><i style="background:var(--jade)"></i>投資型保單（扣完費用）</span><span><i style="background:var(--navy)"></i>直接買基金、不經保單</span><span><i style="background:var(--jade);opacity:.3"></i>八成機率區間（${pct(rLo*100)}～${pct(rHi*100)}）</span><span><i style="background:var(--muted)"></i>累計投入</span></div>
+     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="未來帳戶價值預估">${ticks.map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}${area}${ln(P,z=>z.cum,'var(--muted)',1.5,'4 4')}${ln(P,z=>z.av+z.cash,'var(--jade)',3)}<circle cx="${x(n-1)}" cy="${y(L.av+r.cash)}" r="5" fill="var(--jade)"/>${yl}</svg>
+     <div class="legend" style="margin-top:6px"><span><i style="background:var(--jade)"></i>投資型保單（扣完費用）</span><span><i style="background:var(--jade);opacity:.3"></i>八成機率區間（${pct(rLo*100)}～${pct(rHi*100)}）</span><span><i style="background:var(--muted)"></i>累計投入</span></div>
      ${dOpt.rate==='hist'?`<div class="method"><b>「依過往績效」怎麼算（${pct(dHist(f))}）</b>
        <table class="t rules"><tr><td>十年定期定額</td><td>${f.d10!=null?'每月扣款實際年化 '+pct(f.d10):'成立未滿十年，改用五年資料'}</td></tr>
        <tr><td>五年定期定額</td><td>${f.d5!=null?'每月扣款實際年化 '+pct(f.d5):'—'}</td></tr>
@@ -1769,12 +1769,6 @@ function dRun(){
    <div class="card"><h3>${yrs} 年會被扣掉的成本：${wan(fee)}<span class="muted small">（佔投入 ${(fee/r.cum*100).toFixed(1)}%）</span></h3>
      ${bars(parts.map(([t,v])=>[t+'　'+money(v)+' 元',v/fee*100]),6)}
      <p class="note" style="margin-top:8px">比例為各項佔總費用的百分比。保險成本是買壽險保障的費用（${o.type==='B'?'乙型':'甲型'}保額 ${wan(o.sa)}），會隨年齡增加。基金本身的管理費已反映在報酬率中，未重複扣除。</p></div>
-   <div class="card"><h3>和「直接定期定額買基金」比較</h3>
-     <div class="res3" style="margin-top:8px">
-       <div class="card"><span>直接買基金</span><div class="big">${wan(r.plain)}</div><span>年化 ${pct(r.plainIrr*100)}</span></div>
-       <div class="card hi"><span>投資型保單</span><div class="big jade">${wan(r.total)}</div><span>年化 ${pct(r.irr*100)}</span></div>
-       <div class="card"><span>差額（換到壽險保障與保單功能）</span><div class="big">${wan(r.plain-r.total)}</div><span>其中保險成本 ${wan(r.T.coi)}</span></div>
-     </div></div>
    <div class="card"><h3>逐年明細</h3><div class="tw" style="max-height:420px;overflow-y:auto"><table class="t"><tr><th>第幾年</th><th>年齡</th><th>累計投入</th><th>帳戶價值</th><th>解約金</th>${r.cash>0?'<th>累計領息</th>':''}<th>累計費用</th><th>身故保障</th></tr>
      ${r.rows.map(z=>`<tr><td>${z.y}</td><td>${z.age}</td><td>${wan(z.cum)}</td><td>${wan(z.av)}</td><td>${wan(z.csv)}</td>${r.cash>0?`<td>${wan(z.cash)}</td>`:''}<td>${wan(z.fee)}</td><td>${wan(z.death)}</td></tr>`).join('')}</table></div></div>
    <div class="card"><h3>這張保單的費用規則</h3>
