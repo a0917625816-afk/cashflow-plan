@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>每月現金流規劃</title>
 <script>(function(){var p="blue";try{p=localStorage.getItem("pal")||"blue"}catch(e){}document.documentElement.setAttribute("data-pal",p)})();</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -498,14 +499,18 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
 #tR::-moz-range-thumb{width:var(--tw,80px);height:18px;border-radius:99px;background:var(--gold);border:1px solid var(--gold-deep)}
 #tR:active{cursor:grabbing}
 
+[data-pal="blue"] .mast,[data-pal="warm"] .mast,[data-pal="white"] .mast{border-bottom:1px solid var(--line)}
+[data-pal="white"] .mast{background:var(--band)}
 /* ---- 配色主題：blue 舒適藍（預設）／green 經典墨綠／warm 柔和暖杏 ---- */
-:root[data-pal="blue"]{--bg:#f4f6f8;--paper:#ffffff;--ink:#1f2a37;--muted:#5d6b7a;--line:#dfe4ea;--soft:#eaeef3;--navy:#1e3a5f;--jade:#2f6ea5;--jade-soft:#e4eef7;--gold:#c48a3a;--gold-soft:#f8efe2;--band:#1e3a5f;--band-ink:#f2f5f9;--edge:#cdd5de;--on-jade:#ffffff;--jade-deep:#1d4f7c;--gold-deep:#8f6224;--stock:#4f7fae;--bond:#c48a3a}
-:root[data-pal="warm"]{--bg:#f6f2ea;--paper:#fffdf8;--ink:#2b2a26;--muted:#6b665c;--line:#e6dfd2;--soft:#efe8db;--navy:#3c4a3e;--jade:#5b7f62;--jade-soft:#e6eee3;--gold:#c07a52;--gold-soft:#f6e8de;--band:#3c4a3e;--band-ink:#f6f2ea;--edge:#d9d0c0;--on-jade:#ffffff;--jade-deep:#3f5d45;--gold-deep:#8e5536;--stock:#6f8fa6;--bond:#c07a52}
+:root[data-pal="blue"]{--bg:#f7f9fc;--paper:#ffffff;--ink:#243243;--muted:#66768a;--line:#e3e9f0;--soft:#eef3f8;--navy:#2c4e74;--jade:#4a86bd;--jade-soft:#edf4fb;--gold:#d3a35f;--gold-soft:#fbf4ea;--band:#e6eff8;--band-ink:#24425f;--edge:#d8e0ea;--on-jade:#ffffff;--jade-deep:#3a70a3;--gold-deep:#9c7034;--stock:#6f9bc6;--bond:#d3a35f}
+:root[data-pal="warm"]{--bg:#faf7f1;--paper:#fffefb;--ink:#34322d;--muted:#787266;--line:#ece6da;--soft:#f3eee4;--navy:#4c5d4f;--jade:#7c9e82;--jade-soft:#eef4ec;--gold:#d39a76;--gold-soft:#fbf0e8;--band:#eef2ea;--band-ink:#3f4f42;--edge:#e1d9ca;--on-jade:#ffffff;--jade-deep:#62866a;--gold-deep:#a3694a;--stock:#8aa7bb;--bond:#d39a76}
+:root[data-pal="white"]{--bg:#ffffff;--paper:#ffffff;--ink:#22272e;--muted:#6a737d;--line:#e7eaee;--soft:#f6f7f9;--navy:#2d333b;--jade:#5a6b7d;--jade-soft:#f1f4f7;--gold:#c2a175;--gold-soft:#faf6ef;--band:#ffffff;--band-ink:#2d333b;--edge:#e3e6ea;--on-jade:#ffffff;--jade-deep:#465565;--gold-deep:#937349;--stock:#8297ab;--bond:#c2a175}
 @media (prefers-color-scheme: dark){
  :root[data-pal="blue"]:not([data-theme="light"]){--bg:#0f141a;--paper:#171e26;--ink:#e8edf2;--muted:#9aa7b4;--line:#29333e;--soft:#1d252e;--navy:#cfe0f2;--jade:#8ab8e0;--jade-soft:#1b2a3a;--gold:#e0b878;--gold-soft:#2e271c;--band:#0b1118;--band-ink:#e8edf2;--edge:#070a0e;--on-jade:#0e1a26;--jade-deep:#5d8fbd;--gold-deep:#b08a50;--stock:#8ab0d6;--bond:#e0b878}
+ :root[data-pal="white"]:not([data-theme="light"]){--bg:#121416;--paper:#1a1d21;--ink:#e9ecef;--muted:#a1a9b2;--line:#2c3137;--soft:#20242a;--navy:#e2e6ea;--jade:#b4c0cc;--jade-soft:#232931;--gold:#d9bf95;--gold-soft:#2c271f;--band:#121416;--band-ink:#e9ecef;--edge:#08090a;--on-jade:#14181c;--jade-deep:#8c99a7;--gold-deep:#ad9268;--stock:#9fb1c2;--bond:#d9bf95}
  :root[data-pal="warm"]:not([data-theme="light"]){--bg:#14130f;--paper:#1d1b17;--ink:#ece6da;--muted:#a59e90;--line:#312d26;--soft:#25221c;--navy:#dfe6d9;--jade:#a3c4a8;--jade-soft:#232d24;--gold:#e0a582;--gold-soft:#33261d;--band:#0f0e0b;--band-ink:#ece6da;--edge:#090806;--on-jade:#141a14;--jade-deep:#7ea486;--gold-deep:#b9805d;--stock:#93adc0;--bond:#e0a582}}
-.palbtn{margin-left:auto;display:flex;align-items:center;gap:8px;font:700 14px var(--body);color:var(--band-ink);background:color-mix(in srgb,#fff 12%,transparent);border:1px solid color-mix(in srgb,#fff 28%,transparent);border-radius:99px;padding:7px 12px 7px 8px;cursor:pointer;white-space:nowrap}
-.palbtn i{width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--jade) 0 50%,var(--gold) 0);border:2px solid #fff;display:block}
+.palbtn{margin-left:auto;display:flex;align-items:center;gap:8px;font:700 14px var(--body);color:var(--band-ink);background:color-mix(in srgb,currentColor 9%,transparent);border:1px solid color-mix(in srgb,currentColor 28%,transparent);border-radius:99px;padding:7px 12px 7px 8px;cursor:pointer;white-space:nowrap}
+.palbtn i{width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--jade) 0 50%,var(--gold) 0);border:2px solid var(--paper);box-shadow:0 0 0 1px color-mix(in srgb,currentColor 30%,transparent);display:block}
 .palmenu{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:64px;z-index:30;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);padding:10px;display:flex;flex-direction:column;gap:6px;min-width:250px}
 .palmenu button{display:flex;align-items:center;gap:12px;font:inherit;text-align:left;background:none;border:1px solid transparent;border-radius:12px;padding:10px;cursor:pointer;color:inherit}
 .palmenu button:hover{background:var(--soft)}.palmenu button[aria-checked="true"]{border-color:var(--jade);background:var(--jade-soft)}
@@ -2219,7 +2224,7 @@ $('#dkShare').addEventListener('click',()=>{ const u=SITE+(location.hash||'');
 
 
 /* 配色切換 */
-(function(){ const P=[['blue','舒適藍','柔和藍＋暖白，長時間看最不累（推薦）',['#2f6ea5','#f4f6f8','#c48a3a']],['green','經典墨綠','墨綠＋香檳金，穩重有質感',['#24594c','#f3f4f2','#a8844f']],['warm','柔和暖杏','鼠尾草綠＋米杏色，溫暖護眼',['#5b7f62','#f6f2ea','#c07a52']]];
+(function(){ const P=[['blue','舒適藍','淡藍＋白，長時間看最不累（推薦）',['#4a86bd','#e6eff8','#d3a35f']],['white','簡約白','全白底＋灰藍，乾淨俐落',['#5a6b7d','#ffffff','#c2a175']],['warm','柔和暖杏','淡鼠尾草綠＋米色，溫暖護眼',['#7c9e82','#eef2ea','#d39a76']],['green','經典墨綠','墨綠＋香檳金，原本的配色',['#24594c','#13211d','#a8844f']]];
   const m=$('#palMenu'), b=$('#palBtn'); const cur=()=>document.documentElement.getAttribute('data-pal')||'blue';
   const draw=()=>{ m.innerHTML='<p class="muted small" style="margin:2px 6px 4px">選擇網站配色</p>'+P.map(([k,n,d,c])=>`<button type="button" role="menuitemradio" aria-checked="${k===cur()}" data-k="${k}"><span class="sw">${c.map(x=>`<span style="background:${x}"></span>`).join('')}</span><span><b>${n}</b><small>${d}</small></span></button>`).join(''); };
   const close=()=>{m.hidden=true; b.setAttribute('aria-expanded','false');};
