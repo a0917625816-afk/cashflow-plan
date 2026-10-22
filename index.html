@@ -4,22 +4,25 @@
 <style>
 /* Layout: 深綠存摺色刊頭＋黏性分頁列，單欄閱讀區（1000px）；解說頁大字段落，試算頁左輸入右結果。視覺語彙取自保單帳戶對帳單：橫格線、等寬數字、黃銅色重點 */
 :root{
-  --bg:#eef2f1; --paper:#ffffff; --ink:#122723; --muted:#586a66; --line:#d9e2df; --soft:#e7eeec;
-  --navy:#16364d; --jade:#0d6b5b; --jade-soft:#dcefe9; --gold:#a8771f; --gold-soft:#f5ead2; --red:#b3402f; --red-soft:#f8e3de;
-  --stock:#2c6c9c; --bond:#c4952f; --cash:#8ea3a6; --other:#b5ada0;
-  --band:#0f4a42; --band-ink:#eaf5f1; --edge:#c2d0cb; --on-jade:#ffffff; --jade-deep:#08473c; --gold-deep:#7d5714; --shadow:0 1px 2px rgba(18,39,35,.06),0 10px 28px -18px rgba(18,39,35,.35);
+  --bg:#f3f4f2; --paper:#ffffff; --ink:#18201d; --muted:#626b67; --line:#e1e4df; --soft:#ecefeb;
+  --navy:#1c3a33; --jade:#24594c; --jade-soft:#e3ece7; --gold:#a8844f; --gold-soft:#f3ede2; --red:#a4473b; --red-soft:#f6e6e2;
+  --stock:#40698a; --bond:#b08d57; --cash:#9aa6a1; --other:#c3bcb0;
+  --band:#13211d; --band-ink:#f1ede4; --edge:#cfd5cf; --on-jade:#ffffff; --jade-deep:#163a31; --gold-deep:#7f6135;
+  --shadow:0 1px 2px rgba(19,33,29,.05),0 14px 32px -22px rgba(19,33,29,.35);
   --display:"Noto Serif TC","Songti TC",serif; --body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif; --num:"IBM Plex Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0c1513; --paper:#13201d; --ink:#e4efec; --muted:#97aba6; --line:#24352f; --soft:#1a2a26;
-  --navy:#9cc3e3; --jade:#4ec7aa; --jade-soft:#163a31; --gold:#e2b55c; --gold-soft:#3a2e17; --red:#ef8576; --red-soft:#3e2420;
-  --stock:#6aa8d8; --bond:#e0b25a; --cash:#7b909b; --other:#8d867a;
-  --band:#0a2c27; --band-ink:#e4f2ee; --edge:#050b0a; --on-jade:#04231d; --jade-deep:#23826c; --gold-deep:#9a7330; --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -18px rgba(0,0,0,.7); color-scheme:dark}}
+  --bg:#0f1312; --paper:#171c1a; --ink:#ebeee9; --muted:#9ca5a0; --line:#2a312e; --soft:#1f2522;
+  --navy:#cfe0d8; --jade:#8fc4b0; --jade-soft:#1d2f29; --gold:#d6b680; --gold-soft:#2f281c; --red:#e58c7f; --red-soft:#3a2420;
+  --stock:#86acc9; --bond:#d6b680; --cash:#7f8b86; --other:#8c867c;
+  --band:#0b100e; --band-ink:#ece6da; --edge:#060908; --on-jade:#0d1d18; --jade-deep:#5f9884; --gold-deep:#a98a55;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 32px -20px rgba(0,0,0,.8); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0c1513; --paper:#13201d; --ink:#e4efec; --muted:#97aba6; --line:#24352f; --soft:#1a2a26;
-  --navy:#9cc3e3; --jade:#4ec7aa; --jade-soft:#163a31; --gold:#e2b55c; --gold-soft:#3a2e17; --red:#ef8576; --red-soft:#3e2420;
-  --stock:#6aa8d8; --bond:#e0b25a; --cash:#7b909b; --other:#8d867a;
-  --band:#0a2c27; --band-ink:#e4f2ee; --edge:#050b0a; --on-jade:#04231d; --jade-deep:#23826c; --gold-deep:#9a7330; --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 30px -18px rgba(0,0,0,.7); color-scheme:dark}
+  --bg:#0f1312; --paper:#171c1a; --ink:#ebeee9; --muted:#9ca5a0; --line:#2a312e; --soft:#1f2522;
+  --navy:#cfe0d8; --jade:#8fc4b0; --jade-soft:#1d2f29; --gold:#d6b680; --gold-soft:#2f281c; --red:#e58c7f; --red-soft:#3a2420;
+  --stock:#86acc9; --bond:#d6b680; --cash:#7f8b86; --other:#8c867c;
+  --band:#0b100e; --band-ink:#ece6da; --edge:#060908; --on-jade:#0d1d18; --jade-deep:#5f9884; --gold-deep:#a98a55;
+  --shadow:0 1px 2px rgba(0,0,0,.35),0 14px 32px -20px rgba(0,0,0,.8); color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font:16px/1.75 var(--body);margin:0}
@@ -294,6 +297,29 @@ input[type=range]{accent-color:var(--jade)}
 .dock svg{width:20px;height:20px;display:block;margin:0 auto 2px}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 18px;border-radius:12px;font-size:15px;z-index:30;box-shadow:var(--shadow)}
 @media (prefers-reduced-motion:reduce){.quick button,.door,.insb,.fi,.fcard,nav.tabs button,.dock button{transform:none!important}}
+
+/* ---- 質感配色細節 ---- */
+.mast{border-bottom:1px solid color-mix(in srgb,var(--gold) 55%,transparent);background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--jade) 35%,var(--band)) 0,var(--band) 60%)}
+.mast .brand{letter-spacing:.08em}
+.mast .mark{color:var(--gold)}
+body{background:var(--bg)}
+h1,h2{color:var(--navy);letter-spacing:.01em}
+.eyebrow{color:var(--gold-deep)}.eyebrow::before{background:var(--gold)}
+.big{color:var(--navy)}.big.jade,.zc .score b,.pc .score b,.scen .up b{color:var(--jade)}
+.card{border-color:var(--line)}
+.res3 .card.hi,.res3 .card[style*="jade-soft"],.scen .up{background:linear-gradient(160deg,var(--jade-soft),var(--paper))!important}
+.door .tag{background:var(--jade-soft);color:var(--jade)}
+.door.g .tag,.door.a .tag{background:var(--gold-soft);color:var(--gold-deep)}
+.door.m .tag{background:var(--soft);color:var(--navy)}
+.door.r .tag{background:var(--band);color:var(--band-ink)}
+.quick button[aria-pressed="true"],nav.tabs button[aria-selected="true"],.dock button:not(.alt){background:linear-gradient(180deg,color-mix(in srgb,var(--jade) 88%,#fff) 0,var(--jade) 100%);border-color:var(--jade-deep)}
+nav.tabs button b{background:var(--gold-soft);color:var(--gold-deep)}
+.zc .rank{background:var(--navy);color:var(--paper)}
+.zc:first-child .rank{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 80%,#fff),var(--gold));color:#1b1406}
+.proj,.card.proj{border-top-color:var(--gold)}
+.chip{background:var(--soft);color:var(--muted)}
+.bar em{background:linear-gradient(90deg,var(--jade),color-mix(in srgb,var(--jade) 60%,var(--gold)))}
+a{color:var(--jade)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 
@@ -567,7 +593,7 @@ input[type=range]{accent-color:var(--jade)}
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const DATA=JSON.parse(document.getElementById('fdata').textContent); const FD=DATA.funds;
-const RRC=['var(--other)','#3f9a63','#7aa83b','#c99a1b','#d7712a','#c23b3b'];
+const RRC=['var(--other)','#4c8a6e','#7f9450','#b48f42','#b8683e','#9e4339'];
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const short=n=>n.replace(/[（(][^()（）]*(本金|非投資等級|高風險|ESG|收益平準金|保證)[^()（）]*[)）]/g,'').replace(/\*+$/,'').trim();
 const wan=v=>{const w=v/10000; return w>=10000?(w/10000).toFixed(2)+' 億':(Math.abs(w)>=100?Math.round(w).toLocaleString():w.toFixed(1))+' 萬';};
