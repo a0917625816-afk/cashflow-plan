@@ -476,6 +476,18 @@ body.present table.t{font-size:18px}
 .life>div.off .lic{filter:grayscale(1)}
 .stair div{position:relative}.stair .climb{position:absolute;top:-10.5cqw;left:50%;transform:translateX(-50%);width:7.5cqw;background:none!important;padding:0!important}.stair .climb svg{width:100%;height:auto}
 @media (prefers-reduced-motion:reduce){.slide .art .gear{animation:none}}
+
+.soon{display:flex;flex-direction:column;align-items:center;gap:8px;padding:48px 20px;text-align:center;border:2px dashed var(--line)}
+.soon svg{width:96px;height:96px}.soon b{font:900 22px var(--display);color:var(--navy)}
+.glgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.glb{font:inherit;text-align:left;cursor:pointer;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 3px 0 var(--edge);display:flex;flex-direction:column;gap:4px;transition:transform .1s}
+.glb:hover{border-color:var(--jade)}.glb:active{transform:translateY(3px);box-shadow:0 0 0 var(--edge)}
+.glb b{font:800 18px/1.35 var(--body);color:var(--navy)}.glb span{font-size:14.5px;color:var(--muted);line-height:1.5}
+.glhead{font:800 15px var(--body);color:var(--jade);letter-spacing:.06em;margin:0 0 8px}
+.glex{background:var(--gold-soft);border-radius:12px;padding:12px 14px}
+.gltip{background:var(--jade-soft);border-radius:12px;padding:12px 14px}
+.glrel{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:699px){.glgrid{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -491,6 +503,8 @@ body.present table.t{font-size:18px}
     <button role="tab" data-tab="dca" aria-selected="false"><b>05</b>定期定額模擬</button>
     <button role="tab" data-tab="find" aria-selected="false"><b>06</b>基金搜尋</button>
     <button role="tab" data-tab="loan" aria-selected="false"><b>07</b>房貸與資金規劃</button>
+    <button role="tab" data-tab="best" aria-selected="false"><b>08</b>精選標的</button>
+    <button role="tab" data-tab="gloss" aria-selected="false"><b>09</b>專有名詞</button>
   </div>
 </nav>
 
@@ -831,6 +845,27 @@ body.present table.t{font-size:18px}
     <div class="result" id="mOut"></div>
   </div>
 </section>
+<section class="page" id="p-best" hidden>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <span class="eyebrow">08 精選標的</span>
+    <h2>團隊精選標的</h2>
+    <p class="lead">由團隊挑選、定期更新的重點標的。</p>
+  </div>
+  <div class="card soon" id="bestList">
+    <svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="var(--gold-soft)"/><path d="M60 26l9.5 19.3 21.3 3.1-15.4 15 3.6 21.2L60 74.6 41 84.6l3.6-21.2-15.4-15 21.3-3.1z" fill="var(--gold)"/></svg>
+    <b>精選標的即將上架</b><span class="muted">敬請期待</span>
+  </div>
+</section>
+<section class="page" id="p-gloss" hidden>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <span class="eyebrow">09 專有名詞</span>
+    <h2>看不懂的名詞，點一下就有解釋</h2>
+    <p class="lead">網站裡出現的投資、保單與房貸名詞，用白話說明，並附上例子。</p>
+  </div>
+  <div class="ctrl" style="max-width:480px"><input type="search" id="glQ" placeholder="搜尋名詞，例如：五年年化、後收型、寬限期" aria-label="搜尋名詞"></div>
+  <div class="quick" id="glCat"></div>
+  <div id="glList" style="display:flex;flex-direction:column;gap:22px"></div>
+</section>
 </main>
 
 <footer class="gut">資料來源：各壽險公司官方投資標的查詢系統（基金資料由 MoneyDJ 嘉實資訊提供），資料日期 2026/10/21。團隊評分標的依過去五年淨值、配息、波動、目前全球經濟環境、可連結保單數與資料完整度挑選，僅作為說明範例，不構成投資建議或推薦。過去績效不代表未來表現，投資前請詳閱保單條款與投資標的說明書，並依自身風險屬性評估。</footer>
@@ -860,11 +895,12 @@ const STORY=Object.fromEntries(Object.entries(FD).map(([k,f])=>[k,f.story]));
 const ZN={stable:'穩健型',growth:'積極型',monthly:'月配息區',acc:'累積區',rate:'目標報酬率'};
 
 /* ---------- tabs ---------- */
-const TABS=['why','pick','calc','grow','dca','find','loan'];
+const TABS=['why','pick','calc','grow','dca','find','loan','best','gloss'];
 function go(tab,push=true){
   if(tab==='dca') dcaInit();
   if(tab==='find') findInit();
   if(tab==='loan') mInit();
+  if(tab==='gloss') glInit();
   TABS.forEach(t=>{$('#p-'+t).hidden=t!==tab;});
   $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
   if(push){try{history.replaceState(null,'','#'+tab);}catch(e){}}
@@ -1975,6 +2011,96 @@ function showIns(name){
   const bl=sh.querySelector('#shLoan'); if(bl) bl.addEventListener('click',()=>{close(); go('loan'); mOpt.ins=mi; mOpt.mode=mOpt.mode==='c'?'a':mOpt.mode; $$('#mMode button').forEach(x=>x.setAttribute('aria-selected',x.dataset.v===mOpt.mode)); $('#mIns').value=mi; mModeUI(); mFunds(); mRun();});
 }
 document.addEventListener('click',e=>{const b=e.target.closest('.insl'); if(b) showIns(b.dataset.ins);});
+
+/* ---------- 09 專有名詞 ---------- */
+/* [名詞, 分類, 一句話, 說明, 舉例, 業務提醒, 相關名詞[], 在哪一頁] */
+const GL=[
+ ['五年年化','報酬與績效','過去五年平均每年賺幾 %（含配息、有複利）','把基金過去五年的含息總報酬，換算成「平均每年」的報酬率。中間每年有漲有跌，換算後相當於每年穩定賺這個 %。本站數字以基金原幣計算，未扣保單費用。','五年年化 6%：五年前放 100 萬、配息再投入，五年後約 134 萬（1.06 的 5 次方 ≈ 1.338）。','拿它和「配息率」對照：配息率明顯高於五年年化，代表配息有一部分來自本金，淨值會慢慢往下。',['三年年化','配息率','含息總報酬','淨值'],'find'],
+ ['三年年化','報酬與績效','過去三年平均每年賺幾 %','算法和五年年化相同，只是期間改成三年。期間越短，越容易受到單一年份大漲或大跌影響。','三年年化 -2%：三年前的 100 萬，三年後約剩 94 萬。','三年和五年一起看：兩者差很多，代表近期表現和長期不一樣。',['五年年化','近一年報酬'],'find'],
+ ['近一年報酬','報酬與績效','最近 12 個月含息賺了幾 %','最近一年的含息總報酬，不是年化，就是這一年實際的漲跌幅。','近一年報酬 +12%：一年前的 100 萬，現在約 112 萬。','短期數字波動大，不要只看這一個就判斷好壞。',['五年年化','年化標準差'],'find'],
+ ['含息總報酬','報酬與績效','淨值漲跌＋配息，加起來的真正報酬','只看淨值會漏算配息；只看配息會漏算淨值下跌。兩者加總才是真正賺多少，本站的年化報酬都是含息總報酬。','淨值從 10 元跌到 9.6 元（-4%），一年配了 0.8 元（+8%），含息總報酬約 +4%。','客戶常只看配息率，記得提醒他看含息總報酬。',['配息率','淨值'],'find'],
+ ['定期定額年化','報酬與績效','每月固定扣款買進，最後算出的年化報酬','假設過去五年（或十年）每個月固定金額買進，到現在的總值換算成年化報酬（資金加權）。因為分批買進，和單筆的年化通常不同。','五年定期定額年化 5%：每月扣款的那些錢，平均每年約賺 5%。','第 5 頁「依過往績效」就是以這個數字為主來推估未來。',['五年年化','依過往績效','IRR（內部報酬率）'],'dca'],
+ ['IRR（內部報酬率）','報酬與績效','錢分很多次投入時，平均每年的報酬率','定期定額或分期繳費時，每筆錢放的時間不同，用 IRR 才能算出公平的「平均每年報酬」。本站的定期定額年化、保單試算年化都是 IRR。','每月存 1 萬、存 10 年，最後拿回 150 萬，IRR 約 4.4%。','比較「保單 vs 直接買基金」時，看 IRR 最準。',['定期定額年化'],'dca'],
+ ['淨值','基金基本','基金每一單位現在值多少錢','基金的資產扣掉費用後，除以總單位數。淨值上漲代表本金變多，下跌代表本金變少。','淨值 10 元時買 1,000 單位＝1 萬元；淨值變 11 元，就值 1.1 萬元。','月配息基金的淨值若長期下滑，代表配息在吃本金。',['配息率','含息總報酬'],'find'],
+ ['配息率','基金基本','一年配的錢佔淨值的幾 %','通常是「最近一次配息 × 一年配息次數 ÷ 淨值」。這是配多少，不是賺多少。','淨值 10 元、每月配 0.05 元：年化配息率＝0.05×12÷10＝6%。','配息率高不等於報酬高，要跟五年年化一起看。',['五年年化','配息來源可能為本金','含息總報酬'],'calc'],
+ ['配息來源可能為本金','基金基本','配出來的錢，有一部分是拿你的本金還給你','基金賺的不夠配時，會從本金撥出。法規要求這類基金必須揭露。長期下來淨值會變低。','配息率 8%、但含息總報酬只有 4%：差的 4% 等於每年拿回自己的本金。','跟客戶說明時務必提到，這也是合規重點。',['配息率','資產撥回'],'pick'],
+ ['資產撥回','基金基本','類全委帳戶的「配息」，正式名稱叫撥回','類全委帳戶不叫配息，叫資產撥回，來源同樣可能包含本金，撥回率也會調整。','撥回率 6%、帳戶 100 萬：每年約撥回 6 萬，分 12 個月給。','撥回率不是保證，績效差時可能調降。',['類全委帳戶','配息來源可能為本金'],'pick'],
+ ['累積型','基金基本','不配息，收益直接滾進淨值','賺的錢留在基金裡繼續投資，淨值反映全部報酬，適合長期累積、不需要現金流的人。','同一檔基金分 A（累積）、B（配息）兩種級別，A 的淨值通常較高。','年輕客戶或定期定額累積資產時，常選累積型。',['配息型（月配）'],'dca'],
+ ['配息型（月配）','基金基本','定期把收益配出來，月配就是每月配一次','配息可以領現金當生活費，也可以再投入。另有季配、年配。','月配基金：每個月固定一天入帳。','要退休現金流的客戶最在意，記得提醒配息會調整。',['配息率','累積型'],'calc'],
+ ['年化標準差','風險','報酬上下晃動的幅度，越大越刺激','衡量基金每年報酬偏離平均的程度。數字越大，漲跌越劇烈。本站用它推估樂觀／保守區間。','標準差 15%：一般年份報酬可能落在平均值上下 15% 之間。','保守型客戶挑標準差低的。',['RR 風險等級','樂觀／保守情境'],'find'],
+ ['RR 風險等級','風險','RR1 最保守，RR5 風險最高','投信投顧公會的基金風險分級。RR1～RR2 多為貨幣、短債；RR3 多為債券、平衡；RR4～RR5 多為股票、新興市場、單一產業。','全球股票型多為 RR4；新興市場股票、單一國家股票常為 RR5。','銷售時要和客戶的風險屬性相符（KYC）。',['年化標準差','新興市場'],'pick'],
+ ['新興市場','風險','發展中國家的市場，成長快但波動大','例如中國、印度、巴西、東南亞、東歐等。可能有政治、匯率、資本管制風險，漲跌都大。','美國升息、美元走強時，新興市場股債常同時下跌。','本站所有新興市場標的都有警語，比重不宜過高。',['RR 風險等級','非投資等級債（高收益債）'],'pick'],
+ ['非投資等級債（高收益債）','風險','信用評等較低的公司債，利息高、違約風險也高','評等在 BBB- 以下的債券。給的利息較高，但景氣差時違約與下跌風險大。','景氣衰退時，高收益債可能一年跌 10～20%。','月配息基金常含高收益債，要跟客戶說明。',['投資等級債','新興市場'],'pick'],
+ ['投資等級債','風險','信用評等較好的債券，相對穩健','評等 BBB- 以上，例如大型企業或政府債。違約機率低，但利率上升時價格也會跌。','升息時債券價格下跌，降息時上漲。','適合穩健型客戶當核心部位。',['非投資等級債（高收益債）'],'pick'],
+ ['計價幣別與匯率風險','風險','用哪種貨幣計價；換回台幣會有匯差','美元計價的基金或保單，報酬以美元算。換回台幣時，台幣升值會吃掉報酬，台幣貶值則加分。','美元賺 5%，但同期台幣對美元升值 5%，換回台幣幾乎沒賺。','本站報酬都以原幣計算，沒有算匯率。',['五年年化'],'find'],
+ ['類全委帳戶','基金基本','保險公司委託投信操作的投資帳戶','全名「全權委託投資帳戶」，只能透過投資型保單買。由投信經理人配置多檔基金，多數有月撥回。','例如「XX 人壽委託 YY 投信月提解帳戶」。','費用已含在淨值，撥回率會調整。',['資產撥回'],'find'],
+ ['團隊評分','本站用語','本站依五年真實數據與目前經濟環境算出的分數','依過去五年報酬、抗跌力、配息穩定、波動、可連結保單數，再加上目前全球經濟環境調整後的分數，滿分 100。','評分 82：過去五年量化分數 85，環境調整 -3。','只是篩選參考，不是推薦或保證。',['依過往績效'],'pick'],
+ ['依過往績效','本站用語','本站預估未來報酬的方式','以這檔基金過去十年（或五年）的定期定額與單筆年化為主（7 成），再和同類型長期平均（3 成）加權，並設上限避免把過去少見的大漲直接套到未來。','某股票基金過去十年定期定額年化 11%，同類平均 7%：預估約 9.8%。','比單看過去報酬保守、合理。',['定期定額年化','樂觀／保守情境'],'dca'],
+ ['樂觀／保守情境','本站用語','八成機率會落在這兩個數字之間','依標的的年化標準差推估：十次中約有八次結果落在保守和樂觀之間，一次更好、一次更差。年期越長，區間越窄。','預估 6%，20 年的樂觀 7.4%、保守 4.6%。','跟客戶說明時三個數字一起講，不要只講最高的。',['年化標準差','依過往績效'],'dca'],
+ ['投資型保單','保單','保險＋投資：保費扣完費用後拿去買基金','保費扣除費用後，投入客戶自選的投資標的，帳戶價值隨市場漲跌。分「變額萬能壽險」（有壽險保障）和「變額年金」（以累積和領年金為主）。','每月繳 1 萬，扣完費用後買進月配息基金。','投資風險由保戶自己承擔。',['變額萬能壽險','變額年金'],'dca'],
+ ['變額萬能壽險','保單','有壽險保障的投資型保單','有身故保障，所以每月會扣保險成本。可定期或彈性繳費。','保額 100 萬：身故時至少賠 100 萬（甲型）。','本站第 5 頁定期定額就是用各家的變額萬能壽險試算。',['保險成本（COI）','甲型／乙型','變額年金'],'dca'],
+ ['變額年金','保單','以累積資產、領年金為主的投資型保單','累積期間沒有壽險保險成本，常用躉繳一次投入，搭配月配息標的領現金流。','躉繳 500 萬，連結月配息標的，每月領配息。','本站第 7 頁房貸與資金規劃就是用各家的變額年金試算。',['躉繳','變額萬能壽險'],'loan'],
+ ['躉繳','保單','一次把保費繳清','一次繳一大筆，例如 500 萬一次投入。相對的是分期繳（年繳、月繳）。','退休金 1000 萬一次放進保單。','保費來源要如實填寫，貸款或解約來的錢要特別注意合規。',['彈性繳／定期繳','變額年金'],'loan'],
+ ['彈性繳／定期繳','保單','繳費方式：想繳再繳 vs 固定時間繳','定期繳是每月、每季或每年固定繳；彈性繳是有錢時再繳、金額自訂。','定期繳：每月 5 號扣 1 萬。彈性繳：年終拿 20 萬加碼。','',['目標保費','超額保費'],'dca'],
+ ['目標保費','保單','保單設定的「主要」保費，前置費用通常最高','前收型保單會把保費分成目標保費和超額保費，目標保費前幾年的費用率最高（可能 50～60%）。','目標保費每年 6 萬，第 1 年費用率 60%：先扣 3.6 萬。','前收型保單要說清楚前幾年的費用。',['超額保費','前收型','保費費用（前置費用）'],'dca'],
+ ['超額保費','保單','目標保費以外多繳的錢，費用率低','超出目標保費的部分，費用率通常只有 3～5%，大部分直接進帳戶。','另外加碼 10 萬，費用率 5%：扣 5,000 元，9.5 萬進帳戶。','想降低費用，可以把目標保費設低、多繳超額保費。',['目標保費'],'dca'],
+ ['保費費用（前置費用）','保單','繳保費時先扣掉的費用','繳進來的保費，先扣這筆才進投資帳戶。前收型保單才有，費用率依年度或金額級距而定。','繳 100 萬、費用率 3%：先扣 3 萬，97 萬進帳戶。','點標的頁的保險公司名稱，可以看各家的前置費用。',['前收型','後收型'],'dca'],
+ ['前收型','保單','買進時先扣費用，之後解約不另扣','費用在繳保費時就先扣掉。好處是之後想解約沒有解約費用；缺點是一開始投入的金額變少。','躉繳 1000 萬、前置 3%：一開始只有 970 萬在投資。','適合確定會長期放、但又想保留彈性的人。',['後收型','保費費用（前置費用）'],'dca'],
+ ['後收型','保單','保費全額投入，提早解約才扣費用','不收前置費用，保費全部進帳戶；改成前幾年每月扣帳戶管理費，且前幾年解約要扣解約費用（逐年遞減到 0）。','躉繳 1000 萬全額投資，但第 1 年解約要扣 6～12%。','適合確定放滿解約費用期間（多為 4～7 年）的人。',['前收型','解約費用','帳戶管理費'],'dca'],
+ ['保單管理費','保單','每月固定扣的行政費用','多數每月 100 元左右，從帳戶價值扣除。很多保單累積保費達一定金額（例如 300 萬）就免收。','每月 100 元，一年 1,200 元。','大額保單通常免收。',['帳戶管理費'],'dca'],
+ ['帳戶管理費','保單','依帳戶價值按比例扣的費用','每月按帳戶價值的某個 % 扣，後收型保單前幾年常有，之後變 0。','帳戶 500 萬、每月 0.1%：每月扣 5,000 元。','後收型的主要成本，要看收幾年。',['後收型','保單管理費'],'dca'],
+ ['保險成本（COI）','保單','買壽險保障的費用，年紀越大越貴','變額萬能壽險每月依「淨危險保額」和年齡扣除。年紀越大、保額越高，扣越多。本站依第六回經驗生命表計算。','40 歲男性、淨危險保額 100 萬：每月約幾百元；70 歲會高出很多倍。','高齡客戶要特別注意保險成本會吃掉帳戶。',['淨危險保額','甲型／乙型','第六回經驗生命表'],'dca'],
+ ['淨危險保額','保單','保險公司真正要多賠的那一段','身故保險金扣掉帳戶價值後的差額，保險成本就是按這段計算。帳戶價值越高，甲型的淨危險保額越低。','保額 100 萬、帳戶 30 萬（甲型）：淨危險保額 70 萬。','',['保險成本（COI）','甲型／乙型'],'dca'],
+ ['甲型／乙型','保單','身故時賠多少的兩種算法','甲型：保額和帳戶價值取高（帳戶越大保險成本越低）。乙型：保額＋帳戶價值（保障較高、保險成本也較高）。','45 歲、保額 100 萬、帳戶 80 萬：甲型賠 100 萬和 112 萬（80 萬 × 法定 140%）取高＝112 萬；乙型賠 100＋80＝180 萬。','重投資選甲型，重保障選乙型。',['淨危險保額','法定最低比率'],'dca'],
+ ['法定最低比率','保單','投資型壽險身故保障的法定下限','依法規，身故保險金至少要是帳戶價值的一定倍數，年齡越大比率越低：30 歲以下 190%、31～40 歲 160%、41～50 歲 140%、51～60 歲 120%、61～70 歲 110%、71～90 歲 102%。','45 歲、帳戶 100 萬：身故保障至少 140 萬。','',['甲型／乙型'],'dca'],
+ ['第六回經驗生命表','保單','壽險業計算死亡率的標準表','臺灣壽險業依實際經驗編製的死亡率表，用來算保險成本。各家保單會乘上自己的倍數。','','',['保險成本（COI）'],'dca'],
+ ['解約費用','保單','前幾年解約要扣的費用','後收型保單常見，例如第 1 年 6%、第 2 年 5%…逐年降到 0。部分提領也可能適用。','第 2 年解約、帳戶 100 萬、解約費用 5%：扣 5 萬。','建議客戶放滿解約費用期間。',['後收型','解約金'],'dca'],
+ ['解約金','保單','現在解約實際拿得回來的錢','帳戶價值扣掉解約費用（和保單借款）後的金額。','帳戶 100 萬、解約費用 5%：解約金 95 萬。','',['帳戶價值','解約費用'],'dca'],
+ ['帳戶價值','保單','保單裡投資部位現在值多少','所有投資標的單位數 × 淨值，加上貨幣帳戶等。每天隨淨值變動。','持有 10 萬單位、淨值 10.5 元：帳戶價值 105 萬。','',['解約金','淨值'],'dca'],
+ ['高保費優惠','保單','保費夠多就免收部分費用','累積所繳保費（扣掉提領）達門檻，例如 300 萬，當月免收保單管理費。','','大額客戶記得提醒這項優惠。',['保單管理費'],'loan'],
+ ['宣告利率','保單','利變型保單每月公布的計息利率','利率變動型保單依保險公司每月公布的宣告利率累積，會隨市場調整，不是保證。','本站印鈔機專案的六年期保單，以年化 3.2% 估算。','',['印鈔機專案'],'grow'],
+ ['本息平均攤還','房貸','每月繳一樣的金額','每月月付固定，前期繳的大多是利息，後期大多是本金。預算好安排，總利息比本金平均略多。','1000 萬、30 年、2.3%：每月約 38,480 元。','',['本金平均攤還','寬限期'],'loan'],
+ ['本金平均攤還','房貸','每月還一樣的本金，月付逐月遞減','每月本金固定，利息隨餘額減少，所以月付一開始高、之後越來越少。總利息比本息平均少。','1000 萬、30 年、2.3%：第一期約 46,944 元，最後一期約 27,831 元。','',['本息平均攤還'],'loan'],
+ ['寬限期','房貸','前幾年只繳利息、不還本金','寬限期內月付較低，但本金沒減少，寬限期後月付會變高，總利息也較多。','1000 萬、2.3%：寬限期每月只繳約 19,167 元利息。','',['本息平均攤還'],'loan'],
+ ['損益兩平報酬率','房貸','至少要賺多少才不會虧','本站試算中，投資報酬率至少要達到這個數字，房貸繳完時才不會虧（已含保單費用與房貸利息）。','損益兩平 3.3%：年化總報酬低於 3.3% 就會虧。','比較時看這個數字和標的過往績效差多少。',['壓力測試'],'loan'],
+ ['壓力測試','房貸','假設發生壞事時的結果','本站假設「第 2 年市場大跌 25%」和「第 3 年起房貸利率 +1%」，看最後結果會差多少。','','規劃時請客戶保留足夠預備金。',['損益兩平報酬率'],'loan'],
+ ['印鈔機專案','本站用語','配息撥一部分進六年期保單，到期回填本金','每月配息分兩份：一份花用，一份繳進六年期保單；六年到期整筆回填本金，月配息升級，一輪一輪往上疊。','1000 萬、配息 6%、撥 30%：18 年後本金約 1,401 萬，月配息約 7 萬。','',['宣告利率','配息率'],'grow']
+];
+const GLC=['全部','報酬與績效','基金基本','風險','保單','房貸','本站用語'];
+const TABN={why:'01 為什麼要被動收入',pick:'02 挑選標的',calc:'03 配息試算',grow:'04 資產滾大',dca:'05 定期定額模擬',find:'06 基金搜尋',loan:'07 房貸與資金規劃'};
+let glCat='全部', glReady=false;
+function glInit(){ if(glReady) return; glReady=true;
+  $('#glCat').innerHTML=GLC.map(c=>`<button type="button" data-v="${c}" aria-pressed="${c===glCat}">${c}</button>`).join('');
+  $('#glCat').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; glCat=b.dataset.v; $$('#glCat button').forEach(x=>x.setAttribute('aria-pressed',x===b)); glList();});
+  $('#glQ').addEventListener('input',glList);
+  $('#glList').addEventListener('click',e=>{const b=e.target.closest('.glb'); if(b) showTerm(b.dataset.t);});
+  glList(); }
+function glList(){
+  const q=($('#glQ').value||'').trim().toLowerCase();
+  const L=GL.filter(g=>(glCat==='全部'||g[1]===glCat)&&(!q||(g[0]+g[2]+g[3]).toLowerCase().includes(q)));
+  const cats=GLC.slice(1).filter(c=>L.some(g=>g[1]===c));
+  $('#glList').innerHTML=cats.map(c=>`<div><p class="glhead">${c}</p><div class="glgrid">${L.filter(g=>g[1]===c).map(g=>`<button type="button" class="glb" data-t="${esc(g[0])}"><b>${esc(g[0])}</b><span>${esc(g[2])}</span></button>`).join('')}</div></div>`).join('')||'<p class="muted">找不到這個名詞。</p>';
+}
+function openSheet(h){
+  const sh=document.createElement('div'); sh.className='sheet'; sh.setAttribute('role','dialog'); sh.setAttribute('aria-modal','true'); sh.innerHTML=`<div><button type="button" class="back x">✕ 關閉</button>${h}</div>`;
+  document.body.appendChild(sh); document.body.style.overflow='hidden';
+  const close=()=>{sh.remove(); if(!document.querySelector('.sheet')) document.body.style.overflow=''; document.removeEventListener('keydown',esck);};
+  function esck(e){ if(e.key==='Escape') close(); }
+  sh.addEventListener('click',e=>{ if(e.target===sh) close(); }); sh.querySelector('.x').addEventListener('click',close); document.addEventListener('keydown',esck);
+  return {sh,close};
+}
+function showTerm(t){
+  const g=GL.find(x=>x[0]===t); if(!g) return; const [n,c,one,d,ex,tip,rel,pg]=g;
+  const prev=document.querySelector('.sheet'); if(prev){prev.remove();}
+  const {sh,close}=openSheet(`<div><span class="eyebrow">${esc(c)}</span><h2 style="margin-top:4px">${esc(n)}</h2><p class="lead" style="margin:0">${esc(one)}</p></div>
+    <div class="card"><h3>說明</h3><p style="margin:0">${esc(d)}</p></div>
+    ${ex?`<div class="glex"><b>舉例</b><p style="margin:4px 0 0">${esc(ex)}</p></div>`:''}
+    ${tip?`<div class="gltip"><b>跟客戶說明時</b><p style="margin:4px 0 0">${esc(tip)}</p></div>`:''}
+    ${rel&&rel.length?`<div><p class="glhead" style="margin-bottom:8px">相關名詞</p><div class="glrel">${rel.filter(r=>GL.find(x=>x[0]===r)).map(r=>`<button type="button" class="sbtn ghost glr" data-t="${esc(r)}">${esc(r)}</button>`).join('')}</div></div>`:''}
+    ${pg&&TABN[pg]?`<div class="sharerow"><button type="button" class="sbtn" id="glGo">到「${TABN[pg]}」看看</button></div>`:''}`);
+  sh.querySelectorAll('.glr').forEach(b=>b.addEventListener('click',()=>showTerm(b.dataset.t)));
+  const gb=sh.querySelector('#glGo'); if(gb) gb.addEventListener('click',()=>{close(); go(pg);});
+}
 /* 業務小工具 */
 function toast(m){const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,2200);}
 $('#dkTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
