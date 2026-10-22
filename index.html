@@ -365,6 +365,41 @@ select{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--pa
 .kb.ka{background:var(--gold-soft);color:var(--gold-deep)}.kb.kd{background:var(--jade-soft);color:var(--jade)}
 @media (max-width:699px){.kindtabs{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.kindtabs button{padding:10px}.kindtabs button em{display:none}.kb{font-size:13.5px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ---- 行銷：業務員名片・專屬連結・簡報模式 ---- */
+.sbtn{font:700 16px var(--body);border-radius:14px;padding:12px 18px;cursor:pointer;border:1px solid var(--jade-deep);background:linear-gradient(180deg,color-mix(in srgb,var(--jade) 82%,#fff),var(--jade));color:var(--on-jade);box-shadow:0 4px 0 var(--jade-deep),0 10px 18px -10px rgba(0,0,0,.45);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;white-space:nowrap}
+.sbtn:active{transform:translateY(4px);box-shadow:0 0 0 var(--jade-deep)}
+.sbtn.line{background:linear-gradient(180deg,#2ad06a,#06a647);border-color:#05803a;color:#fff;box-shadow:0 4px 0 #05803a,0 10px 18px -10px rgba(0,0,0,.45)}
+.sbtn.gold{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 80%,#fff),var(--gold));border-color:var(--gold-deep);color:#fff;box-shadow:0 4px 0 var(--gold-deep),0 10px 18px -10px rgba(0,0,0,.45)}
+.sbtn.ghost{background:var(--paper);color:var(--ink);border-color:var(--line);box-shadow:0 4px 0 var(--edge)}
+.sharerow{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin-top:10px}
+.sharerow input{flex:1 1 180px;min-width:0;font:inherit;font-size:17px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink)}
+.planhead{border-radius:20px;padding:20px 22px;background:linear-gradient(135deg,var(--band),color-mix(in srgb,var(--band) 70%,var(--jade)));color:var(--band-ink);display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow)}
+.planhead b{font:900 clamp(22px,3.4vw,30px)/1.3 var(--display);color:var(--band-ink)}
+.planhead span{opacity:.85}
+.planhead .sharerow{margin-top:6px}
+.advc{max-width:1000px;margin:0 auto 26px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:20px 22px;border-radius:22px;background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
+.advc.demo{border:2px dashed var(--gold)}
+.advc .av{width:76px;height:76px;border-radius:50%;object-fit:cover;background:var(--jade-soft);color:var(--jade);display:grid;place-items:center;font:900 30px var(--display);border:3px solid var(--gold-soft)}
+.advc .nm{font:900 22px/1.3 var(--display);color:var(--navy)}
+.advc .tt{color:var(--muted);font-size:15px}
+.advc .sl{margin-top:4px}
+.advc .rg{font-size:13px;color:var(--muted);margin-top:4px}
+.advc .acts{display:flex;flex-direction:column;gap:10px}
+.advc .demo-tag{display:inline-block;font-size:12px;font-weight:700;background:var(--gold-soft);color:var(--gold-deep);border-radius:99px;padding:2px 10px;margin-left:8px;vertical-align:middle}
+.ctaband{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:18px 20px;border-radius:18px;background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent)}
+.ctaband p{margin:0;font-weight:700;color:var(--ink)}
+@media (max-width:699px){.advc{grid-template-columns:auto 1fr;padding:18px}.advc .acts{grid-column:1/-1;flex-direction:row}.advc .acts .sbtn{flex:1}.sharerow .sbtn{flex:1 1 auto}}
+/* 簡報模式：平板面談用，字放大、藏掉細節 */
+body.present{font-size:20px}
+body.present .note,body.present details.adv,body.present .method,body.present footer.gut,body.present #dShare,body.present .mast .sub,body.present .ctaband,body.present .advc{display:none!important}
+body.present main{max-width:1180px}
+body.present .lead{font-size:21px}
+body.present .card{padding:22px 24px}
+body.present #dOut .big{font-size:clamp(28px,3.2vw,40px)}
+body.present table.t{font-size:18px}
+.dock button.on{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 80%,#fff),var(--gold));border-color:var(--gold-deep);box-shadow:0 4px 0 var(--gold-deep),0 10px 18px -8px rgba(0,0,0,.45);color:#fff}
+@media print{.dock,nav.tabs,#dShare,.advc .acts,.ctaband .sbtn{display:none!important}}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -599,7 +634,8 @@ select{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--pa
     <h2>每個月存一筆進投資型保單，幾年後大約有多少？</h2>
     <p class="lead">先選保險公司，再選這家可以連結的標的，年期自己調。系統依該公司投資型壽險的前置費用、保單管理費、依生命表計算的保險成本與解約費用，逐月推算扣完費用後的帳戶價值。</p>
   </div>
-  <div class="card"><h3>① 選保險公司</h3><div class="insgrid" id="dIns"></div></div>
+  <div class="planhead" id="dPlanHead" hidden></div>
+  <div class="card" id="dInsCard"><h3>① 選保險公司</h3><div class="insgrid" id="dIns"></div></div>
   <div class="card" id="dFundCard" hidden><h3>② 選標的 <span class="muted small" id="dFundCnt"></span></h3>
     <div class="ctrl" style="max-width:420px;margin:8px 0 10px"><input type="search" id="dSearch" placeholder="搜尋基金名稱或代號" aria-label="搜尋基金"></div>
     <div class="kindtabs" id="dKind" role="tablist" aria-label="標的類型"></div>
@@ -621,6 +657,11 @@ select{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--pa
         <details class="adv"><summary>進階：自行修改費率</summary><div id="dAdv" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div></details>
       </div>
       <div class="result" id="dOut"></div>
+    </div>
+    <div class="card" id="dShare" style="margin-top:22px"><h3>④ 傳給客戶</h3>
+      <p class="muted" style="margin:0">輸入客戶稱呼，產生這份試算的專屬連結。客戶點開就直接看到他的方案（公司、標的、金額、年期都帶好），不用重打，也方便轉給家人一起看。</p>
+      <div class="sharerow"><input type="text" id="dCli" maxlength="12" placeholder="客戶稱呼，例如：王先生" aria-label="客戶稱呼">
+        <button type="button" class="sbtn" id="dLink">複製專屬連結</button><button type="button" class="sbtn line" id="dLine">用 LINE 傳送</button></div>
     </div>
   </div>
 </section>
@@ -648,11 +689,13 @@ select{width:100%;font:500 16px var(--body);color:var(--ink);background:var(--pa
 </section>
 </main>
 
+<aside class="gut" id="advWrap"></aside>
 <footer class="gut">資料來源：各壽險公司官方投資標的查詢系統（基金資料由 MoneyDJ 嘉實資訊提供），資料日期 2026/10/21。團隊評分標的依過去五年淨值、配息、波動、目前全球經濟環境、可連結保單數與資料完整度挑選，僅作為說明範例，不構成投資建議或推薦。過去績效不代表未來表現，投資前請詳閱保單條款與投資標的說明書，並依自身風險屬性評估。</footer>
 
 
 <div class="dock" aria-label="快捷工具">
   <button type="button" id="dkShare" title="複製網址傳給客戶"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg>分享</button>
+  <button type="button" class="alt" id="dkPres" title="面談用：放大字體、隱藏細節"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>簡報</span></button>
   <button type="button" class="alt" id="dkTop" title="回到最上面"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>頂端</button>
 </div>
 <div class="toast" id="toast" hidden></div>
@@ -1223,9 +1266,9 @@ function dcaInit(){
   $('#dSearch').addEventListener('input',dList);
   $('#dFunds').addEventListener('click',e=>{const b=e.target.closest('.fi'); if(!b)return; $$('.fi').forEach(x=>x.setAttribute('aria-pressed',x===b)); dFund=b.dataset.id; dOpt.rate='auto'; $('#dMain').hidden=false; dRun(); $('#dMain').scrollIntoView({behavior:'smooth',block:'start'});});
 }
-function dSelIns(i){
+function dSelIns(i,scroll=true){
   dIns=i; dProd=JSON.parse(JSON.stringify(DD.prod[i])); $('#dFundCard').hidden=false; dFund=null; $('#dMain').hidden=true; dList(); dAdv();
-  $('#dFundCard').scrollIntoView({behavior:'smooth',block:'start'});
+  if(scroll) $('#dFundCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function dList(){
   const k=DD.ins.indexOf(DD.prod[dIns].ins), qs=$('#dSearch').value.trim().toLowerCase();
@@ -1328,21 +1371,105 @@ function dRun(){
      </table>
      ${p.note?`<p class="note" style="margin-top:8px">${esc(p.note)}</p>`:''}
      <p class="note" style="margin-top:6px">資料來源：<a href="${esc(p.src)}" target="_blank" rel="noopener">${esc(SHORTN(p.ins))}商品說明書／條款</a>。各公司費率可能已調整，實際以保單條款為準；可在左側「進階」自行修改。</p></div>
-   <p class="note">試算方式：從現在起每月扣款，依保單年度扣保費費用，每月扣保單管理費、帳戶管理費與保險成本（依臺灣壽險業第六回經驗生命表 × 各家係數，年齡逐年增加；甲型依法定最低比率計算），帳戶以固定年化報酬率逐月成長${o.div==='cash'&&f.y?'，配息依目前配息率每月領出':''}。美元標的不計匯率變動，未計稅負與轉換、提領費用。這是試算，不代表未來實際報酬。</p>`;
+   <p class="note">試算方式：從現在起每月扣款，依保單年度扣保費費用，每月扣保單管理費、帳戶管理費與保險成本（依臺灣壽險業第六回經驗生命表 × 各家係數，年齡逐年增加；甲型依法定最低比率計算），帳戶以固定年化報酬率逐月成長${o.div==='cash'&&f.y?'，配息依目前配息率每月領出':''}。美元標的不計匯率變動，未計稅負與轉換、提領費用。這是試算，不代表未來實際報酬。</p>
+   ${ctaBand('想知道這個方案適不適合你？讓業務員幫你依實際狀況調整。')}`;
 }
 
 
 /* 業務小工具 */
 function toast(m){const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,2200);}
 $('#dkTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
-$('#dkShare').addEventListener('click',()=>{const u='https://a0917625816-afk.github.io/cashflow-plan/'+(location.hash||'');
+
+/* ---------- 業務員名片（填好資料就會出現在每一頁底部） ---------- */
+const ADV={
+  name:'',          // 姓名，例如：王小明
+  title:'',         // 職稱／單位，例如：資深業務經理・XX通訊處
+  reg:'',           // 業務員登錄字號（對外招攬依規定需揭露）
+  slogan:'幫你把退休後的每月現金流，先算清楚。',
+  line:'',          // LINE 官方帳號或個人 LINE 連結，例如 https://lin.ee/xxxx
+  lineOA:'',        // LINE 官方帳號 ID（含 @），填了可以讓客戶一鍵帶訊息給你
+  phone:'',         // 手機，例如 0912345678
+  photo:''          // 大頭照網址（可留空，會顯示姓氏）
+};
+const SITE='https://a0917625816-afk.github.io/cashflow-plan/';
+const ADV_DEMO=!ADV.name&&!/github\.io$/.test(location.hostname);
+function advMsgURL(text){
+  if(ADV.lineOA) return 'https://line.me/R/oaMessage/'+encodeURIComponent(ADV.lineOA)+'/?'+encodeURIComponent(text);
+  return ADV.line||'';
+}
+function advCard(){
+  if(!ADV.name&&!ADV_DEMO) return '';
+  const nm=ADV.name||'你的名字', first=nm.slice(0,1);
+  const lineHref=advMsgURL('你好，我在「每月現金流規劃」網站看完試算，想請你幫我規劃。')||'#';
+  return `<div class="advc${ADV_DEMO?' demo':''}">
+    ${ADV.photo?`<img class="av" src="${esc(ADV.photo)}" alt="${esc(nm)}">`:`<div class="av" aria-hidden="true">${esc(first)}</div>`}
+    <div><div class="nm">${esc(nm)}${ADV_DEMO?'<span class="demo-tag">範例・填好資料後才會顯示在正式網站</span>':''}</div>
+      <div class="tt">${esc(ADV.title||'職稱・單位')}</div>
+      <div class="sl">${esc(ADV.slogan)}</div>
+      <div class="rg">業務員登錄字號：${esc(ADV.reg||'＿＿＿＿＿＿')}</div></div>
+    <div class="acts"><a class="sbtn line" href="${esc(lineHref)}" target="_blank" rel="noopener">加 LINE 諮詢</a>${ADV.phone||ADV_DEMO?`<a class="sbtn ghost" href="tel:${esc(ADV.phone)}">打電話</a>`:''}</div>
+  </div>`;
+}
+function ctaBand(msg){
+  if(!ADV.name&&!ADV_DEMO) return '';
+  const href=advMsgURL('你好，我想請你幫我看這份規劃：'+(curPlanURL()||SITE))||'#';
+  return `<div class="ctaband"><p>${esc(msg)}</p><a class="sbtn line" href="${esc(href)}" target="_blank" rel="noopener">找${esc(ADV.name||'業務員')}聊聊</a></div>`;
+}
+function renderAdv(){ $('#advWrap').innerHTML=advCard(); }
+
+/* ---------- 專屬規劃連結 ---------- */
+let dClient='';
+function curPlanURL(name){
+  if(!DD||dIns==null||!dFund) return '';
+  const q=new URLSearchParams({i:dIns,f:dFund,p:$('#dP').value,e:$('#dE').value,y:$('#dY').value,a:$('#dAge').value,s:dOpt.sex,sa:$('#dSa').value,t:dOpt.type,d:dOpt.div,r:dOpt.rate,c:dOpt.custom});
+  const n=(name!=null?name:($('#dCli')&&$('#dCli').value)||dClient||'').trim(); if(n) q.set('n',n);
+  const d=new Date(); q.set('dt',d.getFullYear()+'/'+(d.getMonth()+1)+'/'+d.getDate());
+  return SITE+'#plan?'+q.toString();
+}
+function planText(){
+  const f=DD.funds[dFund], n=($('#dCli').value||'').trim();
+  return `${n?n+'您好，':''}這是幫您試算的「每月 ${(+$('#dP').value||0).toLocaleString()} 元、存 ${$('#dY').value} 年」投資型保單規劃（${SHORTN(DD.prod[dIns].ins)}・${f.n}），點開就能看到完整試算：\n${curPlanURL()}`;
+}
+function copyText(u,msg){ const ok=()=>toast(msg); try{navigator.clipboard.writeText(u).then(ok,()=>toast('請長按複製：'+u));}catch(e){toast('請長按複製：'+u);} }
+function syncQuick(){
+  const set=(id,v)=>$$(id+' button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===String(v)));
+  set('#dPQ',$('#dP').value); set('#dSaQ',$('#dSa').value); set('#dYQ',$('#dY').value); set('#dSex',dOpt.sex); set('#dType',dOpt.type); set('#dDiv',dOpt.div);
+}
+function loadPlan(qs){
+  const q=new URLSearchParams(qs); go('dca',false);
+  const iv=q.get('i'), i=/^\d+$/.test(iv||'')&&DD.prod[+iv]?+iv:DD.prod.findIndex(p=>p.ins===iv), fid=q.get('f');
+  if(i<0||!DD.funds[fid]) return false;
+  const k=DD.ins.indexOf(DD.prod[i].ins); if(DD.funds[fid].cd[k]==null) return false;
+  ['p','e','y','a','sa'].forEach((x,j)=>{const v=q.get(x); if(v!=null&&v!=='') $('#'+['dP','dE','dY','dAge','dSa'][j]).value=v;});
+  if(q.get('s')) dOpt.sex=q.get('s'); if(q.get('t')) dOpt.type=q.get('t'); if(q.get('d')) dOpt.div=q.get('d'); if(q.get('c')) dOpt.custom=+q.get('c');
+  $('#dRC').value=dOpt.custom;
+  $$('.insb').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===i)); dSelIns(i,false);
+  dFund=fid; dList(); $('#dMain').hidden=false; dOpt.rate=q.get('r')||'auto'; syncQuick(); dRun();
+  dClient=q.get('n')||''; $('#dCli').value=dClient;
+  const f=DD.funds[fid], who=dClient?esc(dClient)+'的':'您的';
+  $('#dPlanHead').innerHTML=`<b>${who}專屬規劃</b><span>${esc(SHORTN(DD.prod[i].ins))}・${esc(DD.prod[i].p)}　｜　${esc(f.n)}</span><span>每月 ${(+$('#dP').value||0).toLocaleString()} 元・存 ${esc($('#dY').value)} 年・${esc($('#dAge').value)} 歲開始${q.get('dt')?`　｜　試算日期 ${esc(q.get('dt'))}`:''}${ADV.name?`　｜　規劃顧問 ${esc(ADV.name)}`:''}</span>
+    <div class="sharerow"><button type="button" class="sbtn gold" id="phEdit">我想換條件自己試試</button></div>`;
+  $('#dPlanHead').hidden=false; $('#dInsCard').hidden=true; $('#dFundCard').hidden=true;
+  $('#phEdit').addEventListener('click',()=>{$('#dInsCard').hidden=false; $('#dFundCard').hidden=false; $('#dPlanHead').hidden=true; $('#dInsCard').scrollIntoView({behavior:'smooth'});});
+  return true;
+}
+$('#dLink').addEventListener('click',()=>{ if(!dFund) return; copyText(curPlanURL(),'專屬連結已複製，可以貼給客戶'); });
+$('#dLine').addEventListener('click',()=>{ if(!dFund) return; window.open('https://line.me/R/msg/text/?'+encodeURIComponent(planText()),'_blank','noopener'); });
+
+/* ---------- 簡報模式 ---------- */
+function setPresent(on){ document.body.classList.toggle('present',on); const b=$('#dkPres'); b.classList.toggle('on',on); b.querySelector('span').textContent=on?'退出':'簡報'; try{localStorage.setItem('present',on?'1':'');}catch(e){} }
+$('#dkPres').addEventListener('click',()=>{ const on=!document.body.classList.contains('present'); setPresent(on); toast(on?'簡報模式：字放大、細節收起來，再按一次退出':'已回到一般模式'); });
+try{ if(localStorage.getItem('present')==='1') setPresent(true); }catch(e){}
+$('#dkShare').addEventListener('click',()=>{ if(!$('#p-dca').hidden&&dFund){ copyText(curPlanURL(),'這份試算的專屬連結已複製'); return; } const u=SITE+(location.hash||'');
   const ok=()=>toast('網址已複製，可以貼到 LINE 傳給客戶');
   try{navigator.clipboard.writeText(u).then(ok,()=>{toast('請長按複製：'+u);});}catch(e){toast('請長按複製：'+u);}});
 
 /* init */
 calcRun(); growRun();
 (function(){ let h=''; try{h=location.hash.slice(1);}catch(e){}
-  if(h.startsWith('f-')&&FD[h.slice(2)]){ go('pick',false); curGroup=FD[h.slice(2)].g; openFund(h.slice(2),false); }
+  renderAdv();
+  if(h.startsWith('plan?')){ if(!loadPlan(h.slice(5))) go('dca',false); }
+  else if(h.startsWith('f-')&&FD[h.slice(2)]){ go('pick',false); curGroup=FD[h.slice(2)].g; openFund(h.slice(2),false); }
   else if(h.startsWith('z-')&&ZN[h.slice(2)]){ go('pick',false); showGroup(h.slice(2),false); }
   else if(TABS.includes(h)) go(h,false);
 })();
