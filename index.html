@@ -410,6 +410,23 @@ body.present table.t{font-size:18px}
 .ltype{display:inline-block;font-weight:700;font-size:14px;border-radius:99px;padding:3px 12px;margin-left:6px;vertical-align:middle}
 .ltype.f{background:var(--gold-soft);color:var(--gold-deep)}.ltype.b{background:var(--jade-soft);color:var(--jade)}.ltype.m{background:var(--red-soft);color:var(--red)}
 .explain{background:var(--soft);border-radius:12px;padding:12px 14px;margin:8px 0}
+
+.pmhero{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:center;background:linear-gradient(135deg,var(--paper),var(--gold-soft))}
+@media (max-width:699px){.pmhero{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center}.pmhero .wheel{max-width:260px}}
+.wheel{width:100%;height:auto;display:block}
+.wheel .nd circle{fill:var(--paper);stroke:var(--jade);stroke-width:3}
+.wheel .nd.g circle{stroke:var(--gold);fill:var(--gold-soft)}
+.wheel text{font:700 15px var(--body);fill:var(--ink);text-anchor:middle}
+.wheel text.s{font:500 12px var(--num);fill:var(--jade)}
+.wheel text.ct{font:900 26px var(--display);fill:var(--navy)}
+.wheel text.cr{font:700 15px var(--body);fill:var(--gold-deep)}
+.wheel .spin{transform-origin:160px 160px;animation:spin 18s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.wheel .spin{animation:none}}
+.rounds{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.rounds>div{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--paper);display:flex;flex-direction:column;gap:4px}
+.rounds>div b.h{font:900 18px var(--display);color:var(--gold-deep)}
+.rounds .up{font:600 15px var(--body);color:var(--jade)}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -610,6 +627,11 @@ body.present table.t{font-size:18px}
     <h2>配息一半拿來花、一半存回去，會變成多少？</h2>
     <p class="lead">配息不一定要全部花掉。把一部分再投入，本金會越滾越大，之後每個月能花的錢也會跟著變多。比例由你決定。</p>
   </div>
+  <div class="kindtabs" id="gMode" role="tablist" aria-label="資產滾大方式" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    <button type="button" role="tab" data-v="n" aria-selected="true"><b>一般滾存</b><em>配息按比例再投入、其餘花用</em></button>
+    <button type="button" role="tab" data-v="p" aria-selected="false"><b>印鈔機專案</b><em>配息撥一部分進六年期保單，到期回填本金</em></button>
+  </div>
+  <div id="gNormal">
   <div class="calc">
     <div class="card" style="display:flex;flex-direction:column;gap:18px">
       <div class="ctrl"><label for="gAmt">起始本金（萬元）</label><input type="number" id="gAmt" min="10" step="10" value="500"></div>
@@ -634,6 +656,38 @@ body.present table.t{font-size:18px}
       </div>
       <div class="card"><h3>逐年明細</h3><div class="tw"><table class="t" id="gTbl"></table></div></div>
       <p class="note">試算以每月配息、按設定比例再投入計算，未扣保單費用、稅負與匯率；實際配息率與淨值會變動，結果僅供規劃參考。</p>
+    </div>
+  </div>
+  </div>
+  <div id="gPrint" hidden style="display:flex;flex-direction:column;gap:22px">
+    <div class="card pmhero">
+      <svg class="wheel" viewBox="0 0 320 320" role="img" aria-label="印鈔機循環：本金產生配息，配息撥入六年期保單，到期回填本金">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--gold)"/></marker></defs>
+        <g class="spin"><circle cx="160" cy="160" r="112" fill="none" stroke="var(--gold)" stroke-width="3" stroke-dasharray="14 10" opacity=".55"/></g>
+        <path d="M206 62 A112 112 0 0 1 258 114" fill="none" stroke="var(--gold)" stroke-width="4" marker-end="url(#ah)"/>
+        <path d="M258 206 A112 112 0 0 1 206 258" fill="none" stroke="var(--gold)" stroke-width="4" marker-end="url(#ah)"/>
+        <path d="M114 258 A112 112 0 0 1 62 206" fill="none" stroke="var(--gold)" stroke-width="4" marker-end="url(#ah)"/>
+        <path d="M62 114 A112 112 0 0 1 114 62" fill="none" stroke="var(--gold)" stroke-width="4" marker-end="url(#ah)"/>
+        <g class="nd"><circle cx="160" cy="48" r="38"/><text x="160" y="44">本金</text><text x="160" y="62" class="s" id="wP">—</text></g>
+        <g class="nd"><circle cx="272" cy="160" r="38"/><text x="272" y="156">月配息</text><text x="272" y="174" class="s" id="wD">—</text></g>
+        <g class="nd g"><circle cx="160" cy="272" r="38"/><text x="160" y="268">六年期</text><text x="160" y="286" class="s" id="wS">—</text></g>
+        <g class="nd"><circle cx="48" cy="160" r="38"/><text x="48" y="156">回填</text><text x="48" y="174" class="s">本金</text></g>
+        <text x="160" y="152" class="ct">印鈔機</text><text x="160" y="180" class="cr" id="wR">第 1 輪</text>
+      </svg>
+      <div class="pmtxt"><span class="eyebrow">印鈔機專案</span><h3 style="font:900 clamp(22px,3vw,28px)/1.35 var(--display);margin:6px 0 8px">讓配息幫本金長大，本金再生出更多配息</h3>
+        <p class="muted" style="margin:0">每月配息撥一部分進六年期保單，其餘照常花用。六年到期，整筆回填本金，月配息跟著升級，下一輪撥入的錢也變多，一輪一輪往上疊。</p></div>
+    </div>
+    <div class="calc">
+      <div class="card" style="display:flex;flex-direction:column;gap:18px">
+        <div class="ctrl"><label for="pAmt">起始本金（萬元）</label><input type="number" id="pAmt" min="10" step="10" value="1000"><div class="quick" id="pAmtQ"></div></div>
+        <div class="ctrl"><label for="pRate">年化配息率</label><span class="val" id="pRateV"></span><input type="range" id="pRate" min="2" max="15" step="0.5" value="6"></div>
+        <div class="ctrl"><label for="pCut">配息撥入六年期保單的比例</label><span class="val" id="pCutV"></span><input type="range" id="pCut" min="5" max="100" step="5" value="30"><div class="quick" id="pCutQ"></div></div>
+        <div class="ctrl"><label for="pSix">六年期保單年化報酬（%）</label><input type="number" id="pSix" min="0" max="10" step="0.1" value="3.2"></div>
+        <div class="ctrl"><span style="font-size:14px;color:var(--muted)">跑幾輪（每輪 6 年）</span><div class="quick" id="pRnd"></div></div>
+        <div class="ctrl"><label for="pNav">假設本金（淨值）每年變化</label><span class="val" id="pNavV"></span><input type="range" id="pNav" min="-4" max="4" step="0.5" value="0">
+          <span class="note">配息若有部分來自本金，淨值可能逐年下滑；保守試算可設為負值。</span></div>
+      </div>
+      <div class="result" id="pOut"></div>
     </div>
   </div>
 </section>
@@ -1119,6 +1173,67 @@ function growRun(){
 }
 $('#gReQ').innerHTML=[[0,'全部再投入'],[50,'一半一半'],[100,'全部花掉']].map(([v,l])=>`<button type="button" data-v="${100-v}">${l}</button>`).join('');
 $('#gReQ').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;$('#gRe').value=b.dataset.v;growRun();});
+/* ---------- 04 印鈔機專案 ---------- */
+let pRounds=3;
+function printSim(P0,y,cut,six,rounds,nav){
+  let P=P0, V=0, spent=0, paid=0; const months=rounds*72, pts=[], R=[], Y=[]; let yr=null, rd={start:P0,div0:P0*y/12,paid:0};
+  for(let t=0;t<months;t++){
+    if(t%12===0){ yr={y:t/12+1,P0:P,div:0,cut:0,sp:0}; Y.push(yr); }
+    const d=P*y/12, c=d*cut; V=(V+c)*Math.pow(1+six,1/12); spent+=d-c; paid+=c; rd.paid+=c; yr.div+=d; yr.cut+=c; yr.sp+=d-c;
+    P*=Math.pow(1+nav,1/12);
+    if((t+1)%72===0){ const back=V; P+=back; R.push({n:R.length+1,from:t-70,to:t+1,start:rd.start,div0:rd.div0,paid:rd.paid,back,end:P,div1:P*y/12}); V=0; rd={start:P,div0:P*y/12,paid:0}; yr.back=back; }
+    pts.push({t:t+1,P,V,d}); if((t+1)%12===0){ yr.P1=P; yr.V=V; yr.spent=spent; }
+  }
+  return {pts,R,Y,P,spent,paid};
+}
+function printRun(){
+  const P0=(+$('#pAmt').value||0)*10000, y=+$('#pRate').value/100, cut=+$('#pCut').value/100, six=Math.max(0,+$('#pSix').value||0)/100, nav=+$('#pNav').value/100, rn=pRounds;
+  $('#pRateV').textContent=(y*100).toFixed(1)+'%'; $('#pCutV').textContent=`撥入 ${Math.round(cut*100)}%・花用 ${Math.round((1-cut)*100)}%`; $('#pNavV').textContent=(nav>0?'+':'')+(nav*100).toFixed(1)+'%／年';
+  $$('#pCutQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===Math.round(cut*100)));
+  $$('#pAmtQ button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===$('#pAmt').value));
+  $$('#pRnd button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===rn));
+  if(!P0){$('#pOut').innerHTML='<p class="muted">請輸入起始本金。</p>';return;}
+  const A=printSim(P0,y,cut,six,rn,nav), Z=printSim(P0,y,0,six,rn,nav), yrs=rn*6, d0=P0*y/12, d1=A.P*y/12;
+  $('#wP').textContent=wan(A.P).replace(' ',''); $('#wD').textContent=money(d1); $('#wS').textContent=Math.round(cut*100)+'%'; $('#wR').textContent=`跑 ${rn} 輪・${yrs} 年`;
+  const W=720,H=260,Lp=64,Rp=14,T=14,B=28, n=A.pts.length, mx=Math.max(A.P,...A.pts.map(z=>z.P+z.V))*1.08, mn=Math.min(P0,...A.pts.map(z=>z.P),...Z.pts.map(z=>z.P))*0.9;
+  const x=i=>Lp+(W-Lp-Rp)*i/n, yv=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn));
+  const path=(arr,fn)=>`M${x(0)},${yv(P0)}`+arr.map((z,i)=>`L${x(i+1).toFixed(1)},${yv(fn(z)).toFixed(1)}`).join('');
+  const ticks=[0,.25,.5,.75,1].map(t=>mn+(mx-mn)*t), step=yrs>18?6:3;
+  const dmx=Math.max(...A.Y.map(r=>r.div/12))*1.1, bw=(W-Lp-Rp)/yrs*0.62, H2=170, y2=v=>14+(H2-14-28)*(1-v/dmx);
+  $('#pOut').innerHTML=`
+   <div class="res3">
+     <div class="card"><span>${yrs} 年後本金</span><div class="big">${wan(A.P)}</div><span>起始 ${wan(P0)}・${yrs} 年回填 ${rn} 次，共 ${wan(A.R.reduce((a,r)=>a+r.back,0))}</span></div>
+     <div class="card hi"><span>跑完 ${rn} 輪後每月配息</span><div class="big jade">${money(d1)}<span class="unit">元</span></div><span>起始每月 ${money(d0)} 元・升級 ${pct((d1/d0-1)*100,0)}</span></div>
+     <div class="card"><span>${yrs} 年總共領來花用</span><div class="big">${wan(A.spent)}</div><span>另外撥入六年期保單 ${wan(A.paid)}</span></div>
+   </div>
+   <div class="card"><h3>每一輪升級多少</h3><div class="rounds">${A.R.map(r=>`<div><b class="h">第 ${r.n} 輪</b><span class="muted small">第 ${r.n*6-5}～${r.n*6} 年</span>
+       <span>每月撥入約 ${money(r.paid/72)} 元，六年共繳 ${wan(r.paid)}</span><span>到期領回 <b>${wan(r.back)}</b>，回填本金</span>
+       <span class="up">本金 ${wan(r.start)} → ${wan(r.end)}</span><span class="up">月配息 ${money(r.div0)} → ${money(r.div1)} 元</span></div>`).join('')}</div></div>
+   <div class="card"><h3>本金階梯</h3>
+     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="本金逐月變化">${ticks.map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${yv(t)}" y2="${yv(t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${yv(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}
+       ${A.R.map(r=>`<line x1="${x(r.to)}" x2="${x(r.to)}" y1="${T}" y2="${H-B}" stroke="var(--gold)" stroke-dasharray="3 4"/>`).join('')}
+       <path d="${path(Z.pts,z=>z.P)}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4"/>
+       <path d="${path(A.pts,z=>z.P+z.V)}" fill="none" stroke="var(--gold)" stroke-width="1.5"/>
+       <path d="${path(A.pts,z=>z.P)}" fill="none" stroke="var(--jade)" stroke-width="3"/>
+       ${Array.from({length:yrs},(_,i)=>i+1).filter(v=>v%step===0).map(v=>`<text x="${x(v*12)}" y="${H-8}" text-anchor="middle">${v}年</text>`).join('')}</svg>
+     <div class="legend" style="margin-top:6px"><span><i style="background:var(--jade)"></i>本金（每 6 年回填一次）</span><span><i style="background:var(--gold)"></i>本金＋六年期保單累積</span><span><i style="background:var(--muted)"></i>沒有印鈔機（配息全部花掉）</span></div></div>
+   <div class="card"><h3>每月配息逐年升級</h3>
+     <svg viewBox="0 0 ${W} ${H2}" role="img" aria-label="每月配息逐年變化">${A.Y.map((r,i)=>{const cx=Lp+(W-Lp-Rp)*(i+0.5)/yrs, v=r.div/12; return `<rect x="${(cx-bw/2).toFixed(1)}" y="${y2(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(H2-28-y2(v)).toFixed(1)}" rx="3" fill="${(i+1)%6===0?'var(--gold)':'var(--jade)'}" opacity="${0.55+0.45*(Math.floor(i/6)+1)/rn}"/>${(i===0||(i+1)%6===1||i===yrs-1)?`<text x="${cx}" y="${y2(v)-6}" text-anchor="middle">${(v/10000).toFixed(1)}萬</text>`:''}`;}).join('')}
+       ${A.Y.filter(r=>r.y%step===0).map(r=>`<text x="${Lp+(W-Lp-Rp)*(r.y-0.5)/yrs}" y="${H2-8}" text-anchor="middle">${r.y}年</text>`).join('')}</svg>
+     <p class="note" style="margin-top:6px">每到第 6、12、18…年回填後，下一年的月配息就跳上一階。</p></div>
+   <div class="card"><h3>逐年明細</h3><div class="tw" style="max-height:420px;overflow-y:auto"><table class="t"><tr><th>第幾年</th><th>年初本金</th><th>每月配息</th><th>每月撥入</th><th>每月花用</th><th>六年期累積</th><th>到期回填</th></tr>
+     ${A.Y.map(r=>`<tr${r.back?' style="background:var(--gold-soft)"':''}><td>${r.y}</td><td>${wan(r.P0)}</td><td>${money(r.div/12)}</td><td>${money(r.cut/12)}</td><td>${money(r.sp/12)}</td><td>${r.back?'—':wan(r.V)}</td><td>${r.back?wan(r.back):''}</td></tr>`).join('')}</table></div></div>
+   <p class="note">試算方式：本金依年化配息率每月配息，撥入比例的部分每月繳進六年期保單、以年化 ${(six*100).toFixed(1)}% 累積，滿 6 年整筆回填本金後開始下一輪。未扣保單費用、稅負與匯率；配息率、淨值與六年期保單實際報酬都會變動，這是試算，不代表未來實際結果。</p>`;
+}
+$('#gMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $$('#gMode button').forEach(x=>x.setAttribute('aria-selected',x===b)); const pm=b.dataset.v==='p'; $('#gNormal').hidden=pm; $('#gPrint').hidden=!pm; if(pm) printRun();});
+$('#pAmtQ').innerHTML=[300,500,1000,2000,3000].map(v=>`<button type="button" data-v="${v}">${v} 萬</button>`).join('');
+$('#pCutQ').innerHTML=[20,30,50,100].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
+$('#pRnd').innerHTML=[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}">${v} 輪・${v*6} 年</button>`).join('');
+$('#pAmtQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $('#pAmt').value=b.dataset.v; printRun();});
+$('#pCutQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $('#pCut').value=b.dataset.v; printRun();});
+$('#pRnd').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; pRounds=+b.dataset.v; printRun();});
+['pAmt','pRate','pCut','pSix','pNav'].forEach(id=>$('#'+id).addEventListener('input',printRun));
+
 ['gAmt','gRate','gRe','gYrs','gAdd','gNav'].forEach(id=>$('#'+id).addEventListener('input',growRun));
 
 /* 定期定額投資型壽險回測引擎 */
