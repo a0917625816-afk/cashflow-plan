@@ -400,6 +400,16 @@ body.present #dOut .big{font-size:clamp(28px,3.2vw,40px)}
 body.present table.t{font-size:18px}
 .dock button.on{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 80%,#fff),var(--gold));border-color:var(--gold-deep);box-shadow:0 4px 0 var(--gold-deep),0 10px 18px -8px rgba(0,0,0,.45);color:#fff}
 @media print{.dock,nav.tabs,#dShare,.advc .acts,.ctaband .sbtn{display:none!important}}
+
+.insl{font:inherit;color:var(--jade);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-align:left}
+.insl::after{content:" 看費用規則 ›";font-size:12.5px;color:var(--gold-deep);text-decoration:none;display:inline-block;margin-left:4px}
+.sheet{position:fixed;inset:0;z-index:40;background:rgba(10,18,15,.55);display:flex;align-items:flex-end;justify-content:center;padding:0}
+.sheet>div{background:var(--bg);width:min(860px,100%);max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;padding:22px max(18px,env(safe-area-inset-left,0px)) calc(26px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;box-shadow:0 -20px 40px -10px rgba(0,0,0,.4)}
+@media (min-width:700px){.sheet{align-items:center;padding:20px}.sheet>div{border-radius:22px}}
+.sheet .x{position:sticky;top:0;align-self:flex-end;margin-bottom:-40px;z-index:1}
+.ltype{display:inline-block;font-weight:700;font-size:14px;border-radius:99px;padding:3px 12px;margin-left:6px;vertical-align:middle}
+.ltype.f{background:var(--gold-soft);color:var(--gold-deep)}.ltype.b{background:var(--jade-soft);color:var(--jade)}.ltype.m{background:var(--red-soft);color:var(--red)}
+.explain{background:var(--soft);border-radius:12px;padding:12px 14px;margin:8px 0}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -698,12 +708,14 @@ body.present table.t{font-size:18px}
       <div class="ctrl"><label for="mY">房貸年期</label><span class="val" id="mYV">30 年</span><input type="range" id="mY" min="5" max="40" step="1" value="30"><div class="quick" id="mYQ"></div></div>
       <div class="ctrl"><label for="mG">寬限期（只繳利息）</label><div class="quick" id="mG"></div></div>
       <div class="ctrl"><span class="lab" style="font-size:14px;color:var(--muted)">還款方式</span><div class="quick" id="mPay"><button type="button" data-v="eq" aria-pressed="true">本息平均攤還</button><button type="button" data-v="pr">本金平均攤還</button></div></div>
+      <div id="mInvBox" style="display:flex;flex-direction:column;gap:16px">
       <h3 style="margin:8px 0 0" id="mInvH">② 資金放入保單</h3>
       <div class="ctrl"><label for="mI">放入保單的金額（萬元）</label><input type="number" id="mI" min="0" step="10" value="1000"><label class="chk" style="margin-top:6px"><input type="checkbox" id="mSame" checked> 與房貸金額相同</label></div>
       <div class="ctrl"><label for="mIns">保險公司（躉繳投資型）</label><select id="mIns"></select></div>
       <div class="ctrl"><label for="mF">月配息標的</label><select id="mF"></select></div>
       <div class="ctrl"><span style="font-size:14px;color:var(--muted)">年化總報酬假設（含息）</span><div class="quick" id="mRate"></div><input type="range" id="mRC" min="0" max="15" step="0.5" value="6" aria-label="自訂年化報酬" hidden></div>
       <div class="ctrl"><label for="mYld">每年配息率（%）</label><input type="number" id="mYld" min="0" max="15" step="0.1" value="6"><span class="note" style="margin:0">預設帶入標的目前配息率，可自行修改。</span></div>
+      </div>
     </div>
     <div class="result" id="mOut"></div>
   </div>
@@ -881,7 +893,7 @@ function openFund(id,push=true){
     ${f.h&&f.h.length?`<div class="card"><h3>前十大持股</h3>${bars(f.h.map(([n,v])=>[n,v]),10)}<p class="note" style="margin-top:8px">持股名稱已翻成中文，資料日期 ${esc(f.ad||'')}。</p></div>`:''}
     ${f.tw&&f.tw.length?`<div class="card"><h3>持有的台灣股票</h3><p class="note" style="margin-bottom:10px">投信公布的持股名單（${esc(f.ad||'')}），依股票代號排列，未公布個別比重。</p><div style="display:flex;flex-wrap:wrap;gap:6px">${f.tw.map(([n,c])=>`<span class="chip" style="font-size:14px">${esc(n)} <span style="font-family:var(--num)">${esc(c)}</span></span>`).join('')}</div></div>`:''}
     <div class="card"><h3>各家壽險的基金代號</h3><p class="muted small">同一檔基金，每家保險公司的代號不同。${f.ins.length} 家壽險、${f.npol} 張現售投資型保單可連結這檔標的。</p>
-      <div class="tw" style="margin-top:8px"><table class="t codet"><tr><th>保險公司</th><th>基金代號</th></tr>${Object.entries(f.codes||{}).sort((a,b)=>a[0].localeCompare(b[0],'zh-Hant')).map(([k,v])=>`<tr><td>${esc(k)}${f.ins.includes(k)?'':'<span class="muted small">（官網未提供保單對照）</span>'}</td><td>${esc(v)}</td></tr>`).join('')}</table></div></div>
+      <div class="tw" style="margin-top:8px"><table class="t codet"><tr><th>保險公司</th><th>基金代號</th></tr>${Object.entries(f.codes||{}).sort((a,b)=>a[0].localeCompare(b[0],'zh-Hant')).map(([k,v])=>`<tr><td><button type="button" class="insl" data-ins="${esc(k)}">${esc(k)}</button>${f.ins.includes(k)?'':'<span class="muted small">（官網未提供保單對照）</span>'}</td><td>${esc(v)}</td></tr>`).join('')}</table></div></div>
   </div>`;
   $('#backBtn').addEventListener('click',()=>{closeFund();});
   const run=a=>{$('#simOut').innerHTML=simHTML(f,a*10000);};
@@ -962,7 +974,7 @@ function openPool(id){
     </div>
     ${d.h&&d.h.length?`<div class="card"><h3>前十大持股</h3>${bars(d.h,10)}<p class="note" style="margin-top:8px">持股名稱已翻成中文${d.ad?'，資料日期 '+esc(d.ad):''}。</p></div>`:''}
     <div class="card"><h3>連結的保險公司與基金代號</h3><p class="muted small">同一檔基金，每家保險公司的代號不同。共 ${d.codes.length} 家壽險可連結${d.np?`、約 ${d.np} 張投資型保單`:''}。</p>
-      <div class="tw" style="margin-top:8px"><table class="t codet"><tr><th>保險公司</th><th>基金代號</th></tr>${d.codes.map(([k,c])=>`<tr><td>${esc(k)}</td><td>${esc(c)}</td></tr>`).join('')}</table></div></div>
+      <div class="tw" style="margin-top:8px"><table class="t codet"><tr><th>保險公司</th><th>基金代號</th></tr>${d.codes.map(([k,c])=>`<tr><td><button type="button" class="insl" data-ins="${esc(k)}">${esc(k)}</button></td><td>${esc(c)}</td></tr>`).join('')}</table></div></div>
   </div>`;
   $('#backBtn').addEventListener('click',()=>closeFund());
   window.scrollTo({top:0});
@@ -1255,7 +1267,7 @@ function openBasic(id){
       <div><span>可連結保險公司</span><b>${Object.keys(f.cd).length} 家</b></div>
     </div>
     <div class="card"><h3>官方資料</h3><p class="muted small">這檔目前只有基本資料。淨值走勢、配息紀錄與持股，請看 MoneyDJ 頁面。</p>${offLinks(id,[['nav','淨值表'],['div','配息紀錄'],['perf','績效表'],['info','基本資料']])}</div>
-    <div class="card"><h3>連結的保險公司與基金代號</h3><div class="tw" style="margin-top:8px"><table class="t codet"><tr><th>保險公司</th><th>基金代號</th></tr>${Object.entries(f.cd).sort((a,b)=>insL[a[0]].localeCompare(insL[b[0]],'zh-Hant')).map(([k,c])=>`<tr><td>${esc(insL[k])}</td><td>${esc(c)}</td></tr>`).join('')}</table></div></div>
+    <div class="card"><h3>連結的保險公司與基金代號</h3><div class="tw" style="margin-top:8px"><table class="t codet"><tr><th>保險公司</th><th>基金代號</th></tr>${Object.entries(f.cd).sort((a,b)=>insL[a[0]].localeCompare(insL[b[0]],'zh-Hant')).map(([k,c])=>`<tr><td><button type="button" class="insl" data-ins="${esc(insL[k])}">${esc(insL[k])}</button></td><td>${esc(c)}</td></tr>`).join('')}</table></div></div>
     <p class="note">資料來源：各壽險公司官方投資標的查詢系統（MoneyDJ 提供），資料日期 2026/10/21。過去績效不代表未來表現。</p>
   </div>`;
   $('#backBtn').addEventListener('click',()=>closeFund());
@@ -1418,7 +1430,7 @@ const MP=[
  {ins:'元大人壽',p:'全元得益變額年金保險',front:[[0,0]],admin:100,waive:3000000,acct:[0],sur:[0],v:'110.05',src:'https://finfo.tw/products/%E5%85%83%E5%A4%A7%E4%BA%BA%E5%A3%BD%E5%85%A8%E5%85%83%E5%BE%97%E7%9B%8A%E8%AE%8A%E9%A1%8D%E5%B9%B4%E9%87%91%E4%BF%9D%E9%9A%AA-2021-05-24',note:'高保費優惠門檻以 300 萬元估計'},
  {ins:'安聯人壽',p:'好鑫人生變額年金保險',front:[[0,2.1]],admin:100,waive:3000000,acct:[0],sur:[7,6,5,4,3,2,0],v:'—',src:'https://www.esunbank.com/zh-tw/-/media/ESUNBANK/Files/insurance/product/investment/allianz/HOWSIN/6-2___.pdf'}
 ];
-let mOpt={mode:'a',grace:0,pay:'eq',rate:'auto',custom:6,ins:0,fund:null}, mReady=false;
+let mOpt={mode:'c',grace:0,pay:'eq',rate:'auto',custom:6,ins:0,fund:null}, mReady=false;
 function loanSched(L,r,yrs,grace,pay,bump){ /* 回傳每月 {pay,int,prin,bal} */
   const n=yrs*12, g=Math.min(grace*12,n-12), out=[]; let bal=L, pmt=0;
   for(let t=0;t<n;t++){
@@ -1463,7 +1475,7 @@ function mCompare(o,ret,shock,bump){
 }
 function mInit(){
   if(mReady) return; mReady=true; if(!DD) DD=JSON.parse(document.getElementById('ddata').textContent);
-  $('#mMode').innerHTML=[['a','房貸＋配息現金流','房貸照繳，資金放保單領月配息'],['b','提前還款 vs 保留資金','手上一筆錢：拿去還房貸，還是留著配息']].map(([v,l,t])=>`<button type="button" role="tab" data-v="${v}" aria-selected="${v===mOpt.mode}"><b>${l}</b><em>${t}</em></button>`).join('');
+  $('#mMode').innerHTML=[['c','單純房貸試算','每月繳多少、總利息多少'],['a','房貸＋配息現金流','房貸照繳，資金放保單領月配息'],['b','提前還款 vs 保留資金','手上一筆錢：拿去還房貸，還是留著配息']].map(([v,l,t])=>`<button type="button" role="tab" data-v="${v}" aria-selected="${v===mOpt.mode}"><b>${l}</b><em>${t}</em></button>`).join('');
   $('#mMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; mOpt.mode=b.dataset.v; $$('#mMode button').forEach(x=>x.setAttribute('aria-selected',x===b)); mModeUI(); mRun();});
   $('#mLQ').innerHTML=[500,800,1000,1500,2000].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===1000}">${v} 萬</button>`).join('');
   $('#mYQ').innerHTML=[20,30,40].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===30}">${v} 年</button>`).join('');
@@ -1486,7 +1498,7 @@ function mInit(){
   mFunds(); mModeUI(); mRun();
 }
 function mModeUI(){
-  const b=mOpt.mode==='b';
+  const b=mOpt.mode==='b'; $('#mInvBox').hidden=mOpt.mode==='c';
   $('#mBalW label').textContent=b?'目前房貸餘額（萬元）':'房貸金額（萬元）';
   $('#mInvH').textContent=b?'② 手上這筆資金':'② 資金放入保單';
   $('#mI').previousElementSibling.textContent=b?'手上可運用的資金（萬元）':'放入保單的金額（萬元）';
@@ -1500,7 +1512,9 @@ function mFunds(){
   mOpt.fund=L.find(x=>x[0]===prev)?prev:(L[0]||[null])[0]; if(mOpt.fund){$('#mF').value=mOpt.fund; const f=DD.funds[mOpt.fund]; if(f.y) $('#mYld').value=f.y.toFixed(1);}
 }
 function mRun(){
-  if(!mReady||!mOpt.fund) return;
+  if(!mReady) return;
+  if(mOpt.mode==='c') return mLoanOnly();
+  if(!mOpt.fund) return;
   const f=DD.funds[mOpt.fund], prod=MP[mOpt.ins], yrs=Math.min(40,Math.max(5,Math.round(+$('#mY').value||30)));
   const o={L:Math.max(0,+$('#mL').value||0)*10000,r:Math.max(0,+$('#mRN').value||0)/100,yrs,grace:Math.min(mOpt.grace,yrs-1),pay:mOpt.pay,I:Math.max(0,+$('#mI').value||0)*10000,prod,yld:Math.max(0,+$('#mYld').value||0)/100};
   $('#mRV').textContent=(o.r*100).toFixed(2).replace(/0$/,'')+'%'; $('#mYV').textContent=yrs+' 年';
@@ -1580,6 +1594,83 @@ function mRun(){
      <p class="note">試算方式：A 為把資金一次還掉部分本金、年期不變、每月房貸降低；B 為資金躉繳放入保單、房貸照原條件繳。比較 ${o.yrs} 年後 B 的帳戶價值＋累計配息，與 A 期間少繳的房貸總額（未計少繳金額另行運用的收益）。未計匯率、稅負與提領費用。這是試算，不代表未來實際報酬。</p>`;
   }
 }
+
+/* ---------- 單純房貸試算 ---------- */
+function mLoanOnly(){
+  const L=Math.max(0,+$('#mL').value||0)*10000, r=Math.max(0,+$('#mRN').value||0)/100, yrs=Math.min(40,Math.max(5,Math.round(+$('#mY').value||30))), g=Math.min(mOpt.grace,yrs-1);
+  $('#mRV').textContent=(r*100).toFixed(2).replace(/0$/,'')+'%'; $('#mYV').textContent=yrs+' 年';
+  if(!L){$('#mOut').innerHTML='<p class="muted">請輸入房貸金額。</p>';return;}
+  const sum=S=>({tot:S.reduce((a,x)=>a+x.pay,0),int:S.reduce((a,x)=>a+x.int,0)});
+  const E=loanSched(L,r,yrs,g,'eq'), P=loanSched(L,r,yrs,g,'pr'), S=mOpt.pay==='eq'?E:P, se=sum(E), sp=sum(P), sm=sum(S), a0=Math.min(g*12,S.length-1);
+  const rows=[]; for(let yI=0;yI<yrs;yI++){const seg=S.slice(yI*12,yI*12+12); rows.push({y:yI+1,pay:seg[0].pay,pl:seg[11].pay,prin:seg.reduce((a,x)=>a+x.prin,0),int:seg.reduce((a,x)=>a+x.int,0),bal:seg[11].bal});}
+  const W=720,H=230,Lp=60,Rp=14,T=14,B=28,n=S.length,mx=L*1.04,x=i=>Lp+(W-Lp-Rp)*i/(n-1),y=v=>T+(H-T-B)*(1-v/mx);
+  let ci=0,cp=0; const cum=S.map(z=>{ci+=z.int; cp+=z.prin; return {ci,cp,bal:z.bal};});
+  const ln=(fn,c,w,d='')=>`<path d="${cum.map((z,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(fn(z)).toFixed(1)}`).join('')}" fill="none" stroke="${c}" stroke-width="${w}" ${d?`stroke-dasharray="${d}"`:''}/>`;
+  const step=yrs>20?5:yrs>10?2:1, yl=rows.filter(z=>z.y%step===0).map(z=>`<text x="${x(z.y*12-1)}" y="${H-8}" text-anchor="middle">${z.y}年</text>`).join('');
+  const rb=[0.5,-0.25,0.25,0.5,1].map(d=>[d,r+d]).filter(([d,rr])=>rr>0).slice(1);
+  $('#mOut').innerHTML=`
+   <div class="res3">
+     <div class="card hi"><span>每月應繳${g?'（寬限期後）':''}</span><div class="big jade">${money(S[a0].pay)}<span class="unit">元</span></div><span>${mOpt.pay==='pr'?`本金平均：之後逐月遞減，最後一期約 ${money(S[n-1].pay)} 元`:'本息平均：每月固定'}</span>${g?`<span>寬限期 ${g} 年每月只繳息 ${money(S[0].pay)} 元</span>`:''}</div>
+     <div class="card"><span>總利息</span><div class="big">${wan(sm.int)}</div><span>佔貸款 ${(sm.int/L*100).toFixed(1)}%</span></div>
+     <div class="card"><span>本息總共要繳</span><div class="big">${wan(sm.tot)}</div><span>${yrs} 年・${n} 期</span></div>
+   </div>
+   <div class="card"><h3>兩種還款方式比較</h3><table class="t" style="margin-top:6px"><tr><th></th><th>本息平均攤還</th><th>本金平均攤還</th></tr>
+     <tr><td>第一期月付${g?'（寬限期後）':''}</td><td>${money(E[a0].pay)} 元</td><td>${money(P[a0].pay)} 元</td></tr>
+     <tr><td>最後一期月付</td><td>${money(E[n-1].pay)} 元</td><td>${money(P[n-1].pay)} 元</td></tr>
+     <tr><td>總利息</td><td>${wan(se.int)}</td><td>${wan(sp.int)}</td></tr></table>
+     <p class="note" style="margin-top:8px">本金平均攤還前期壓力較大，但總利息較少（少 ${wan(se.int-sp.int)}）；本息平均每月固定，較好安排預算。${g?'寬限期內只繳利息，本金沒有減少，寬限期越長總利息越多。':''}</p></div>
+   <div class="card"><h3>利率變動的影響（${mOpt.pay==='eq'?'本息平均':'本金平均'}）</h3><table class="t" style="margin-top:6px"><tr><th>年利率</th><th>每月應繳</th><th>總利息</th></tr>
+     ${[r-0.0025,r,r+0.0025,r+0.005,r+0.01].filter(v=>v>0).map(rr=>{const Q=loanSched(L,rr,yrs,g,mOpt.pay), q=sum(Q); return `<tr${Math.abs(rr-r)<1e-9?' style="font-weight:700"':''}><td>${(rr*100).toFixed(2)}%</td><td>${money(Q[a0].pay)} 元</td><td>${wan(q.int)}</td></tr>`;}).join('')}</table></div>
+   <div class="card"><h3>貸款餘額與累計利息</h3><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="貸款餘額">${[0,.25,.5,.75,1].map(t=>mx*t).map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}${ln(z=>z.bal,'var(--navy)',3)}${ln(z=>z.cp,'var(--jade)',2,'5 4')}${ln(z=>z.ci,'var(--red)',2)}${yl}</svg>
+     <div class="legend" style="margin-top:6px"><span><i style="background:var(--navy)"></i>貸款餘額</span><span><i style="background:var(--jade)"></i>累計已還本金</span><span><i style="background:var(--red)"></i>累計已付利息</span></div></div>
+   <div class="card"><h3>逐年明細</h3><div class="tw" style="max-height:420px;overflow-y:auto"><table class="t"><tr><th>第幾年</th><th>每月應繳</th><th>當年還本金</th><th>當年付利息</th><th>年底餘額</th></tr>
+     ${rows.map(z=>`<tr><td>${z.y}</td><td>${money(z.pay)}${Math.abs(z.pl-z.pay)>1?'～'+money(z.pl):''}</td><td>${wan(z.prin)}</td><td>${wan(z.int)}</td><td>${wan(z.bal)}</td></tr>`).join('')}</table></div></div>
+   <p class="note">以固定利率試算，實際利率與月付金額以銀行核貸條件為準。</p>`;
+}
+
+/* ---------- 保險公司費用規則（點保險公司名稱開啟） ---------- */
+const insKey=n=>String(n||'').replace(/\(.*?\)|（.*?）/g,'').replace(/人壽.*$/,'').replace('法國巴黎','法巴').replace('三商美邦','三商').replace('合作金庫','合庫').slice(0,4);
+function loadType(kind,frontPos,surPos){
+  if(kind==='front'||kind==='flat'||(frontPos&&!surPos)) return ['f','前收型','買進時先從保費扣費用，之後提早解約不另扣解約費用。'];
+  if(frontPos&&surPos) return ['m','前收＋解約費用','買進時先扣保費費用，前幾年解約另外扣解約費用。'];
+  return ['b','後收型','保費全額進入帳戶，不先扣費用；改成前幾年每月扣帳戶管理費，提早解約要扣解約費用。'];
+}
+const yrsTxt=(a,unit='%')=>(a||[]).length&&(a||[]).some(x=>x)?a.map((v,i)=>`第${i+1}年 ${v}${unit}`).join('、')+(a[a.length-1]===0?'':'（之後同最後一年）'):'無';
+function showIns(name){
+  if(!DD) DD=JSON.parse(document.getElementById('ddata').textContent);
+  const k=insKey(name), di=DD.prod.findIndex(p=>insKey(p.ins)===k), mi=MP.findIndex(p=>insKey(p.ins)===k);
+  const p=DD.prod[di], m=MP[mi];
+  let h=`<button type="button" class="back x" id="shX">✕ 關閉</button><div><span class="eyebrow">保單費用規則</span><h2 style="margin-top:4px">${esc(name)}</h2><p class="muted" style="margin:0">本站試算採用的代表商品。同一家公司其他商品的費用可能不同，實際以保單條款為準。</p></div>`;
+  if(p){ const [c,t,e]=loadType(p.kind);
+    h+=`<div class="card"><h3>定期定額・${esc(p.p)} <span class="ltype ${c}">${t}</span></h3><div class="explain">${e}</div>
+     <table class="t rules"><tr><td>繳費方式</td><td>${esc(p.pay)}</td></tr>
+     <tr><td>保費費用</td><td>${p.kind==='front'?`目標保費：${yrsTxt(p.tl)}；超額保費 ${p.xl}%`:p.kind==='flat'?`每筆保費：${yrsTxt(p.tl)}`:'無（後收型）'}</td></tr>
+     <tr><td>保單管理費</td><td>${p.admin?`每月 ${p.admin} 元${p.waive?`（累計保費達 ${wan(p.waive)} 免收）`:''}`:'無'}</td></tr>
+     <tr><td>帳戶管理費</td><td>${p.acct&&p.acct.some(x=>x)?yrsTxt(p.acct)+'（每月，依帳戶價值）':'無'}</td></tr>
+     <tr><td>保險成本</td><td>每月依淨危險保額扣除，年齡越大越高；${esc(p.coiNote||'')}</td></tr>
+     <tr><td>解約費用</td><td>${yrsTxt(p.sur)}</td></tr></table>
+     ${p.note?`<p class="note" style="margin-top:8px">${esc(p.note)}</p>`:''}<p class="note" style="margin-top:6px"><a href="${esc(p.src)}" target="_blank" rel="noopener">商品說明書／條款</a></p>
+     <div class="sharerow"><button type="button" class="sbtn" id="shDca">用這家試算定期定額</button></div></div>`; }
+  if(m){ const fp=m.front.some(([a,v])=>v>0), sp=m.sur.some(x=>x); const [c,t,e]=loadType(null,fp,sp);
+    h+=`<div class="card"><h3>單筆躉繳・${esc(m.p)} <span class="ltype ${c}">${t}</span></h3><div class="explain">${e}</div>
+     <table class="t rules"><tr><td>保費費用</td><td>${fp?m.front.map(([th,v],i)=>m.front.length>1?`${i?wan(th)+' 以上':'未達 '+wan(m.front[1][0])} ${v}%`:`${v}%`).join('、'):'無'}</td></tr>
+     <tr><td>保單管理費</td><td>${m.admin?`每月 ${m.admin} 元${m.waive?`（累計保費達 ${wan(m.waive)} 免收）`:''}${m.ay?`（前 ${m.ay} 年）`:''}`:'無'}</td></tr>
+     <tr><td>帳戶管理費</td><td>${m.acct.some(x=>x)?yrsTxt(m.acct)+'（每月，依帳戶價值）':'無'}</td></tr>
+     <tr><td>保險成本</td><td>無（變額年金累積期間不收）</td></tr>
+     <tr><td>解約費用</td><td>${yrsTxt(m.sur)}</td></tr></table>
+     ${m.note?`<p class="note" style="margin-top:8px">${esc(m.note)}</p>`:''}<p class="note" style="margin-top:6px"><a href="${esc(m.src)}" target="_blank" rel="noopener">商品說明書／條款</a></p>
+     <div class="sharerow"><button type="button" class="sbtn gold" id="shLoan">用這家試算房貸與資金規劃</button></div></div>`; }
+  if(!p&&!m) h+=`<div class="card"><p class="muted">本站尚未收錄這家公司的投資型保單費用。</p></div>`;
+  h+=`<p class="note">基金本身的經理費、保管費已反映在淨值中，不另外扣。各公司費率可能調整，以最新商品說明書為準。</p>`;
+  const sh=document.createElement('div'); sh.className='sheet'; sh.setAttribute('role','dialog'); sh.setAttribute('aria-modal','true'); sh.innerHTML=`<div>${h}</div>`;
+  document.body.appendChild(sh); document.body.style.overflow='hidden';
+  const close=()=>{sh.remove(); document.body.style.overflow='';};
+  sh.addEventListener('click',e=>{ if(e.target===sh) close(); }); sh.querySelector('#shX').addEventListener('click',close);
+  document.addEventListener('keydown',function esck(e){ if(e.key==='Escape'){close(); document.removeEventListener('keydown',esck);} });
+  const bd=sh.querySelector('#shDca'); if(bd) bd.addEventListener('click',()=>{close(); go('dca'); $$('.insb').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===di)); dSelIns(di);});
+  const bl=sh.querySelector('#shLoan'); if(bl) bl.addEventListener('click',()=>{close(); go('loan'); mOpt.ins=mi; mOpt.mode=mOpt.mode==='c'?'a':mOpt.mode; $$('#mMode button').forEach(x=>x.setAttribute('aria-selected',x.dataset.v===mOpt.mode)); $('#mIns').value=mi; mModeUI(); mFunds(); mRun();});
+}
+document.addEventListener('click',e=>{const b=e.target.closest('.insl'); if(b) showIns(b.dataset.ins);});
 /* 業務小工具 */
 function toast(m){const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,2200);}
 $('#dkTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
