@@ -1,4 +1,5 @@
 <title>每月現金流規劃</title>
+<script>(function(){var p="blue";try{p=localStorage.getItem("pal")||"blue"}catch(e){}document.documentElement.setAttribute("data-pal",p)})();</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
@@ -496,12 +497,31 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
 #tR::-webkit-slider-thumb{-webkit-appearance:none;width:var(--tw,80px);height:18px;border-radius:99px;background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 80%,#fff),var(--gold));border:1px solid var(--gold-deep);box-shadow:0 2px 0 var(--gold-deep)}
 #tR::-moz-range-thumb{width:var(--tw,80px);height:18px;border-radius:99px;background:var(--gold);border:1px solid var(--gold-deep)}
 #tR:active{cursor:grabbing}
+
+/* ---- 配色主題：blue 舒適藍（預設）／green 經典墨綠／warm 柔和暖杏 ---- */
+:root[data-pal="blue"]{--bg:#f4f6f8;--paper:#ffffff;--ink:#1f2a37;--muted:#5d6b7a;--line:#dfe4ea;--soft:#eaeef3;--navy:#1e3a5f;--jade:#2f6ea5;--jade-soft:#e4eef7;--gold:#c48a3a;--gold-soft:#f8efe2;--band:#1e3a5f;--band-ink:#f2f5f9;--edge:#cdd5de;--on-jade:#ffffff;--jade-deep:#1d4f7c;--gold-deep:#8f6224;--stock:#4f7fae;--bond:#c48a3a}
+:root[data-pal="warm"]{--bg:#f6f2ea;--paper:#fffdf8;--ink:#2b2a26;--muted:#6b665c;--line:#e6dfd2;--soft:#efe8db;--navy:#3c4a3e;--jade:#5b7f62;--jade-soft:#e6eee3;--gold:#c07a52;--gold-soft:#f6e8de;--band:#3c4a3e;--band-ink:#f6f2ea;--edge:#d9d0c0;--on-jade:#ffffff;--jade-deep:#3f5d45;--gold-deep:#8e5536;--stock:#6f8fa6;--bond:#c07a52}
+@media (prefers-color-scheme: dark){
+ :root[data-pal="blue"]:not([data-theme="light"]){--bg:#0f141a;--paper:#171e26;--ink:#e8edf2;--muted:#9aa7b4;--line:#29333e;--soft:#1d252e;--navy:#cfe0f2;--jade:#8ab8e0;--jade-soft:#1b2a3a;--gold:#e0b878;--gold-soft:#2e271c;--band:#0b1118;--band-ink:#e8edf2;--edge:#070a0e;--on-jade:#0e1a26;--jade-deep:#5d8fbd;--gold-deep:#b08a50;--stock:#8ab0d6;--bond:#e0b878}
+ :root[data-pal="warm"]:not([data-theme="light"]){--bg:#14130f;--paper:#1d1b17;--ink:#ece6da;--muted:#a59e90;--line:#312d26;--soft:#25221c;--navy:#dfe6d9;--jade:#a3c4a8;--jade-soft:#232d24;--gold:#e0a582;--gold-soft:#33261d;--band:#0f0e0b;--band-ink:#ece6da;--edge:#090806;--on-jade:#141a14;--jade-deep:#7ea486;--gold-deep:#b9805d;--stock:#93adc0;--bond:#e0a582}}
+.palbtn{margin-left:auto;display:flex;align-items:center;gap:8px;font:700 14px var(--body);color:var(--band-ink);background:color-mix(in srgb,#fff 12%,transparent);border:1px solid color-mix(in srgb,#fff 28%,transparent);border-radius:99px;padding:7px 12px 7px 8px;cursor:pointer;white-space:nowrap}
+.palbtn i{width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--jade) 0 50%,var(--gold) 0);border:2px solid #fff;display:block}
+.palmenu{position:absolute;right:max(16px,env(safe-area-inset-right,0px));top:64px;z-index:30;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px -16px rgba(0,0,0,.45);padding:10px;display:flex;flex-direction:column;gap:6px;min-width:250px}
+.palmenu button{display:flex;align-items:center;gap:12px;font:inherit;text-align:left;background:none;border:1px solid transparent;border-radius:12px;padding:10px;cursor:pointer;color:inherit}
+.palmenu button:hover{background:var(--soft)}.palmenu button[aria-checked="true"]{border-color:var(--jade);background:var(--jade-soft)}
+.palmenu .sw{display:flex;flex:none}.palmenu .sw span{width:20px;height:28px;display:block}.palmenu .sw span:first-child{border-radius:8px 0 0 8px}.palmenu .sw span:last-child{border-radius:0 8px 8px 0}
+.palmenu b{display:block;font-size:15.5px}.palmenu small{color:var(--muted);font-size:13px}
+.mast{position:relative}
+@media (max-width:520px){.palbtn em{display:none}.palbtn{padding:7px}}
 </style>
 
 <header class="mast gut"><div class="in">
   <svg class="mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="7" width="34" height="26" rx="5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M3 15h34" stroke="currentColor" stroke-width="2.4"/><path d="M10 25h8M10 29h14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="25" r="4" fill="var(--gold)"/></svg>
   <div><div class="brand">每月現金流規劃</div><div class="sub"><span>全台 17 家壽險・投資型保單連結標的研究</span>　<span style="white-space:nowrap">資料日期 2026/10/21</span></div></div>
-</div></header>
+  <button type="button" class="palbtn" id="palBtn" aria-haspopup="true" aria-expanded="false"><i></i><em>配色</em></button>
+</div>
+<div class="palmenu" id="palMenu" role="menu" hidden></div>
+</header>
 <nav class="tabs gut" aria-label="分頁">
   <div class="in" role="tablist">
     <button role="tab" data-tab="why" aria-selected="true"><b>01</b>為什麼要被動收入</button>
@@ -2197,6 +2217,17 @@ $('#dkShare').addEventListener('click',()=>{ const u=SITE+(location.hash||'');
   try{navigator.clipboard.writeText(u).then(ok,()=>{toast('請長按複製：'+u);});}catch(e){toast('請長按複製：'+u);}});
 
 
+
+/* 配色切換 */
+(function(){ const P=[['blue','舒適藍','柔和藍＋暖白，長時間看最不累（推薦）',['#2f6ea5','#f4f6f8','#c48a3a']],['green','經典墨綠','墨綠＋香檳金，穩重有質感',['#24594c','#f3f4f2','#a8844f']],['warm','柔和暖杏','鼠尾草綠＋米杏色，溫暖護眼',['#5b7f62','#f6f2ea','#c07a52']]];
+  const m=$('#palMenu'), b=$('#palBtn'); const cur=()=>document.documentElement.getAttribute('data-pal')||'blue';
+  const draw=()=>{ m.innerHTML='<p class="muted small" style="margin:2px 6px 4px">選擇網站配色</p>'+P.map(([k,n,d,c])=>`<button type="button" role="menuitemradio" aria-checked="${k===cur()}" data-k="${k}"><span class="sw">${c.map(x=>`<span style="background:${x}"></span>`).join('')}</span><span><b>${n}</b><small>${d}</small></span></button>`).join(''); };
+  const close=()=>{m.hidden=true; b.setAttribute('aria-expanded','false');};
+  b.addEventListener('click',e=>{e.stopPropagation(); if(m.hidden){draw(); m.hidden=false; b.setAttribute('aria-expanded','true');} else close();});
+  m.addEventListener('click',e=>{const x=e.target.closest('button'); if(!x)return; document.documentElement.setAttribute('data-pal',x.dataset.k); try{localStorage.setItem('pal',x.dataset.k);}catch(er){} draw(); toast('已切換為「'+P.find(p=>p[0]===x.dataset.k)[1]+'」配色'); setTimeout(close,250); try{calcRun(); growRun(); if(!$('#gPrint').hidden) printRun(); if(typeof dRun==='function') dRun(); if(mReady) mRun();}catch(er){} });
+  document.addEventListener('click',e=>{ if(!m.hidden&&!m.contains(e.target)) close(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
+})();
 /* 分頁列左右拉霸 */
 (function(){ const sc=$('nav.tabs .in'), r=$('#tR'), bar=$('#tBar');
   const max=()=>sc.scrollWidth-sc.clientWidth;
