@@ -434,9 +434,9 @@ body.present table.t{font-size:18px}
 .slide{flex:0 0 100%;scroll-snap-align:center;aspect-ratio:16/9;container-type:inline-size;border-radius:20px;overflow:hidden;position:relative;background:linear-gradient(135deg,#fbf8f2,#f1eadc);color:#18201d;box-shadow:var(--shadow);border:1px solid #e3dccd}
 .slide .in{position:absolute;inset:0;padding:4.6cqw 6cqw 7.6cqw;display:flex;flex-direction:column;gap:2cqw}
 .slide .kick{font:700 1.7cqw/1 var(--body);letter-spacing:.2em;color:#a8844f}
-.slide h4{font:900 4.4cqw/1.25 var(--display);margin:0;color:#163a31}
+.slide h4{font:900 4cqw/1.25 var(--display);margin:0;color:#163a31;text-wrap:balance}
 .slide p{font:400 2.1cqw/1.6 var(--body);margin:0;color:#3a443f}
-.slide .num{font:600 6.6cqw/1 var(--num);color:#24594c;letter-spacing:-.02em}
+.slide .num{white-space:nowrap;font:600 6.2cqw/1 var(--num);color:#24594c;letter-spacing:-.02em}
 .slide .num small{font-size:2.2cqw;margin-left:.6cqw;color:#626b67}
 .slide .row{display:grid;gap:2.4cqw;flex:1;align-items:center}
 .slide .pane{background:#fff;border:1px solid #e6dfd0;border-radius:2cqw;padding:2.4cqw;display:flex;flex-direction:column;gap:1cqw}
@@ -447,9 +447,9 @@ body.present table.t{font-size:18px}
 .slide .ico.g{background:#f3ede2;color:#7f6135}
 .slide .foot{position:absolute;left:6cqw;right:6cqw;bottom:2.6cqw;display:flex;justify-content:space-between;font:400 1.35cqw var(--body);color:#8a8f8a}
 .slide.dark{background:linear-gradient(135deg,#13211d,#1f4a3f);color:#f1ede4;border-color:#13211d}
-.slide.dark h4{color:#f6f1e6}.slide.dark p{color:#d7d2c6}.slide.dark .num{color:#e2c48f}.slide.dark .kick{color:#d6b680}.slide.dark .foot{color:#9fb3ab}
-.life{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.6cqw}
-.life>div{background:#fff;border-radius:1.6cqw;padding:1.2cqw 1.4cqw;border:1px solid #e6dfd0;display:flex;flex-direction:column;gap:.6cqw;align-items:flex-start}
+.slide.dark h4{color:#f6f1e6}.slide .in[style*='--n'] .num{font-size:var(--n)}.slide.dark p{color:#d7d2c6}.slide.dark .num{color:#e2c48f}.slide.dark .kick{color:#d6b680}.slide.dark .foot{color:#9fb3ab}
+.life{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.2cqw}
+.life>div{background:#fff;border-radius:1.6cqw;padding:.9cqw 1.3cqw;border:1px solid #e6dfd0;display:flex;flex-direction:column;gap:.6cqw;align-items:flex-start}
 .life>div.off{opacity:.38;background:transparent;border-style:dashed}
 .life>div b{font:700 1.9cqw/1.3 var(--body);color:#163a31}.life div span{font:500 1.6cqw var(--num);color:#24594c}
 .stair{display:flex;align-items:flex-end;gap:2cqw;flex:1;padding-top:2cqw}
@@ -467,6 +467,15 @@ body.present table.t{font-size:18px}
   body.printdeck .slide{width:100%;break-after:page;margin:0 0 0;box-shadow:none;border-radius:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{size:A4 landscape;margin:8mm}
 }
+
+.slide .art{position:absolute;pointer-events:none}.slide .art svg{width:100%;height:auto;display:block}
+.slide .art .gear{transform-origin:300px 62px;animation:spin 14s linear infinite}
+.slide .pane.spot{align-items:flex-start}.slide .pane.spot .sp{width:100%;height:12cqw;display:flex;align-items:flex-end;justify-content:center;margin-bottom:.6cqw}.slide .pane.spot .sp svg{height:100%;width:auto}
+.life .lic{width:4.6cqw;height:4.6cqw;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 28%,#fff);color:color-mix(in srgb,var(--c) 70%,#13211d);border:.3cqw solid var(--c)}
+.life .lic svg{width:2.6cqw;height:2.6cqw}
+.life>div.off .lic{filter:grayscale(1)}
+.stair div{position:relative}.stair .climb{position:absolute;top:-10.5cqw;left:50%;transform:translateX(-50%);width:7.5cqw;background:none!important;padding:0!important}.stair .climb svg{width:100%;height:auto}
+@media (prefers-reduced-motion:reduce){.slide .art .gear{animation:none}}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -1297,6 +1306,60 @@ const ICO={
  med:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>'
 };
 const LIFE=[['房貸或房租',30000,'home'],['一家人的伙食費',25000,'food'],['孝親費',10000,'heart'],['子女教育',15000,'book'],['保險費',8000,'shield'],['水電瓦斯網路',6000,'bolt'],['出國旅遊（每月分攤）',8000,'plane'],['醫療保健',5000,'med']];
+/* 簡報插圖（原創扁平風） */
+const COIN=(x,y,r=12,c='#e2b866')=>`<g transform="translate(${x} ${y})"><ellipse cx="0" cy="${r*0.28}" rx="${r}" ry="${r*0.42}" fill="#b8893f"/><ellipse cx="0" cy="0" rx="${r}" ry="${r*0.42}" fill="${c}"/><ellipse cx="0" cy="0" rx="${r*0.62}" ry="${r*0.24}" fill="none" stroke="#c99a48" stroke-width="${r*0.12}"/></g>`;
+const COINF=(x,y,r=11)=>`<g transform="translate(${x} ${y})"><circle r="${r}" fill="#e2b866" stroke="#b8893f" stroke-width="${r*0.16}"/><circle r="${r*0.62}" fill="none" stroke="#c99a48" stroke-width="${r*0.12}"/></g>`;
+const BILL=(x,y,a)=>`<g transform="translate(${x} ${y}) rotate(${a})"><rect x="-26" y="-13" width="52" height="26" rx="4" fill="#d6ead9" stroke="#5f9884" stroke-width="2"/><circle r="7" fill="none" stroke="#5f9884" stroke-width="2"/><path d="M-20-7v14M20-7v14" stroke="#5f9884" stroke-width="2"/></g>`;
+const SPARK=(x,y,s=1,c='#e2c48f')=>`<path transform="translate(${x} ${y}) scale(${s})" d="M0-9C1-2 2-1 9 0 2 1 1 2 0 9-1 2-2 1-9 0-2-1-1-2 0-9z" fill="${c}"/>`;
+const ART={
+ machine:`<svg viewBox="0 0 420 330" aria-hidden="true"><ellipse cx="210" cy="300" rx="170" ry="16" fill="#000" opacity=".22"/>
+   <g class="gear"><circle cx="300" cy="62" r="30" fill="#a8844f"/><circle cx="300" cy="62" r="12" fill="#13211d"/>${[0,45,90,135,180,225,270,315].map(a=>`<rect x="294" y="22" width="12" height="16" rx="3" fill="#a8844f" transform="rotate(${a} 300 62)"/>`).join('')}</g>
+   <rect x="96" y="80" width="230" height="190" rx="28" fill="#2f6b5c"/><rect x="96" y="80" width="230" height="60" rx="28" fill="#3f8a75"/><rect x="96" y="120" width="230" height="20" fill="#3f8a75"/>
+   <rect x="124" y="150" width="110" height="64" rx="12" fill="#13211d"/><path d="M138 196l18-16 16 10 22-24 24 14" fill="none" stroke="#e2c48f" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+   <circle cx="276" cy="172" r="16" fill="#e2c48f"/><circle cx="276" cy="172" r="7" fill="#a8844f"/><circle cx="276" cy="210" r="9" fill="#e08a6d"/>
+   <rect x="120" y="238" width="182" height="14" rx="7" fill="#13211d"/>
+   <rect x="128" y="96" width="40" height="10" rx="5" fill="#cfe3da" opacity=".7"/>
+   ${BILL(156,268,-12)}${BILL(212,284,8)}${BILL(268,266,-4)}${BILL(330,292,16)}
+   ${COIN(70,284,15)}${COIN(92,298,12)}${COIN(360,262,13)}${COIN(58,262,11)}
+   ${SPARK(70,130,1.4)}${SPARK(372,150,1)}${SPARK(46,190,0.8,'#cfe3da')}${SPARK(392,214,1.2,'#cfe3da')}</svg>`,
+ piggy:`<svg viewBox="0 0 380 320" aria-hidden="true"><ellipse cx="170" cy="292" rx="140" ry="12" fill="#163a31" opacity=".1"/>
+   <circle cx="300" cy="74" r="40" fill="#f3e3c2"/>${SPARK(300,74,1.6,'#e2b866')}
+   <ellipse cx="160" cy="190" rx="110" ry="88" fill="#e6b9a6"/><ellipse cx="148" cy="174" rx="80" ry="58" fill="#efcbbb"/>
+   <path d="M98 118l-6-38 40 24z" fill="#d79f8a"/><rect x="246" y="168" width="36" height="44" rx="16" fill="#d79f8a"/><circle cx="258" cy="184" r="4" fill="#9a5f4c"/><circle cx="270" cy="196" r="4" fill="#9a5f4c"/>
+   <circle cx="214" cy="160" r="7" fill="#3a2a24"/><rect x="120" y="102" width="56" height="10" rx="5" fill="#9a5f4c"/>
+   <rect x="96" y="256" width="26" height="34" rx="9" fill="#d79f8a"/><rect x="196" y="256" width="26" height="34" rx="9" fill="#d79f8a"/><path d="M50 182c-24-6-20-30-2-26" fill="none" stroke="#d79f8a" stroke-width="8" stroke-linecap="round"/>
+   ${COINF(148,62,15)}${COINF(176,30,12)}${COINF(124,30,10)}
+   <g transform="translate(272 214)"><rect width="92" height="84" rx="12" fill="#fff" stroke="#24594c" stroke-width="4"/><rect width="92" height="24" rx="12" fill="#24594c"/><rect y="12" width="92" height="12" fill="#24594c"/><text x="46" y="18" text-anchor="middle" style="font:700 14px var(--body);fill:#fff">每月</text>${COINF(46,56,18)}</g></svg>`,
+ umbrella:`<svg viewBox="0 0 200 140" aria-hidden="true">${[30,60,150,175].map((x,i)=>`<path d="M${x} ${8+i*4}l-6 16" stroke="#9fb7c8" stroke-width="4" stroke-linecap="round"/>`).join('')}
+   <path d="M40 66a60 50 0 0 1 120 0z" fill="#a8844f"/><path d="M40 66q15-10 30 0 15-10 30 0 15-10 30 0 15-10 30 0" fill="#c9a66b"/><path d="M100 16v4" stroke="#7f6135" stroke-width="5" stroke-linecap="round"/><path d="M100 66v44q0 10 10 10" fill="none" stroke="#7f6135" stroke-width="5" stroke-linecap="round"/>
+   ${COIN(84,122,14)}${COIN(84,112,14)}${COIN(84,102,14)}${COIN(124,124,12)}</svg>`,
+ lockpig:`<svg viewBox="0 0 200 140" aria-hidden="true"><ellipse cx="92" cy="80" rx="60" ry="46" fill="#e6b9a6"/><path d="M60 42l-4-22 22 13z" fill="#d79f8a"/><rect x="142" y="70" width="20" height="26" rx="9" fill="#d79f8a"/><circle cx="122" cy="68" r="4.5" fill="#3a2a24"/><rect x="70" y="40" width="34" height="7" rx="3.5" fill="#9a5f4c"/><rect x="58" y="114" width="16" height="20" rx="6" fill="#d79f8a"/><rect x="108" y="114" width="16" height="20" rx="6" fill="#d79f8a"/>
+   <g transform="translate(126 54)"><path d="M12 24v-10a14 14 0 0 1 28 0v10" fill="none" stroke="#163a31" stroke-width="7"/><rect x="2" y="22" width="48" height="40" rx="9" fill="#24594c"/><circle cx="26" cy="40" r="6" fill="#e2c48f"/><rect x="23.5" y="42" width="5" height="11" rx="2" fill="#e2c48f"/></g></svg>`,
+ refill:`<svg viewBox="0 0 200 140" aria-hidden="true"><path d="M40 52c20-30 70-40 100-20" fill="none" stroke="#e2c48f" stroke-width="6" stroke-dasharray="2 12" stroke-linecap="round"/>
+   <g transform="translate(14 44) rotate(-28)"><rect width="56" height="46" rx="10" fill="#a8844f"/><rect x="-4" y="-8" width="64" height="12" rx="6" fill="#7f6135"/></g>${COINF(78,40,8)}${COINF(102,32,8)}${COINF(124,36,8)}
+   <path d="M108 64h76l-8 66h-60z" fill="#2f6b5c"/><rect x="102" y="56" width="88" height="14" rx="7" fill="#163a31"/>${COIN(130,64,12)}${COIN(156,62,12)}${COIN(144,54,11)}
+   <path d="M146 118V88M134 100l12-12 12 12" stroke="#e2c48f" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ family:`<svg viewBox="0 0 240 150" aria-hidden="true"><path d="M30 70l70-52 70 52v74H30z" fill="#f3ede2" stroke="#a8844f" stroke-width="5" stroke-linejoin="round"/><path d="M18 76l82-62 82 62" fill="none" stroke="#7f6135" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+   <rect x="84" y="96" width="32" height="48" rx="4" fill="#2f6b5c"/><rect x="44" y="84" width="28" height="24" rx="4" fill="#bcd9e8"/><rect x="128" y="84" width="28" height="24" rx="4" fill="#bcd9e8"/>
+   <g transform="translate(190 72)"><circle cx="0" cy="0" r="12" fill="#f0c9a8"/><path d="M-16 44q0-30 16-30t16 30z" fill="#e08a6d"/></g><g transform="translate(220 88)"><circle cx="0" cy="0" r="9" fill="#f0c9a8"/><path d="M-12 56q0-36 12-36t12 36z" fill="#24594c"/></g>${SPARK(200,30,1,'#e2b866')}</svg>`,
+ climber:`<svg viewBox="0 0 80 110" aria-hidden="true"><path d="M52 4v52" stroke="#7f6135" stroke-width="4" stroke-linecap="round"/><path d="M54 6l24 9-24 9z" fill="#e08a6d"/><circle cx="30" cy="40" r="10" fill="#f0c9a8"/><path d="M20 30q10-10 20 0" fill="#3a2a24"/><path d="M16 84q0-30 14-30t14 30z" fill="#e2c48f"/><path d="M40 62l12-14" stroke="#e2c48f" stroke-width="7" stroke-linecap="round"/><path d="M24 84l-4 22M36 84l4 22" stroke="#163a31" stroke-width="7" stroke-linecap="round"/></svg>`,
+ tree:`<svg viewBox="0 0 400 320" aria-hidden="true"><circle cx="330" cy="58" r="30" fill="#e2c48f" opacity=".9"/>${SPARK(60,60,1.4)}${SPARK(250,30,1,'#cfe3da')}
+   <ellipse cx="200" cy="300" rx="170" ry="14" fill="#000" opacity=".25"/><path d="M186 300c6-50 4-90-4-120h36c-8 30-10 70-4 120z" fill="#8a6a45"/><path d="M200 190l-40-30M206 200l44-34" stroke="#8a6a45" stroke-width="12" stroke-linecap="round"/>
+   <circle cx="200" cy="120" r="84" fill="#3f8a75"/><circle cx="130" cy="150" r="56" fill="#2f6b5c"/><circle cx="272" cy="150" r="58" fill="#2f6b5c"/><circle cx="200" cy="80" r="56" fill="#4f9c86"/>
+   ${[[150,110],[200,70],[250,112],[120,170],[280,176],[204,150],[172,190],[236,196]].map(([x,y])=>COINF(x,y,13)).join('')}
+   <g transform="translate(300 252)"><path d="M0 0h60l-10 40H10z" fill="#e08a6d"/><path d="M6 0l20-26M54 0L34-26" stroke="#e08a6d" stroke-width="6" stroke-linecap="round"/></g>${COIN(80,290,14)}${COIN(104,296,11)}</svg>`,
+ check:`<svg viewBox="0 0 160 170" aria-hidden="true"><rect x="16" y="18" width="104" height="138" rx="12" fill="#fff" stroke="#a8844f" stroke-width="5"/><rect x="44" y="8" width="48" height="20" rx="8" fill="#a8844f"/>
+   ${[52,84,116].map(y=>`<path d="M32 ${y}l8 8 14-16" fill="none" stroke="#24594c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="62" y="${y-2}" width="42" height="7" rx="3.5" fill="#e3dccd"/>`).join('')}
+   <g transform="translate(116 118)"><circle r="26" fill="#bcd9e8" fill-opacity=".55" stroke="#163a31" stroke-width="7"/><path d="M18 18l20 20" stroke="#163a31" stroke-width="10" stroke-linecap="round"/></g></svg>`
+};
+function splitArt(cut){ const wl=6+20*cut, wr=6+20*(1-cut), sl=0.62+0.62*cut, sr=0.62+0.62*(1-cut);
+  return `<svg viewBox="0 0 300 270" aria-hidden="true">${COINF(150,30,16)}${COINF(132,14,10)}${COINF(170,10,9)}
+   <path d="M150 52v36" stroke="#e2c48f" stroke-width="22" stroke-linecap="round"/>
+   <path d="M150 90c0 30-70 20-78 62" fill="none" stroke="#c9a66b" stroke-width="${wl}" stroke-linecap="round"/><path d="M150 90c0 30 70 20 78 62" fill="none" stroke="#5f9884" stroke-width="${wr}" stroke-linecap="round"/>
+   <text x="92" y="104" text-anchor="middle" style="font:700 15px var(--num);fill:#7f6135">${Math.round(cut*100)}%</text><text x="208" y="104" text-anchor="middle" style="font:700 15px var(--num);fill:#24594c">${Math.round((1-cut)*100)}%</text>
+   <g transform="translate(72 214) scale(${sl}) translate(-50 -56)"><rect width="100" height="92" rx="14" fill="#a8844f"/><rect x="10" y="10" width="80" height="72" rx="10" fill="#c9a66b"/><circle cx="50" cy="46" r="20" fill="#7f6135"/><circle cx="50" cy="46" r="8" fill="#e2c48f"/><path d="M50 26v8M50 58v8M30 46h8M62 46h8" stroke="#e2c48f" stroke-width="4" stroke-linecap="round"/><rect x="34" y="-14" width="32" height="18" rx="9" fill="#13211d"/><text x="50" y="0" text-anchor="middle" style="font:700 12px var(--body);fill:#e2c48f">6年</text></g>
+   <g transform="translate(228 214) scale(${sr}) translate(-50 -58)"><path d="M8 24h84l-8 68H16z" fill="#2f6b5c"/><path d="M30 24c0-30 40-30 40 0" fill="none" stroke="#163a31" stroke-width="7"/><path d="M50 52c-6-8-18-6-18 4 0 9 18 18 18 18s18-9 18-18c0-10-12-12-18-4z" fill="#e08a6d"/></g></svg>`; }
+const LCOL={home:'#e08a6d',food:'#e2b866',heart:'#e6a4a4',book:'#7fa6c9',shield:'#5f9884',bolt:'#d9b44a',plane:'#8cb8d6',med:'#8fc4b0',cup:'#c9a66b'};
 function makeDeck(){
   const P0=(+$('#pAmt').value||0)*10000, y=+$('#pRate').value/100, cut=+$('#pCut').value/100, six=Math.max(0,+$('#pSix').value||0)/100, nav=+$('#pNav').value/100, rn=pRounds, yrs=rn*6;
   if(!P0) return toast('請先輸入起始本金');
@@ -1307,39 +1370,43 @@ function makeDeck(){
   const donut=(()=>{const r=15.9, c=2*Math.PI*r, a=c*cut; return `<svg viewBox="0 0 42 42" style="width:22cqw;height:22cqw"><circle cx="21" cy="21" r="${r}" fill="none" stroke="#e3ece7" stroke-width="6"/><circle cx="21" cy="21" r="${r}" fill="none" stroke="#24594c" stroke-width="6" stroke-dasharray="${(c-a).toFixed(2)} ${a.toFixed(2)}" stroke-dashoffset="${(-a+c*0.25).toFixed(2)}"/><circle cx="21" cy="21" r="${r}" fill="none" stroke="#a8844f" stroke-width="6" stroke-dasharray="${a.toFixed(2)} ${(c-a).toFixed(2)}" stroke-dashoffset="${(c*0.25).toFixed(2)}"/><text x="21" y="20" text-anchor="middle" style="font:700 4px var(--body);fill:#163a31">每月配息</text><text x="21" y="26" text-anchor="middle" style="font:600 4.6px var(--num);fill:#24594c">${(d0/10000).toFixed(1)}萬</text></svg>`;})();
   const maxP=Math.max(...A.R.map(r=>r.end));
   const S=[
-   `<div class="slide dark"><div class="in" style="justify-content:center"><span class="kick">CASH FLOW PLAN</span><h4 style="font-size:6.2cqw">${who}印鈔機計畫</h4><p style="font-size:2.4cqw">讓配息幫本金長大，本金再生出更多配息</p>
-     <div style="display:flex;gap:5cqw;margin-top:3cqw"><div><p>起始本金</p><div class="num">${(P0/10000).toLocaleString()}<small>萬</small></div></div><div><p>${yrs} 年後每月配息</p><div class="num">${(d1/10000).toFixed(1)}<small>萬</small></div></div></div></div>${foot(1)}</div>`,
-   `<div class="slide"><div class="in"><span class="kick">STEP 1・起點</span><h4>${(P0/10000).toLocaleString()} 萬放進月配息保單，每個月就有現金流</h4>
-     <div class="row" style="grid-template-columns:1fr auto 1fr"><div class="pane" style="align-items:center;text-align:center"><div class="ico">${ICO.coin}</div><b>本金</b><div class="num">${(P0/10000).toLocaleString()}<small>萬</small></div></div>
-     <svg viewBox="0 0 40 20" style="width:8cqw"><path d="M2 10h32M28 4l7 6-7 6" fill="none" stroke="#a8844f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-     <div class="pane" style="align-items:center;text-align:center"><div class="ico g">${ICO.loop}</div><b>每月配息（年化 ${(y*100).toFixed(1)}%）</b><div class="num">${money(d0)}<small>元</small></div></div></div>
-     <p>本金不動，每個月固定領配息。接下來的關鍵是：這筆配息怎麼分配。</p></div>${foot(2)}</div>`,
-   `<div class="slide"><div class="in"><span class="kick">STEP 2・配息怎麼分</span><h4>每月 ${money(d0)} 元，分成兩個口袋</h4>
-     <div class="row" style="grid-template-columns:auto 1fr">${donut}<div style="display:flex;flex-direction:column;gap:2cqw">
-       <div class="pane" style="border-left:1.2cqw solid #a8844f"><b>${Math.round(cut*100)}%・每月 ${money(c0)} 元</b><span>撥進六年期保單，存起來讓本金長大</span></div>
-       <div class="pane" style="border-left:1.2cqw solid #24594c"><b>${Math.round((1-cut)*100)}%・每月 ${money(s0)} 元</b><span>當作生活費，現在就好好享受</span></div></div></div></div>${foot(3)}</div>`,
+   `<div class="slide dark"><div class="in" style="justify-content:center;max-width:58%"><span class="kick">CASH FLOW PLAN</span><h4 style="font-size:5.2cqw">${who}<br>印鈔機計畫</h4><p style="font-size:2.3cqw">讓配息幫本金長大，本金再生出更多配息</p>
+     <div style="display:flex;gap:4.5cqw;margin-top:2.6cqw"><div><p>起始本金</p><div class="num">${(P0/10000).toLocaleString()}<small>萬</small></div></div><div><p>${yrs} 年後每月配息</p><div class="num">${(d1/10000).toFixed(1)}<small>萬</small></div></div></div></div>
+     <div class="art" style="right:2cqw;bottom:6cqw;width:44cqw">${ART.machine}</div>${foot(1)}</div>`,
+   `<div class="slide"><div class="in" style="max-width:56%"><span class="kick">STEP 1・起點</span><h4>${(P0/10000).toLocaleString()} 萬放進月配息保單，每個月就有現金流</h4>
+     <div style="display:flex;flex-direction:column;gap:1.6cqw;margin-top:1cqw"><div class="pane" style="flex-direction:row;align-items:center;gap:2cqw"><b style="min-width:13cqw">本金</b><div class="num">${(P0/10000).toLocaleString()}<small>萬</small></div></div>
+     <div class="pane" style="flex-direction:row;align-items:center;gap:2cqw"><b style="min-width:13cqw">每月配息<br><span>年化 ${(y*100).toFixed(1)}%</span></b><div class="num">${money(d0)}<small>元</small></div></div></div>
+     <p style="font-size:1.9cqw">本金不動，每月固定領配息。關鍵是：配息怎麼分。</p></div>
+     <div class="art" style="right:3cqw;top:9cqw;width:38cqw">${ART.piggy}</div>${foot(2)}</div>`,
+   `<div class="slide"><div class="in"><span class="kick">STEP 2・配息怎麼分</span><h4>每月 ${money(d0)} 元，分成兩個口袋</h4><p>${cut>=0.6?'偏重讓本金長大：大部分配息存進六年期，本金升級更快。':cut>=0.4?'存錢和生活各一半：現在有生活費，本金也穩穩長大。':'偏重現在的生活品質：大部分配息拿來用，一小部分持續幫本金加碼。'}</p>
+     <div class="row" style="grid-template-columns:1fr 1.15fr 1fr">
+       <div class="pane" style="border-top:1.2cqw solid #a8844f"><b>${Math.round(cut*100)}%・每月 ${money(c0)} 元</b><span>撥進六年期保單，存起來讓本金長大</span></div>
+       <div style="width:100%">${splitArt(cut)}</div>
+       <div class="pane" style="border-top:1.2cqw solid #24594c"><b>${Math.round((1-cut)*100)}%・每月 ${money(s0)} 元</b><span>當作生活費，現在就好好享受</span></div></div></div>${foot(3)}</div>`,
    `<div class="slide"><div class="in"><span class="kick">STEP 3・存起來的那一份</span><h4>為什麼要放進六年期保單？</h4>
-     <div class="row" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-       <div class="pane"><div class="ico">${ICO.shield}</div><b>抗跌</b><span>這筆錢以約 ${(six*100).toFixed(1)}% 年化穩定累積，不跟著市場淨值上下波動，是整個計畫的穩定器。</span></div>
-       <div class="pane"><div class="ico g">${ICO.lock}</div><b>不讓自己亂花</b><span>配息直接撥走、鎖六年，不會在帳戶裡被順手花掉，等於幫自己強迫儲蓄。</span></div>
-       <div class="pane"><div class="ico">${ICO.loop}</div><b>六年後回填本金</b><span>到期整筆約 ${wan(A.R[0].back)} 回到本金，本金變大，之後每個月的配息也跟著變多。</span></div></div></div>${foot(4)}</div>`,
-   `<div class="slide"><div class="in"><span class="kick">STEP 4・花用的那一份（生活開銷為一般家庭參考值）</span><h4>每月 ${money(s0)} 元，可以支付這些生活開銷</h4>
-     <div class="life">${items.map(x=>`<div class="${x.ok?'':'off'}"><div class="ico${x.ok?'':' g'}" style="width:4.4cqw;height:4.4cqw">${ICO[x.ic]}</div><b>${x.n}</b><span>${x.ok?'✓ ':''}約 ${x.v.toLocaleString()} 元</span></div>`).join('')}</div>
-     <p>${coveredN?`可以支付其中 ${coveredN} 項${left>=1000?`，還剩約 ${money(left)} 元`:''}。`:'這個金額還不足以支付一項固定開銷，可以提高本金或花用比例。'}跑完 ${rn} 輪後，每月花用升到約 ${money(s1)} 元。</p></div>${foot(5)}</div>`,
+     <div class="row" style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch">
+       <div class="pane spot"><div class="sp">${ART.umbrella}</div><b>抗跌</b><span>以約 ${(six*100).toFixed(1)}% 年化穩定累積，不跟著市場淨值上下波動，是整個計畫的穩定器。</span></div>
+       <div class="pane spot"><div class="sp">${ART.lockpig}</div><b>不讓自己亂花</b><span>配息直接撥走、鎖六年，不會被順手花掉，等於幫自己強迫儲蓄。</span></div>
+       <div class="pane spot"><div class="sp">${ART.refill}</div><b>六年後回填本金</b><span>到期整筆約 ${wan(A.R[0].back)} 回到本金，之後每個月的配息也跟著變多。</span></div></div></div>${foot(4)}</div>`,
+   `<div class="slide"><div class="in"><span class="kick">STEP 4・花用的那一份（生活開銷為一般家庭參考值）</span><h4 style="max-width:72%;font-size:3.6cqw">每月 ${money(s0)} 元，可以支付這些生活開銷</h4>
+     <div class="life">${items.map(x=>`<div class="${x.ok?'':'off'}"><div class="lic" style="--c:${LCOL[x.ic]}">${ICO[x.ic]}</div><b>${x.n}</b><span>${x.ok?'✓ ':''}約 ${x.v.toLocaleString()} 元</span></div>`).join('')}</div>
+     <p>${coveredN?`可以支付其中 ${coveredN} 項${left>=1000?`，還剩約 ${money(left)} 元`:''}。`:'這個金額還不足以支付一項固定開銷，可以提高本金或花用比例。'}跑完 ${rn} 輪後，每月花用升到約 ${money(s1)} 元。</p></div>
+     <div class="art" style="right:5cqw;top:3cqw;width:17cqw">${ART.family}</div>${foot(5)}</div>`,
    `<div class="slide"><div class="in"><span class="kick">STEP 5・一輪一輪升級</span><h4>每六年回填一次，本金與配息一起往上走</h4>
-     <div class="stair"><div class="s0" style="height:${(P0/maxP*100).toFixed(0)}%"><span>起點</span><b>${wan(P0)}</b><span>月配 ${money(d0)}</span></div>${A.R.map(r=>`<div style="height:${(r.end/maxP*100).toFixed(0)}%"><span>第 ${r.n} 輪後・第 ${r.n*6} 年</span><b>${wan(r.end)}</b><span>月配 ${money(r.div1)}</span></div>`).join('')}</div></div>${foot(6)}</div>`,
-   `<div class="slide dark"><div class="in"><span class="kick">${yrs} 年後</span><h4>本金變大了，每月現金流也變多了</h4>
-     <div class="row" style="grid-template-columns:repeat(3,minmax(0,1fr))">
-       <div><p>本金</p><div class="num">${(A.P/10000).toLocaleString(undefined,{maximumFractionDigits:0})}<small>萬</small></div><p>起始 ${(P0/10000).toLocaleString()} 萬</p></div>
-       <div><p>每月配息</p><div class="num">${(d1/10000).toFixed(1)}<small>萬</small></div><p>起始 ${(d0/10000).toFixed(1)} 萬・升級 ${Math.round((d1/d0-1)*100)}%</p></div>
-       <div><p>這段期間領來花用</p><div class="num">${(A.spent/10000).toLocaleString(undefined,{maximumFractionDigits:0})}<small>萬</small></div><p>每月都有生活費</p></div></div></div>${foot(7)}</div>`,
-   `<div class="slide"><div class="in"><span class="kick">提醒</span><h4>規劃前，請一起了解這些事</h4>
-     <div class="row" style="grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch">
+     <div class="stair"><div class="s0" style="height:${(P0/maxP*74).toFixed(0)}%"><span>起點</span><b>${wan(P0)}</b><span>月配 ${money(d0)}</span></div>${A.R.map((r,k)=>`<div style="height:${(r.end/maxP*74).toFixed(0)}%">${k===A.R.length-1?`<div class="climb">${ART.climber}</div>`:''}<span>第 ${r.n} 輪後・第 ${r.n*6} 年</span><b>${wan(r.end)}</b><span>月配 ${money(r.div1)}</span></div>`).join('')}</div></div>${foot(6)}</div>`,
+   `<div class="slide dark"><div class="in" style="max-width:62%;--n:5.2cqw"><span class="kick">${yrs} 年後</span><h4>本金變大了，每月現金流也變多了</h4>
+     <div style="display:flex;flex-direction:column;gap:1.8cqw;margin-top:1cqw">
+       <div style="display:flex;align-items:baseline;gap:2cqw"><p style="min-width:15cqw">本金</p><div class="num">${(A.P/10000).toLocaleString(undefined,{maximumFractionDigits:0})}<small>萬</small></div><p>起始 ${(P0/10000).toLocaleString()} 萬</p></div>
+       <div style="display:flex;align-items:baseline;gap:2cqw"><p style="min-width:15cqw">每月配息</p><div class="num">${(d1/10000).toFixed(1)}<small>萬</small></div><p>升級 ${Math.round((d1/d0-1)*100)}%</p></div>
+       <div style="display:flex;align-items:baseline;gap:2cqw"><p style="min-width:15cqw">期間領來花用</p><div class="num">${(A.spent/10000).toLocaleString(undefined,{maximumFractionDigits:0})}<small>萬</small></div></div></div></div>
+     <div class="art" style="right:2cqw;bottom:5cqw;width:40cqw">${ART.tree}</div>${foot(7)}</div>`,
+   `<div class="slide"><div class="in"><span class="kick">提醒</span><h4 style="max-width:68%">規劃前，請一起了解這些事</h4>
+     <div class="row" style="grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;max-width:76%;flex:0;gap:1.6cqw">
        <div class="pane"><b>配息不是保證</b><span>配息率會依市場與基金公司調整，配息來源可能包含本金；淨值也會漲跌。</span></div>
        <div class="pane"><b>六年期保單提早解約可能不划算</b><span>試算以年化 ${(six*100).toFixed(1)}% 估算，實際以保單條款與宣告利率為準。</span></div>
        <div class="pane"><b>本試算未扣費用與稅負</b><span>保單相關費用、匯率與稅負會影響實際結果。</span></div>
-       <div class="pane"><b>依自身狀況調整</b><span>保留足夠緊急預備金，並依風險承受度調整撥入比例。</span></div></div>
-     <p style="font-size:1.6cqw">本簡報為試算說明，不代表未來實際報酬，投資前請詳閱保單條款與投資標的說明書。</p></div>${foot(8)}</div>`
+       <div class="pane"><b>依自身狀況調整</b><span>保留足夠緊急預備金，並依風險承受度調整撥入比例。</span></div></div></div>
+     <div class="art" style="right:3cqw;top:8cqw;width:19cqw">${ART.check}</div><div class="foot"><span>本簡報為試算說明，不代表未來實際報酬，投資前請詳閱保單條款與投資標的說明書。</span><span>8 / 8</span></div></div>`
   ];
   $('#deck').innerHTML=S.join(''); $('#deckWrap').hidden=false; $('#deck').scrollLeft=0; dkPage();
   $('#deckWrap').scrollIntoView({behavior:'smooth',block:'start'});
