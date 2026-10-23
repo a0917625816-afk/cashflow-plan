@@ -817,7 +817,7 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
     <div class="calc">
       <div class="card" style="display:flex;flex-direction:column;gap:18px">
         <div class="ctrl"><label for="pAmt">起始本金（萬元）</label><input type="number" id="pAmt" min="10" step="10" value="1000"><div class="quick" id="pAmtQ"></div></div>
-        <div class="ctrl"><label for="pRate">年化配息率</label><span class="val" id="pRateV"></span><input type="range" id="pRate" min="2" max="15" step="0.5" value="6"></div>
+        <div class="ctrl"><label for="pRate">年化配息率</label><span class="val" id="pRateV"></span><input type="range" id="pRate" min="2" max="15" step="0.5" value="8"></div>
         <div class="ctrl"><label for="pCut">配息撥入六年期保單的比例</label><span class="val" id="pCutV"></span><input type="range" id="pCut" min="5" max="100" step="5" value="30"><div class="quick" id="pCutQ"></div></div>
         <div class="ctrl"><label for="pSix">六年期保單年化報酬（%）</label><input type="number" id="pSix" min="0" max="10" step="0.1" value="3.2"></div>
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">跑幾輪（每輪 6 年）</span><div class="quick" id="pRnd"></div></div>
@@ -2162,7 +2162,7 @@ const GL=[
  ['寬限期','房貸','前幾年只繳利息、不還本金','寬限期內月付較低，但本金沒減少，寬限期後月付會變高，總利息也較多。','1000 萬、2.3%：寬限期每月只繳約 19,167 元利息。','',['本息平均攤還'],'loan'],
  ['損益兩平報酬率','房貸','至少要賺多少才不會虧','本站試算中，投資報酬率至少要達到這個數字，房貸繳完時才不會虧（已含保單費用與房貸利息）。','損益兩平 3.3%：年化總報酬低於 3.3% 就會虧。','比較時看這個數字和標的過往績效差多少。',['壓力測試'],'loan'],
  ['壓力測試','房貸','假設發生壞事時的結果','本站假設「第 2 年市場大跌 25%」和「第 3 年起房貸利率 +1%」，看最後結果會差多少。','','規劃時請客戶保留足夠預備金。',['損益兩平報酬率'],'loan'],
- ['印鈔機專案','本站用語','配息撥一部分進六年期保單，到期回填本金','每月配息分兩份：一份花用，一份繳進六年期保單；六年到期整筆回填本金，月配息升級，一輪一輪往上疊。','1000 萬、配息 6%、撥 30%：18 年後本金約 1,401 萬，月配息約 7 萬。','',['宣告利率','配息率'],'grow']
+ ['印鈔機專案','本站用語','配息撥一部分進六年期保單，到期回填本金','每月配息分兩份：一份花用，一份繳進六年期保單；六年到期整筆回填本金，月配息升級，一輪一輪往上疊。','1000 萬、配息 8%、撥 30%：18 年後本金約 1,556 萬，月配息約 10.4 萬。','',['宣告利率','配息率'],'grow']
 ];
 const GLC=['全部','報酬與績效','基金基本','風險','保單','房貸','本站用語'];
 const TABN={why:'01 為什麼要被動收入',pick:'02 挑選標的',calc:'03 配息試算',grow:'04 資產滾大',dca:'05 定期定額模擬',find:'06 基金搜尋',loan:'07 房貸與資金規劃'};
