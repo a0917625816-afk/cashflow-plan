@@ -528,6 +528,25 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
 .palmenu .sw2{width:48px;height:28px;border-radius:99px;background:var(--line);position:relative;border:0;padding:0;cursor:pointer}
 .palmenu .sw2::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .15s}
 .palmenu .sw2[aria-checked="true"]{background:var(--jade)}.palmenu .sw2[aria-checked="true"]::after{left:23px}
+
+.storycard{display:flex;flex-direction:column;gap:16px;background:linear-gradient(135deg,var(--paper),var(--gold-soft))}
+.sthead{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.stplay{font-size:18px;padding:14px 22px}
+.ststrip{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory}
+.ststrip button{flex:0 0 auto;width:180px;border:2px solid transparent;border-radius:12px;overflow:hidden;padding:0;cursor:pointer;background:var(--soft);scroll-snap-align:start;position:relative}
+.ststrip button:hover{border-color:var(--gold)}
+.ststrip img{width:100%;aspect-ratio:16/9;display:block;object-fit:cover}
+.ststrip span{position:absolute;left:6px;top:6px;font:700 12px var(--num);background:rgba(0,0,0,.55);color:#fff;border-radius:6px;padding:1px 6px}
+.stview{position:fixed;inset:0;z-index:50;background:#0d1210;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:16px}
+.stview .stimg{width:min(96vw,calc((100vh - 190px)*16/9));aspect-ratio:16/9;border-radius:14px;overflow:hidden;box-shadow:0 20px 50px -20px rgba(0,0,0,.8);background:#1c2420;touch-action:pan-y}
+.stview .stimg img{width:100%;height:100%;object-fit:contain;display:block}
+.stview .stcap{max-width:min(96vw,1100px);color:#ece6da;font-size:clamp(16px,2vw,21px);line-height:1.6;text-align:center;min-height:3.2em}
+.stview .stbar{display:flex;align-items:center;gap:14px;color:#cfd8d3;font:600 15px var(--num)}
+.stview .stbar button{width:52px;height:52px;border-radius:50%;border:1px solid #3c4a44;background:#1c2420;color:#fff;font-size:24px;cursor:pointer}
+.stview .stbar button:disabled{opacity:.3}
+.stview .stx{position:absolute;top:14px;right:14px;border:1px solid #3c4a44;background:#1c2420;color:#fff;border-radius:99px;padding:8px 16px;font:700 15px var(--body);cursor:pointer}
+.stview .stcapt{position:absolute;top:14px;left:14px;border:1px solid #3c4a44;background:#1c2420;color:#fff;border-radius:99px;padding:8px 16px;font:700 15px var(--body);cursor:pointer}
+.stdots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:90vw}.stdots i{width:8px;height:8px;border-radius:50%;background:#3c4a44}.stdots i.on{background:#e2c48f}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -560,6 +579,12 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
     <span class="eyebrow">01 為什麼要創造被動收入</span>
     <h1>讓資產每個月，<br>幫你發一份薪水</h1>
     <p class="lead">工作的收入，要用時間去換；被動收入，是讓已經存下來的錢替你工作。越早建立，越早擁有選擇生活的空間。</p>
+  </div>
+
+  <div class="card storycard">
+    <div class="sthead"><div><span class="eyebrow">情境還原</span><h2 style="margin:6px 0 4px">陳大哥的故事：錢有了，日子呢？</h2><p class="muted" style="margin:0">一位 58 歲、準備退休的大哥，從「有錢不敢花」到「讓資產每月發薪水」。16 張圖，約 5 分鐘看完。</p></div>
+      <button type="button" class="sbtn gold stplay" id="stPlay">▶ 開始播放</button></div>
+    <div class="ststrip" id="stStrip"></div>
   </div>
 
   <div class="compare">
@@ -2257,6 +2282,30 @@ $('#dkShare').addEventListener('click',()=>{ const u=SITE+(location.hash||'');
 
 
 
+
+/* ---------- 01 情境還原（故事播放） ---------- */
+const STN=["今天想跟您分享一個很多人都會遇到的故事。主角是陳大哥，58 歲，努力了大半輩子，現在要開始想退休後的日子。", "陳大哥工作了三十年，房貸繳完了，存款也不少，退休紀念牌也拿到了。在大家眼中，他是人生勝利組。", "但陳大哥有個習慣：什麼都「明年再說」。太太想去日本賞楓，他說再等等。不是沒錢，是怕錢花了就少了。", "錢放在定存裡，數字看起來沒變，很安全。但同樣一筆錢，今天買得到一整籃菜，多年後只買得到半籃。", "假設每年物價漲 2%，今天的 100 元，10 年後大約只買得到 82 元的東西，20 年後只剩 67 元。錢沒有少，但能過的生活變少了。", "現在退休後還有二、三十年要過。每個月只出不進，看著存款一點一點變少，陳大哥心裡其實很不安。", "簡單算一下：每個月生活費 5 萬，一年就是 60 萬，退休 25 年就要 1,500 萬，這還沒算通膨跟醫療費。", "他想把錢留給孩子，也想跟太太好好去走走。兩份心願都很重要，但不知道怎麼兼顧，所以乾脆什麼都先不動。", "後來陳大哥想通了：錢不是越存越多就安心，而是每一筆錢都要有自己的任務。生活用的、備用的、留給未來的，分開想就清楚了。", "其中「生活」這一份，他規劃成每月現金流：本金放著，每個月有一筆錢進來，就像退休後還有人發薪水。配息會變動，也可能來自本金。", "以 1,000 萬為例，假設年化配息率 6%，一年大約 60 萬，每個月約 5 萬，剛好就是前面算的生活費。這是試算，配息率會變動。", "陳大哥再多做了一步：每個月的配息，一部分過生活，一部分存進六年期保單。六年到期，整筆放回本金，之後每個月的配息也跟著變多。", "用同樣的 1,000 萬來算：配息一半生活、一半存六年期，第 18 年本金約 1,721 萬，每月配息從 5 萬變成約 8.6 萬，這 18 年還領了 654 萬來過生活。", "現在的陳大哥，從一句「明年再說」，變成跟太太一起排行程。該去日本就去，家人聚餐他請客，週末陪孫子放風箏。最重要的是，他不再焦慮了。", "當然，任何投資都有風險：配息可能來自本金、市場和匯率會影響價值、保單費用會影響實際成果、提前用錢要看契約條件。看懂了，再決定。", "最後想問您：如果每個月多一筆錢，您最想拿來做什麼？我們先聊生活，再一起看數字，用您實際的金額試算一次。"];
+(function(){ const n=STN.length, pad=i=>String(i+1).padStart(2,'0');
+  $('#stStrip').innerHTML=STN.map((_,i)=>`<button type="button" data-i="${i}" aria-label="第 ${i+1} 張"><img src="story/t${pad(i)}.jpg" alt="" loading="lazy"><span>${i+1}</span></button>`).join('');
+  let cur=0, sh=null, cap=true;
+  const draw=()=>{ sh.querySelector('.stimg img').src=`story/${pad(cur)}.jpg`; sh.querySelector('.stimg img').alt=`情境還原第 ${cur+1} 張`;
+    sh.querySelector('.stcap').textContent=cap?STN[cur]:''; sh.querySelector('#stN').textContent=`${cur+1} / ${n}`;
+    sh.querySelector('#stP').disabled=cur===0; sh.querySelector('#stF').disabled=cur===n-1;
+    sh.querySelector('.stdots').innerHTML=STN.map((_,i)=>`<i class="${i===cur?'on':''}"></i>`).join('');
+    if(cur<n-1){const im=new Image(); im.src=`story/${pad(cur+1)}.jpg`;} };
+  const open=i=>{ cur=i||0; sh=document.createElement('div'); sh.className='stview'; sh.setAttribute('role','dialog'); sh.setAttribute('aria-modal','true');
+    sh.innerHTML=`<button type="button" class="stcapt" id="stC">旁白：開</button><button type="button" class="stx" id="stX">✕ 關閉</button><div class="stimg"><img alt=""></div><div class="stcap"></div><div class="stbar"><button type="button" id="stP" aria-label="上一張">‹</button><span id="stN"></span><button type="button" id="stF" aria-label="下一張">›</button></div><div class="stdots"></div>`;
+    document.body.appendChild(sh); document.body.style.overflow='hidden';
+    const close=()=>{ sh.remove(); sh=null; document.body.style.overflow=''; document.removeEventListener('keydown',key); };
+    const key=e=>{ if(e.key==='Escape') close(); if(e.key==='ArrowRight'&&cur<n-1){cur++;draw();} if(e.key==='ArrowLeft'&&cur>0){cur--;draw();} };
+    sh.querySelector('#stX').onclick=close; sh.querySelector('#stP').onclick=()=>{if(cur>0){cur--;draw();}}; sh.querySelector('#stF').onclick=()=>{if(cur<n-1){cur++;draw();}};
+    sh.querySelector('#stC').onclick=e=>{cap=!cap; e.target.textContent='旁白：'+(cap?'開':'關'); draw();};
+    sh.querySelector('.stimg').onclick=e=>{ const r=e.currentTarget.getBoundingClientRect(); if(e.clientX-r.left<r.width*0.35){ if(cur>0){cur--;draw();} } else if(cur<n-1){cur++;draw();} };
+    let x0=null; const im=sh.querySelector('.stimg'); im.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true}); im.addEventListener('touchend',e=>{ if(x0==null)return; const d=e.changedTouches[0].clientX-x0; if(Math.abs(d)>40){ if(d<0&&cur<n-1)cur++; else if(d>0&&cur>0)cur--; draw(); e.preventDefault(); } x0=null; });
+    document.addEventListener('keydown',key); draw(); };
+  $('#stPlay').addEventListener('click',()=>open(0));
+  $('#stStrip').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) open(+b.dataset.i);});
+})();
 /* 配色切換 */
 (function(){ const P=[['blue','舒適藍','淡藍＋白，長時間看最不累（推薦）',['#4a86bd','#e6eff8','#d3a35f']],['white','簡約白','全白底＋灰藍，乾淨俐落',['#5a6b7d','#ffffff','#c2a175']],['warm','柔和暖杏','淡鼠尾草綠＋米色，溫暖護眼',['#7c9e82','#eef2ea','#d39a76']],['green','經典墨綠','墨綠＋香檳金，原本的配色',['#24594c','#13211d','#a8844f']]];
   const m=$('#palMenu'), b=$('#palBtn'); const cur=()=>document.documentElement.getAttribute('data-pal')||'blue';
