@@ -1948,7 +1948,7 @@ function dRun(){
   $('#dRate').innerHTML=R.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${v===dOpt.rate}">${l}</button>`).join('');
   $('#dRC').hidden=dOpt.rate!=='custom'; $('#dYV').textContent=yrs+' 年';
   if(!o.p&&!o.e){$('#dOut').innerHTML='<p class="muted">請輸入每月投入金額。</p>';return;}
-  const band=(f.sd||8)/100*1.28/Math.sqrt(yrs), rLo=Math.max(-0.5,rate-band), rHi=rate+band;
+  const band=(f.sd||8)/100*1.28/Math.sqrt(yrs), rLo=Math.max(-0.5,rate-band), rHi=Math.min(Math.max(rate,0.15),rate+band);
   const r=dcaProject(DD,p,o,rate,yrs), lo=dcaProject(DD,p,o,rLo,yrs), hi=dcaProject(DD,p,o,rHi,yrs), L=r.last;
   const hr=dHist(f)/100, hb2=(f.sd||8)/100*1.28/Math.sqrt(yrs), sc=[['保守',Math.max(-0.5,hr-hb2)],['預估',hr],['樂觀',Math.min(0.15,hr+hb2)]].map(([l,rr])=>[l,rr,dcaProject(DD,p,o,rr,yrs)]);
   const fee=r.T.load+r.T.admin+r.T.acct+r.T.coi+r.T.sur, gc=r.gain>=0?'var(--jade)':'var(--red)', payR=f.y?f.y/100:0.04;
@@ -1964,12 +1964,12 @@ function dRun(){
    <div class="card" style="padding:14px 16px"><b>${esc(SHORTN(p.ins))}・${esc(p.p)}</b><span class="muted small">　連結：${esc(f.n)}（代號 ${esc(f.cd[k])}）</span>${f.em?`<div class="emwarn" style="margin-top:10px"><b>⚠ 新興市場警語</b>${esc(EMWARN.split('：')[1])}</div>`:''}</div>
    <div class="res3">
      <div class="card"><span>${yrs} 年總共投入</span><div class="big">${wan(r.cum)}</div><span>${(o.p+o.e).toLocaleString()} 元 × ${yrs*12} 個月</span><span>過去${f.d10!=null?'十':'五'}年定期定額實際年化 ${pct(f.d10!=null?f.d10:f.d5)}</span></div>
-     <div class="card hi"><span>${o.age+yrs} 歲時預估解約金${r.cash>0?'＋已領配息':''}</span><div class="big jade">${wan(r.total)}</div><span style="color:${gc}">${r.gain>=0?'賺':'賠'} ${wan(Math.abs(r.gain))}・${pct(r.gain/r.cum*100)}</span><span>八成機率落在 ${wan(lo.total)}～${wan(hi.total)}</span></div>
+     <div class="card hi"><span>${o.age+yrs} 歲時預估解約金${r.cash>0?'＋已領配息':''}</span><div class="big jade">${wan(r.total)}</div><span style="color:${gc}">${r.gain>=0?'賺':'賠'} ${wan(Math.abs(r.gain))}・${pct(r.gain/r.cum*100)}</span><span>保守情況約 ${wan(lo.total)}（年化 ${pct(rLo*100)}）</span></div>
      <div class="card"><span>到時每月可領（以 ${(payR*100).toFixed(1)}% 配息率）</span><div class="big">${money(L.av*payR/12)}<span class="unit">元</span></div><span>身故保障約 ${wan(L.death)}</span></div>
    </div>
    <div class="card"><h3>三種情境：${yrs} 年後大約多少</h3>
      <div class="scen">${sc.map(([l,rr,s])=>`<div class="${l==='樂觀'?'up':l==='保守'?'dn':''}"><span>${l}・年化 ${pct(rr*100)}</span><b>${wan(s.total)}</b><em>${s.gain>=0?'賺':'賠'} ${wan(Math.abs(s.gain))}（${pct(s.gain/s.cum*100)}）</em></div>`).join('')}</div>
-     <p class="note" style="margin-top:8px">以「依過往績效」為中間值，樂觀與保守為八成機率區間的上下緣（約十次中有一次會比樂觀更好、一次比保守更差）。跟客戶說明時，三個數字請一起呈現。</p></div>
+     <p class="note" style="margin-top:8px">以「依過往績效」為中間值，樂觀與保守為八成機率區間的上下緣（約十次中有一次會比樂觀更好、一次比保守更差）；樂觀最高以年化 15% 計，避免把過去少見的大漲直接套到未來。跟客戶說明時，三個數字請一起呈現。</p></div>
    <div class="card"><h3>帳戶價值預估（年化 ${(rate*100).toFixed(1)}%）</h3>
      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="未來帳戶價值預估">${ticks.map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}${area}${ln(P,z=>z.cum,'var(--muted)',1.5,'4 4')}${ln(P,z=>z.av+z.cash,'var(--jade)',3)}<circle cx="${x(n-1)}" cy="${y(L.av+r.cash)}" r="5" fill="var(--jade)"/>${yl}</svg>
      <div class="legend" style="margin-top:6px"><span><i style="background:var(--jade)"></i>投資型保單（扣完費用）</span><span><i style="background:var(--jade);opacity:.3"></i>八成機率區間（${pct(rLo*100)}～${pct(rHi*100)}）</span><span><i style="background:var(--muted)"></i>累計投入</span></div>
