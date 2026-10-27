@@ -858,7 +858,6 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
   <div class="card" id="dInsCard"><h3>① 選保險公司</h3><div class="insgrid" id="dIns"></div></div>
   <div class="card" id="dFundCard" hidden><h3>② 選標的 <span class="muted small" id="dFundCnt"></span></h3>
     <div class="ctrl" style="max-width:420px;margin:8px 0 10px"><input type="search" id="dSearch" placeholder="搜尋基金名稱或代號" aria-label="搜尋基金"></div>
-    <div class="kindtabs" id="dKind" role="tablist" aria-label="標的類型"></div>
     <div class="quick" id="dSort" style="margin-bottom:10px"><button type="button" data-v="sc" aria-pressed="true">團隊評分高→低</button><button type="button" data-v="r">風險低→高</button><button type="button" data-v="n">名稱</button></div>
     <div class="flist" id="dFunds"></div></div>
   <div id="dMain" hidden>
@@ -873,7 +872,7 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">性別</span><div class="quick" id="dSex"><button type="button" data-v="m" aria-pressed="true">男</button><button type="button" data-v="f">女</button></div></div>
         <div class="ctrl"><label for="dSa">壽險保額（萬元）</label><input type="number" id="dSa" min="0" step="10" value="100"><div class="quick" id="dSaQ"></div></div>
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">保險型態</span><div class="quick" id="dType"><button type="button" data-v="A" aria-pressed="true">甲型（保額與帳戶價值取高）</button><button type="button" data-v="B">乙型（保額＋帳戶價值）</button></div></div>
-        <div class="ctrl"><span style="font-size:14px;color:var(--muted)">配息處理</span><div class="quick" id="dDiv"><button type="button" data-v="reinvest" aria-pressed="true">配息再投入</button><button type="button" data-v="cash">現金領回</button></div></div>
+        <div class="ctrl" hidden><span style="font-size:14px;color:var(--muted)">配息處理</span><div class="quick" id="dDiv"><button type="button" data-v="reinvest" aria-pressed="true">配息再投入</button><button type="button" data-v="cash">現金領回</button></div></div>
         <details class="adv"><summary>進階：自行修改費率</summary><div id="dAdv" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div></details>
       </div>
       <div class="result" id="dOut"></div>
@@ -1790,7 +1789,7 @@ let DD=null, dIns=null, dFund=null, dProd=null, dOpt={sex:'m',type:'A',div:'rein
 const SHORTN=n=>n.replace(/人壽.*$/,'');
 function dcaInit(){
   if(DD) return; DD=JSON.parse(document.getElementById('ddata').textContent);
-  $('#dIns').innerHTML=DD.prod.map((p,i)=>{const k=DD.ins.indexOf(p.ins); const cnt=Object.values(DD.funds).filter(f=>f.cd[k]!=null).length;
+  $('#dIns').innerHTML=DD.prod.map((p,i)=>{const k=DD.ins.indexOf(p.ins); const cnt=Object.values(DD.funds).filter(f=>f.cd[k]!=null&&!(f.d||f.y)).length;
     const tag=p.kind==='front'?`前收型・首年 ${p.tl[0]}%`:p.kind==='flat'?`每筆 ${p.tl[0]}%`:'後收型・免前置';
     return `<button type="button" class="insb" data-i="${i}"><b>${esc(SHORTN(p.ins))}</b><span>${esc(p.p)}</span><em>${tag}・${cnt} 檔</em></button>`;}).join('');
   $('#dIns').addEventListener('click',e=>{const b=e.target.closest('.insb'); if(!b)return; $$('.insb').forEach(x=>x.setAttribute('aria-pressed',x===b)); dSelIns(+b.dataset.i);});
@@ -1802,7 +1801,6 @@ function dcaInit(){
   qb('#dYQ',v=>{$('#dY').value=v; dRun();});
   qb('#dSex',v=>{dOpt.sex=v; dRun();}); qb('#dType',v=>{dOpt.type=v; dRun();}); qb('#dDiv',v=>{dOpt.div=v; dRun();});
   qb('#dSort',v=>{dOpt.sort=v; dList();});
-  $('#dKind').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; dOpt.kind=b.dataset.v; dList();});
   $('#dRate').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; dOpt.rate=b.dataset.v; dRun();});
   $('#dRC').addEventListener('input',e=>{dOpt.custom=+e.target.value; dOpt.rate='custom'; dRun();});
   ['dP','dE','dAge','dSa'].forEach(id=>$('#'+id).addEventListener('input',dRun));
@@ -1816,10 +1814,9 @@ function dSelIns(i,scroll=true){
 }
 function dList(){
   const k=DD.ins.indexOf(DD.prod[dIns].ins), qs=$('#dSearch').value.trim().toLowerCase();
-  const isDiv=f=>!!(f.d||f.y), kind=dOpt.kind||'all';
-  const base=Object.entries(DD.funds).filter(([id,f])=>f.cd[k]!=null&&(!qs||f.n.toLowerCase().includes(qs)||String(f.cd[k]).toLowerCase().includes(qs)||id.toLowerCase().includes(qs)));
+  const isDiv=f=>!!(f.d||f.y), kind='acc';
+  const base=Object.entries(DD.funds).filter(([id,f])=>f.cd[k]!=null&&!isDiv(f)&&(!qs||f.n.toLowerCase().includes(qs)||String(f.cd[k]).toLowerCase().includes(qs)||id.toLowerCase().includes(qs)));
   const nDiv=base.filter(([i,f])=>isDiv(f)).length, nAcc=base.length-nDiv;
-  $('#dKind').innerHTML=[['all','全部',base.length,''],['acc','累積型',nAcc,'不配息，收益滾進淨值，適合長期累積'],['div','配息型',nDiv,'定期配息，可再投入或領現金']].map(([v,l,c,t])=>`<button type="button" role="tab" data-v="${v}" aria-selected="${v===kind}"><b>${l}</b><span>${c} 檔</span>${t?`<em>${t}</em>`:''}</button>`).join('');
   let L=base.filter(([i,f])=>kind==='all'||(kind==='div')===isDiv(f));
   L.sort((a,b)=>dOpt.sort==='r'?(a[1].r-b[1].r||(b[1].sc||0)-(a[1].sc||0)):dOpt.sort==='n'?a[1].n.localeCompare(b[1].n,'zh-Hant'):(b[1].sc||0)-(a[1].sc||0));
   $('#dFundCnt').textContent=`（${SHORTN(DD.prod[dIns].ins)}可連結的${kind==='acc'?'累積型':kind==='div'?'配息型':''} ${L.length} 檔）`;
