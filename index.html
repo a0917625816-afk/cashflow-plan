@@ -556,6 +556,8 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
 .evlist>div{display:flex;gap:10px;align-items:flex-start;background:var(--red-soft);border-radius:10px;padding:8px 10px}
 .evlist i{flex:none;width:22px;height:22px;border-radius:50%;background:var(--red);color:#fff;font:700 12px/22px var(--num);text-align:center;font-style:normal}
 .evlist span{display:flex;flex-direction:column;gap:2px}.evlist b{font-size:14.5px}.evlist em{font-style:normal;font-size:13.5px;color:var(--muted)}
+
+.qs{background:linear-gradient(135deg,var(--paper),var(--jade-soft))}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -855,6 +857,17 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
     <p class="lead">先選保險公司，再選這家可以連結的標的，年期自己調。系統依該公司投資型壽險的前置費用、保單管理費、依生命表計算的保險成本與解約費用，逐月推算扣完費用後的帳戶價值。</p>
   </div>
   <div class="planhead" id="dPlanHead" hidden></div>
+  <div class="card qs" id="qsCard">
+    <div class="sthead"><div><span class="eyebrow">快速模擬</span><h3 style="margin:6px 0 4px;font-size:22px">不分保險公司：每月存多少、報酬率多少，幾年後有多少？</h3><p class="muted" style="margin:0">先用簡單的數字看方向；要看各家保單扣完費用的結果，再往下選保險公司。</p></div></div>
+    <div class="calc" style="margin-top:12px">
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="ctrl"><label for="qP">每月投入（元）</label><input type="number" id="qP" min="0" step="1000" value="10000"><div class="quick" id="qPQ"></div></div>
+        <div class="ctrl"><label for="qR">年化報酬率</label><span class="val" id="qRV"></span><input type="range" id="qR" min="0" max="20" step="0.5" value="6"><input type="number" id="qRN" min="0" max="30" step="0.1" value="6" aria-label="年化報酬自填"><div class="quick" id="qRQ"></div></div>
+        <div class="ctrl"><label for="qY">要存幾年</label><span class="val" id="qYV"></span><input type="range" id="qY" min="1" max="40" step="1" value="20"><div class="quick" id="qYQ"></div></div>
+      </div>
+      <div class="result" id="qOut"></div>
+    </div>
+  </div>
   <div class="card" id="dInsCard"><h3>① 選保險公司</h3><div class="insgrid" id="dIns"></div></div>
   <div class="card" id="dFundCard" hidden><h3>② 選標的 <span class="muted small" id="dFundCnt"></span></h3>
     <div class="ctrl" style="max-width:420px;margin:8px 0 10px"><input type="search" id="dSearch" placeholder="搜尋基金名稱或代號" aria-label="搜尋基金"></div>
@@ -2376,6 +2389,39 @@ const STORIES=[
   $('#stPlay').addEventListener('click',()=>open(0));
   $('#stStrip').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) open(+b.dataset.i);});
   card();
+})();
+
+/* ---------- 05 快速模擬（不分保險公司） ---------- */
+(function(){
+  const fv=(P,r,n)=>{const rm=Math.pow(1+r,1/12)-1; let v=0; const pts=[0]; for(let t=0;t<n;t++){ v=(v+P)*(1+rm); pts.push(v);} return pts;};
+  const qb=(id,arr,fmt,cb)=>{ $(id).innerHTML=arr.map(v=>`<button type="button" data-v="${v}">${fmt(v)}</button>`).join(''); $(id).addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; cb(b.dataset.v); run();}); };
+  qb('#qPQ',[3000,5000,10000,20000,30000],v=>(+v).toLocaleString(),v=>$('#qP').value=v);
+  qb('#qRQ',[4,6,8,10,12],v=>v+'%',v=>{$('#qR').value=v;$('#qRN').value=v;});
+  qb('#qYQ',[10,15,20,30],v=>v+' 年',v=>$('#qY').value=v);
+  function run(){
+    const P=Math.max(0,+$('#qP').value||0), r=Math.max(0,+$('#qRN').value||0)/100, Y=+$('#qY').value, n=Y*12;
+    $('#qRV').textContent=(r*100).toFixed(1)+'%'; $('#qYV').textContent=Y+' 年';
+    $$('#qPQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===P)); $$('#qRQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===+(r*100).toFixed(1))); $$('#qYQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===Y));
+    if(!P){$('#qOut').innerHTML='<p class="muted">請輸入每月投入金額。</p>';return;}
+    const pts=fv(P,r,n), end=pts[n], cum=P*n, gain=end-cum;
+    const alt=[4,6,8,10].map(x=>[x,fv(P,x/100,n)[n]]);
+    const W=640,H=220,L=60,R=14,T=12,B=26, mx=end*1.06||1, x=i=>L+(W-L-R)*i/n, y=v=>T+(H-T-B)*(1-v/mx);
+    const ln=(f,c,w,d='')=>`<path d="${pts.map((_,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(f(i)).toFixed(1)}`).join('')}" fill="none" stroke="${c}" stroke-width="${w}" ${d?`stroke-dasharray="${d}"`:''}/>`;
+    const step=Y>20?5:Y>10?2:1, rows=[]; for(let yy=1;yy<=Y;yy++) if(yy<=3||yy%step===0||yy===Y) rows.push(yy);
+    $('#qOut').innerHTML=`<div class="res3">
+      <div class="card"><span>${Y} 年總共投入</span><div class="big">${wan(cum)}</div><span>${P.toLocaleString()} 元 × ${n} 個月</span></div>
+      <div class="card hi"><span>${Y} 年後大約有</span><div class="big jade">${wan(end)}</div><span>年化 ${(r*100).toFixed(1)}%</span></div>
+      <div class="card"><span>比投入多出</span><div class="big" style="color:var(--jade)">${wan(gain)}</div><span>約是投入的 ${(end/cum).toFixed(2)} 倍</span></div></div>
+      <div class="card"><h3>累積走勢</h3><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="定期定額累積走勢">${[0,.5,1].map(t=>mx*t).map(t=>`<line x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${L-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}${ln(i=>P*i,'var(--muted)',1.5,'4 4')}${ln(i=>pts[i],'var(--jade)',3)}${rows.filter(v=>v%step===0).map(v=>`<text x="${x(v*12)}" y="${H-6}" text-anchor="middle">${v}年</text>`).join('')}</svg>
+        <div class="legend" style="margin-top:6px"><span><i style="background:var(--jade)"></i>帳戶累積</span><span><i style="background:var(--muted)"></i>累計投入</span></div></div>
+      <div class="card"><h3>不同報酬率比較（每月 ${P.toLocaleString()} 元、${Y} 年）</h3><div class="scen" style="grid-template-columns:repeat(auto-fit,minmax(130px,1fr))">${alt.map(([a,v])=>`<div class="${Math.abs(a-r*100)<0.01?'up':''}"><span>年化 ${a}%</span><b>${wan(v)}</b><em>多出 ${wan(v-cum)}</em></div>`).join('')}</div></div>
+      <div class="card"><h3>逐年明細</h3><div class="tw"><table class="t"><tr><th>第幾年</th><th>累計投入</th><th>帳戶價值</th><th>多出</th></tr>${rows.map(v=>`<tr><td>${v}</td><td>${wan(P*v*12)}</td><td>${wan(pts[v*12])}</td><td>${wan(pts[v*12]-P*v*12)}</td></tr>`).join('')}</table></div></div>
+      <p class="note">以每月月初投入、固定年化報酬率逐月複利計算，不含任何保單費用、保險成本與稅負；實際報酬會有漲跌，這是試算，不代表未來實際結果。</p>`;
+  }
+  ['qP','qY'].forEach(id=>$('#'+id).addEventListener('input',run));
+  $('#qR').addEventListener('input',()=>{$('#qRN').value=$('#qR').value; run();});
+  $('#qRN').addEventListener('input',()=>{$('#qR').value=Math.min(20,+$('#qRN').value||0); run();});
+  run();
 })();
 /* 配色切換 */
 (function(){ const P=[['blue','舒適藍','淡藍＋白，長時間看最不累（推薦）',['#4a86bd','#e6eff8','#d3a35f']],['white','簡約白','全白底＋灰藍，乾淨俐落',['#5a6b7d','#ffffff','#c2a175']],['warm','柔和暖杏','淡鼠尾草綠＋米色，溫暖護眼',['#7c9e82','#eef2ea','#d39a76']],['green','經典墨綠','墨綠＋香檳金，原本的配色',['#24594c','#13211d','#a8844f']]];
