@@ -694,8 +694,8 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
       </button>
       <button class="door r" data-g="rate" aria-pressed="false" type="button" style="grid-column:1/-1">
         <span class="tag">2%～20%・自己選</span>
-        <span class="t">依目標報酬率找標的</span>
-        <span class="muted">想要每年 6%？還是拚 15%？選一個數字，直接列出配息率或報酬率最接近的月配息型、累積型標的，附團隊評分和風險指數。</span>
+        <span class="t">依目標配息率找月配息標的</span>
+        <span class="muted">想要每年配息 6%？還是 10%？選一個數字，直接列出配息率最接近的月配息標的，附團隊評分和風險指數。</span>
       </button>
     </div>
     <div class="card macro" id="macroCard">
@@ -996,17 +996,17 @@ function showRate(push=true){
   v.innerHTML=`<div style="display:flex;flex-direction:column;gap:22px">
     <button class="back" type="button" id="zBack">← 回到選項</button>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <span class="eyebrow">02 挑選標的・依目標報酬率</span>
-      <h2>你希望一年大約多少 %？</h2>
-      <p class="lead">選一個數字，列出配息率（月配息型）或五年年化報酬（累積型）最接近的標的，各取團隊評分最高的 3 檔。沒有剛好的，就列出最接近的。</p>
+      <span class="eyebrow">02 挑選標的・依目標配息率</span>
+      <h2>你希望每年配息大約多少 %？</h2>
+      <p class="lead">選一個數字，列出近一年配息率最接近的月配息標的，取團隊評分最高的 3 檔。沒有剛好的，就列出最接近的。</p>
     </div>
     <div class="card" style="display:flex;flex-direction:column;gap:14px">
       <div class="quick" id="rQ">${Q.map(x=>`<button type="button" data-v="${x}">${x}%</button>`).join('')}</div>
-      <div class="ctrl"><label for="rRate">目標年化</label><span class="val" id="rRateV"></span><input type="range" id="rRate" min="2" max="20" step="0.5" value="${curRate}"></div>
+      <div class="ctrl"><label for="rRate">目標配息率</label><span class="val" id="rRateV"></span><input type="range" id="rRate" min="2" max="20" step="0.5" value="${curRate}"></div>
     </div>
     <div class="card" id="rPick"></div>
   </div>`;
-  const run=()=>{curRate=+$('#rRate').value; $('#rRateV').textContent=curRate.toFixed(1)+'%'; $$('#rQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===curRate)); pickRun(curRate,$('#rPick'),false);};
+  const run=()=>{curRate=+$('#rRate').value; $('#rRateV').textContent=curRate.toFixed(1)+'%'; $$('#rQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===curRate)); pickRun(curRate,$('#rPick'),false,true);};
   $('#rQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $('#rRate').value=b.dataset.v; run();});
   $('#rRate').addEventListener('input',run);
   $('#rPick').addEventListener('click',e=>{const b=e.target.closest('.pc[data-id]'); if(b) openAny(b.dataset.id);});
@@ -1292,16 +1292,16 @@ function pcard(p,i,kind){const [rl,rc]=riskLbl(p.sd); const has=!!FD[p.id];
     <span class="codes">${p.cd.map(([k,v])=>`<span>${esc(k)} <b>${esc(v)}</b></span>`).join('')}${p.ncd>3?`<span>等 ${p.ncd} 家</span>`:''}</span>
     <span class="small jade">${has?'看完整分析（含五年模擬）':'看內容、建議與連結的保險公司'} →</span>
   </button>`;}
-function pickRun(r=+$('#cRate').value,el=$('#cPick'),title=true){ const m=near('m',r), a=near('a',r);
+function pickRun(r=+$('#cRate').value,el=$('#cPick'),title=true,mOnly=false){ const m=near('m',r), a=mOnly?{out:[],w:0}:near('a',r);
   const head=(x,lbl)=>x.w>0.5?`<p class="note">沒有剛好 ${r}% 的${lbl}，列出 ${Math.max(0,r-x.w)}%～${r+x.w}% 之間評分最高的。</p>`:'';
   el.innerHTML=`${title?`<h3>配息率 ${r}% 附近，可以考慮的標的</h3>`:''}
     <p class="muted small">依你選的配息率，從可連結 5 家以上壽險的美元／台幣標的中，列出團隊評分最高的 3 檔。</p>
     <h4 class="ph">月配息型（每月領現金，看近一年配息率）</h4>${head(m,'月配息標的')}
     ${m.out.length?`<div class="pgrid">${m.out.map((p,i)=>pcard(p,i,'m')).join('')}</div>`:'<p class="muted">這個配息率附近沒有符合條件的月配息標的。</p>'}
     ${r>10?'<div class="warn" style="margin-top:10px"><b>要注意：</b>配息率超過 10% 的標的，配息大多有一部分來自本金，「本金每年約」是負的就代表本金在縮水。</div>':''}
-    <h4 class="ph">累積型（不配息，用五年年化報酬對照）</h4>${head(a,'累積型標的')}
-    ${a.out.length?`<div class="pgrid">${a.out.map((p,i)=>pcard(p,i,'a')).join('')}</div>`:'<p class="muted">這個報酬率附近沒有符合條件的累積型標的。</p>'}
-    ${r>=12?'<div class="warn" style="margin-top:10px"><b>要注意：</b>五年年化超過 12% 的多是單一產業或單一國家的股票基金，過去漲得多、跌起來也深，不能把過去報酬當成未來的配息。</div>':''}
+    ${mOnly?'':`<h4 class="ph">累積型（不配息，用五年年化報酬對照）</h4>${head(a,'累積型標的')}
+    ${a.out.length?`<div class="pgrid">${a.out.map((p,i)=>pcard(p,i,'a')).join('')}</div>`:'<p class="muted">這個報酬率附近沒有符合條件的累積型標的。</p>'}`}
+    ${!mOnly&&r>=12?'<div class="warn" style="margin-top:10px"><b>要注意：</b>五年年化超過 12% 的多是單一產業或單一國家的股票基金，過去漲得多、跌起來也深，不能把過去報酬當成未來的配息。</div>':''}
     ${[...m.out,...a.out].some(p=>p.em)?`<div class="emwarn" style="margin-top:12px"><b>⚠ 新興市場警語</b>${esc(EMWARN.split('：')[1])}</div>`:''}
     <p class="note" style="margin-top:10px">「本金每年約」＝五年年化總報酬－近一年配息率的估算值。評分依歷史資料量化排序，不代表未來績效，也不構成投資建議。</p>`;}
 $('#cPick').addEventListener('click',e=>{const b=e.target.closest('.pc[data-id]'); if(!b)return; retCalc='calc'; go('pick'); openAny(b.dataset.id);});
