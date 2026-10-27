@@ -559,6 +559,32 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
 
 .qs{background:linear-gradient(135deg,var(--paper),var(--jade-soft))}
 .sarule{font-size:13px;line-height:1.6;margin-top:6px;color:var(--ink)}.sarule .ok{color:var(--jade)}.sarule .bad{color:var(--red)}.sarule a{color:inherit}
+
+/* 05 定期定額：精簡版面 */
+.dmode{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dmode button{display:flex;flex-direction:column;gap:3px;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--paper);border:1.5px solid var(--line);border-radius:14px;padding:14px 16px}
+.dmode button b{font-size:17px}.dmode button em{font-style:normal;font-size:13px;color:var(--muted)}
+.dmode button[aria-selected="true"]{border-color:var(--jade);background:var(--jade-soft);box-shadow:0 3px 0 var(--jade-deep)}
+@media (max-width:560px){.dmode button em{display:none}}
+#p-dca.m-q #dInsCard,#p-dca.m-q #dFundCard,#p-dca.m-q #dMain,#p-dca.m-q #dPlanHead{display:none!important}
+#p-dca.m-i #qsCard{display:none!important}
+.stephd{display:flex;justify-content:space-between;align-items:center;gap:10px}.stephd h3{margin:0}
+.chg{display:none;font:inherit;font-size:14px;cursor:pointer;background:none;border:1px solid var(--line);border-radius:999px;padding:4px 14px;color:var(--jade)}
+#dInsCard.picked .chg,#dFundCard.picked .chg{display:inline-block}
+#dInsCard.picked .insgrid{margin-top:10px}
+#dInsCard.picked .insb:not([aria-pressed="true"]){display:none}
+#dInsCard.picked .insgrid{grid-template-columns:minmax(0,320px)}
+#dFundCard.picked #dSearch,#dFundCard.picked #dSort,#dFundCard.picked .ctrl{display:none}
+#dFundCard.picked .fi:not([aria-pressed="true"]){display:none}
+#dFundCard.picked .flist{margin-top:10px;max-height:none}
+details.fold{padding:0}
+details.fold>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:16px 20px}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold>summary h3{margin:0;font-size:17px}
+details.fold>summary::after{content:"展開 ▾";font-size:13px;color:var(--jade);white-space:nowrap}
+details.fold[open]>summary::after{content:"收合 ▴"}
+details.fold>.fbody{padding:0 20px 18px}
+.mfold>summary{cursor:pointer;list-style:none}.mfold>summary::-webkit-details-marker{display:none}.mfold>summary::after{content:' 點開看 ▾';font-size:13px;color:var(--jade);font-weight:400}.mfold[open]>summary::after{content:' 收合 ▴'}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -855,7 +881,11 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
   <div style="display:flex;flex-direction:column;gap:10px">
     <span class="eyebrow">05 定期定額模擬</span>
     <h2>每個月存一筆進投資型保單，幾年後大約有多少？</h2>
-    <p class="lead">先選保險公司，再選這家可以連結的標的，年期自己調。系統依該公司投資型壽險的前置費用、保單管理費、依生命表計算的保險成本與解約費用，逐月推算扣完費用後的帳戶價值。</p>
+    <p class="lead">想快速看方向用「快速試算」；要算到各家保單實際扣完費用的結果，切到「依保險公司試算」。</p>
+  </div>
+  <div class="dmode" id="dMode" role="tablist" aria-label="試算方式">
+    <button type="button" role="tab" data-v="q" aria-selected="true"><b>快速試算</b><em>不分保險公司，只填金額、報酬、年期</em></button>
+    <button type="button" role="tab" data-v="i" aria-selected="false"><b>依保險公司試算</b><em>選公司、選標的，扣掉實際保單費用</em></button>
   </div>
   <div class="planhead" id="dPlanHead" hidden></div>
   <div class="card qs" id="qsCard">
@@ -869,8 +899,8 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
       <div class="result" id="qOut"></div>
     </div>
   </div>
-  <div class="card" id="dInsCard"><h3>① 選保險公司</h3><div class="insgrid" id="dIns"></div></div>
-  <div class="card" id="dFundCard" hidden><h3>② 選標的 <span class="muted small" id="dFundCnt"></span></h3>
+  <div class="card" id="dInsCard"><div class="stephd"><h3>① 選保險公司</h3><button type="button" class="chg" id="dInsChg">更換</button></div><div class="insgrid" id="dIns"></div></div>
+  <div class="card" id="dFundCard" hidden><div class="stephd"><h3>② 選標的 <span class="muted small" id="dFundCnt"></span></h3><button type="button" class="chg" id="dFundChg">更換</button></div>
     <div class="ctrl" style="max-width:420px;margin:8px 0 10px"><input type="search" id="dSearch" placeholder="搜尋基金名稱或代號" aria-label="搜尋基金"></div>
     <div class="quick" id="dSort" style="margin-bottom:10px"><button type="button" data-v="sc" aria-pressed="true">團隊評分高→低</button><button type="button" data-v="r">風險低→高</button><button type="button" data-v="n">名稱</button></div>
     <div class="flist" id="dFunds"></div></div>
@@ -1943,12 +1973,12 @@ function dRun(){
    <div class="card"><h3>帳戶價值預估（年化 ${(rate*100).toFixed(1)}%）</h3>
      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="未來帳戶價值預估">${ticks.map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}${area}${ln(P,z=>z.cum,'var(--muted)',1.5,'4 4')}${ln(P,z=>z.av+z.cash,'var(--jade)',3)}<circle cx="${x(n-1)}" cy="${y(L.av+r.cash)}" r="5" fill="var(--jade)"/>${yl}</svg>
      <div class="legend" style="margin-top:6px"><span><i style="background:var(--jade)"></i>投資型保單（扣完費用）</span><span><i style="background:var(--jade);opacity:.3"></i>八成機率區間（${pct(rLo*100)}～${pct(rHi*100)}）</span><span><i style="background:var(--muted)"></i>累計投入</span></div>
-     ${dOpt.rate==='hist'?`<div class="method"><b>「依過往績效」怎麼算（${pct(dHist(f))}）</b>
+     ${dOpt.rate==='hist'?`<details class="method mfold"><summary><b>「依過往績效」怎麼算（${pct(dHist(f))}）</b></summary>
        <table class="t rules"><tr><td>十年定期定額</td><td>${f.d10!=null?'每月扣款實際年化 '+pct(f.d10):'成立未滿十年，改用五年資料'}</td></tr>
        <tr><td>五年定期定額</td><td>${f.d5!=null?'每月扣款實際年化 '+pct(f.d5):'—'}</td></tr>
        <tr><td>單筆長期年化</td><td>${f.l10!=null?'十年 '+pct(f.l10):''}${f.l10!=null&&f.l5!=null?'・':''}${f.l5!=null?'五年 '+pct(f.l5):''}</td></tr>
        <tr><td>同類長期平均</td><td>${esc(f.k||'同類')} 約 ${f.base}%</td></tr></table>
-       <p class="note" style="margin-top:6px">先把這檔自己的歷史（${f.d10!=null?'十年定期定額 5 成、十年單筆 2.5 成、五年定期定額 2.5 成':'五年定期定額 6 成、五年單筆 4 成'}）合成 ${pct(f.H)}，再和同類長期平均以 7：3 加權，最高不超過同類平均＋5%（${f.base+5}%），避免把過去少見的大漲直接套到未來。報酬皆含配息、以基金原幣計算（資料：MoneyDJ，至 2026/10/20）。樂觀／保守區間依年化波動 ${f.sd!=null?f.sd.toFixed(1):'—'}% 推估，年期越長區間越窄。</p></div>`:''}
+       <p class="note" style="margin-top:6px">先把這檔自己的歷史（${f.d10!=null?'十年定期定額 5 成、十年單筆 2.5 成、五年定期定額 2.5 成':'五年定期定額 6 成、五年單筆 4 成'}）合成 ${pct(f.H)}，再和同類長期平均以 7：3 加權，最高不超過同類平均＋5%（${f.base+5}%），避免把過去少見的大漲直接套到未來。報酬皆含配息、以基金原幣計算（資料：MoneyDJ，至 2026/10/20）。樂觀／保守區間依年化波動 ${f.sd!=null?f.sd.toFixed(1):'—'}% 推估，年期越長區間越窄。</p></details>`:''}
      ${dOpt.rate==='yld'&&f.r5!=null&&f.r5<f.y?`<div class="warn" style="margin-top:12px"><b>要注意：</b>這檔目前配息率 ${f.y.toFixed(1)}%，但過去五年含息年化只有 ${f.r5.toFixed(1)}%，配息有一部分來自本金。用配息率當報酬率會高估，建議同時看「過去五年年化」或保守 4%。</div>`:''}
      ${rate>0.1?'<div class="warn" style="margin-top:12px"><b>要注意：</b>年化超過 10% 的假設偏樂觀，多半來自過去特定產業大漲，未來不一定重現。</div>':''}</div>
    <div class="card"><h3>${yrs} 年會被扣掉的成本：${wan(fee)}<span class="muted small">（佔投入 ${(fee/r.cum*100).toFixed(1)}%）</span></h3>
@@ -2219,7 +2249,7 @@ function showIns(name){
   const close=()=>{sh.remove(); document.body.style.overflow='';};
   sh.addEventListener('click',e=>{ if(e.target===sh) close(); }); sh.querySelector('#shX').addEventListener('click',close);
   document.addEventListener('keydown',function esck(e){ if(e.key==='Escape'){close(); document.removeEventListener('keydown',esck);} });
-  const bd=sh.querySelector('#shDca'); if(bd) bd.addEventListener('click',()=>{close(); go('dca'); $$('.insb').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===di)); dSelIns(di);});
+  const bd=sh.querySelector('#shDca'); if(bd) bd.addEventListener('click',()=>{close(); go('dca'); dSetMode('i'); $$('.insb').forEach(x=>x.setAttribute('aria-pressed',+x.dataset.i===di)); dSelIns(di);});
   const bl=sh.querySelector('#shLoan'); if(bl) bl.addEventListener('click',()=>{close(); go('loan'); mOpt.ins=mi; mOpt.mode=mOpt.mode==='c'?'a':mOpt.mode; $$('#mMode button').forEach(x=>x.setAttribute('aria-selected',x.dataset.v===mOpt.mode)); $('#mIns').value=mi; mModeUI(); mFunds(); mRun();});
 }
 document.addEventListener('click',e=>{const b=e.target.closest('.insl'); if(b) showIns(b.dataset.ins);});
@@ -2314,6 +2344,24 @@ function showTerm(t){
   sh.querySelectorAll('.glr').forEach(b=>b.addEventListener('click',()=>showTerm(b.dataset.t)));
   const gb=sh.querySelector('#glGo'); if(gb) gb.addEventListener('click',()=>{close(); go(pg);});
 }
+
+/* 05 精簡版面：模式切換、選完收合、次要卡片折疊 */
+function dSetMode(m){const sec=$('#p-dca'); sec.classList.toggle('m-q',m==='q'); sec.classList.toggle('m-i',m==='i');
+  $$('#dMode button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===m)); try{localStorage.setItem('dmode',m)}catch(e){} }
+function foldCards(root,re){ if(!root) return; [...root.children].forEach(c=>{ if(c.tagName!=='DIV'||!c.classList.contains('card')) return; const h=c.querySelector(':scope>h3'); if(!h||!re.test(h.textContent)) return;
+  const d=document.createElement('details'); d.className=c.className+' fold'; const sm=document.createElement('summary'); sm.appendChild(h); const bd=document.createElement('div'); bd.className='fbody';
+  while(c.firstChild) bd.appendChild(c.firstChild); d.append(sm,bd); c.replaceWith(d); }); }
+(function(){
+  const sec=$('#p-dca'); let m='q'; try{m=localStorage.getItem('dmode')||'q'}catch(e){} dSetMode(m==='i'?'i':'q');
+  $('#dMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) dSetMode(b.dataset.v);});
+  $('#dIns').addEventListener('click',e=>{ if(e.target.closest('.insb')) { $('#dInsCard').classList.add('picked'); $('#dFundCard').classList.remove('picked'); } });
+  $('#dFunds').addEventListener('click',e=>{ if(e.target.closest('.fi')) $('#dFundCard').classList.add('picked'); });
+  $('#dInsChg').addEventListener('click',()=>{$('#dInsCard').classList.remove('picked');});
+  $('#dFundChg').addEventListener('click',()=>{$('#dFundCard').classList.remove('picked'); $('#dFundCard').scrollIntoView({behavior:'smooth',block:'start'});});
+  const RE=/逐年明細|費用規則|會被扣掉的成本/;
+  const ob=(id)=>{const el=$(id); new MutationObserver(()=>{ if(el.querySelector(':scope>div.card>h3')) foldCards(el,RE); }).observe(el,{childList:true});};
+  ob('#dOut'); ob('#qOut'); foldCards($('#qOut'),RE); foldCards($('#dOut'),RE);
+})();
 /* 業務小工具 */
 function toast(m){const t=$('#toast'); t.textContent=m; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,2200);}
 $('#dkTop').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
@@ -2374,7 +2422,7 @@ function syncQuick(){
   set('#dPQ',$('#dP').value); set('#dSaQ',$('#dSa').value); set('#dYQ',$('#dY').value); set('#dSex',dOpt.sex); set('#dType',dOpt.type); set('#dDiv',dOpt.div);
 }
 function loadPlan(qs){
-  const q=new URLSearchParams(qs); go('dca',false);
+  const q=new URLSearchParams(qs); go('dca',false); dSetMode('i');
   const iv=q.get('i'), i=/^\d+$/.test(iv||'')&&DD.prod[+iv]?+iv:DD.prod.findIndex(p=>p.ins===iv), fid=q.get('f');
   if(i<0||!DD.funds[fid]) return false;
   const k=DD.ins.indexOf(DD.prod[i].ins); if(DD.funds[fid].cd[k]==null) return false;
