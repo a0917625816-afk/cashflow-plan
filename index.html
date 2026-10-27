@@ -558,6 +558,7 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
 .evlist span{display:flex;flex-direction:column;gap:2px}.evlist b{font-size:14.5px}.evlist em{font-style:normal;font-size:13.5px;color:var(--muted)}
 
 .qs{background:linear-gradient(135deg,var(--paper),var(--jade-soft))}
+.sarule{font-size:13px;line-height:1.6;margin-top:6px;color:var(--ink)}.sarule .ok{color:var(--jade)}.sarule .bad{color:var(--red)}.sarule a{color:inherit}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -831,7 +832,7 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
         <div class="ctrl"><label for="pAmt">起始本金（萬元）</label><input type="number" id="pAmt" min="10" step="10" value="1000"><div class="quick" id="pAmtQ"></div></div>
         <div class="ctrl"><label for="pRate">年化配息率</label><span class="val" id="pRateV"></span><input type="range" id="pRate" min="2" max="15" step="0.5" value="8"></div>
         <div class="ctrl"><label for="pCut">配息撥入六年期保單的比例</label><span class="val" id="pCutV"></span><input type="range" id="pCut" min="5" max="100" step="5" value="30"><div class="quick" id="pCutQ"></div></div>
-        <div class="ctrl"><label for="pSix">六年期保單年化報酬（%）</label><input type="number" id="pSix" min="0" max="10" step="0.1" value="3.2"></div>
+        <div class="ctrl"><label for="pSix">六年期保單年化報酬（%）</label><input type="number" id="pSix" min="0" max="10" step="0.1" value="0"></div>
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">跑幾輪（每輪 6 年）</span><div class="quick" id="pRnd"></div></div>
         <div class="ctrl"><label for="pNav">假設本金（淨值）每年變化</label><span class="val" id="pNavV"></span><input type="range" id="pNav" min="-4" max="4" step="0.5" value="0">
           <span class="note">配息若有部分來自本金，淨值可能逐年下滑；保守試算可設為負值。</span></div>
@@ -883,7 +884,7 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">年化報酬假設</span><div class="quick" id="dRate"></div><input type="range" id="dRC" min="0" max="15" step="0.5" value="6" aria-label="自訂年化報酬" hidden></div>
         <div class="ctrl"><label for="dAge">現在年齡</label><input type="number" id="dAge" min="15" max="75" value="40"></div>
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">性別</span><div class="quick" id="dSex"><button type="button" data-v="m" aria-pressed="true">男</button><button type="button" data-v="f">女</button></div></div>
-        <div class="ctrl"><label for="dSa">壽險保額（萬元）</label><input type="number" id="dSa" min="0" step="10" value="100"><div class="quick" id="dSaQ"></div></div>
+        <div class="ctrl"><label for="dSa">壽險保額（萬元）</label><input type="number" id="dSa" min="0" step="10" value="100"><div class="quick" id="dSaQ"></div><div class="sarule" id="dSaRule"></div></div>
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">保險型態</span><div class="quick" id="dType"><button type="button" data-v="A" aria-pressed="true">甲型（保額與帳戶價值取高）</button><button type="button" data-v="B">乙型（保額＋帳戶價值）</button></div></div>
         <div class="ctrl" hidden><span style="font-size:14px;color:var(--muted)">配息處理</span><div class="quick" id="dDiv"><button type="button" data-v="reinvest" aria-pressed="true">配息再投入</button><button type="button" data-v="cash">現金領回</button></div></div>
         <details class="adv"><summary>進階：自行修改費率</summary><div id="dAdv" style="display:flex;flex-direction:column;gap:10px;margin-top:10px"></div></details>
@@ -1800,6 +1801,51 @@ function addFut(id){ const box=$('#fundView').firstElementChild; const fa=box&&b
 /* ---------- 05 定期定額模擬器 ---------- */
 let DD=null, dIns=null, dFund=null, dProd=null, dOpt={sex:'m',type:'A',div:'reinvest',sort:'sc',rate:'auto',custom:6};
 const SHORTN=n=>n.replace(/人壽.*$/,'');
+/* 各家壽險保額規則（壽險公會「投資型保險商品核保及銷售規範」與商品 DM；查不到的不放） */
+const SA_FB=[[60,68,92,92],[59,67,92,92],[57,65,92,92],[57,65,92,92],[57,65,92,92],[57,65,92,92],[54,60,92,92],[52,59,92,92],[51,58,92,92],[50,57,92,92],[49,56,92,92],[48,55,92,92],[47,54,92,92],[47,53,92,92],[46,52,92,92],[45,50,92,92],[45,50,190,240],[43,49,190,240],[42,48,190,240],[41,47,190,240],[41,46,190,240],[40,45,185,230],[39,44,180,225],[38,43,175,220],[38,43,170,215],[37,42,165,210],[36,41,160,200],[36,40,155,195],[35,39,150,190],[34,39,145,185],[34,38,140,180],[33,37,135,170],[32,36,130,165],[32,36,125,160],[31,35,120,155],[31,35,115,150],[30,34,110,140],[29,33,105,135],[29,32,100,130],[28,32,95,125],[28,31,90,120],[27,31,85,110],[27,30,85,105],[26,29,80,100],[26,29,80,95],[25,28,75,90],[25,28,75,90],[24,27,70,85],[24,27,70,85],[23,26,65,80],[23,26,65,80],[22,25,60,70],[22,25,60,70],[21,24,55,65],[21,24,55,65],[20,23,50,60],[20,23,50,60],[20,22,45,55],[19,22,45,55],[19,21,40,50],[18,21,40,50],[18,20,35,45],[17,20,35,45],[17,19,30,40],[16,19,30,40],[16,18,25,35],[15,18,25,35],[15,17,25,30],[15,17,20,30],[14,16,20,25],[14,16,16,25]];
+const SA_RULES={
+ '富邦人壽':{age:[0,70],minAnn:24000,src:'https://lia-roc.org.tw/storage/uploads/6639e17fea628.pdf',
+   note:'富貴吉祥(V2) 的倍數表未公開，暫用同公司「年年吉祥變額萬能壽險」核保規範（113.01）的倍數表推估',
+   f(a,s,ann){const r=SA_FB[Math.min(70,Math.max(0,a))], m=s==='f'; return {min:ann*r[m?1:0],max:Math.min(6e7,ann*r[m?3:2]),how:`年繳化目標保費 × ${r[m?1:0]}～${r[m?3:2]} 倍`};}},
+ '保誠人壽':{age:[15,65],minMon:3000,src:'https://www.pcalife.com.tw/content/dam/prudential-aem-lbu/pcalt/zh_TW/products/investment-linked-insurance/rvl2-rvlf1-dm.pdf',
+   note:'享保障變額萬能壽險 DM：基本保額＝月繳化目標保費 × 保額倍數（固定倍數）',
+   f(a,s,ann){const B=[[25,1320],[30,1020],[35,840],[40,660],[45,480],[50,360],[60,300],[65,240]], x=(B.find(b=>a<=b[0])||B[B.length-1])[1], v=ann/12*x; return {min:v,max:v,how:`月繳目標保費 × ${x} 倍`};}},
+ '遠雄人壽':{age:[15,64],minAnn:24000,src:'https://www.liaroc.org.tw/storage/uploads/6639e1b64dd83.pdf',
+   note:'金吉利變額萬能壽險核保規範：最低 10 萬、最高 3,000 萬（倍數表未公開）',
+   f(){return {min:1e5,max:3e7,how:'最低 10 萬、最高 3,000 萬'};}},
+ '安達人壽':{age:[15,80],minAnn:24000,src:'https://lia-roc.org.tw/storage/uploads/66aae1bd19647.pdf',
+   note:'鴻利鑫喜變額萬能壽險核保規範（113.07）：最低 10 萬；最高依年齡 2 億／1.3 億／4,000 萬（倍數表未公開）',
+   f(a){return {min:1e5,max:a<=60?2e8:a<=70?1.3e8:4e7,how:'最低 10 萬，最高依年齡'};}},
+ '三商美邦人壽':{age:[0,70],minAnn:12000,src:'https://www.liaroc.org.tw/storage/uploads/6807478419e11.pdf',
+   note:'金世紀達利變額萬能終身壽險核保規範（114.03）：最高甲型 6,000 萬、乙型 4,000 萬；最低依「投保倍數限制表」（未公開）',
+   f(a,s,ann,t){return {min:null,max:a<15?69e4:(t==='B'?4e7:6e7),how:'最高甲型 6,000 萬／乙型 4,000 萬'};}},
+ '法國巴黎人壽':{src:'https://life.cardif.com.tw/documents/418719/461863/Vie_SPM_UL0090.pdf',
+   note:'新滿富足變額萬能壽險：基本保額＝已繳保費總額 × 要保人指定的百分比，沒有固定倍數表；新契約保費下限 10 萬元',
+   f(){return null;}}
+};
+function saRange(){
+  if(dIns==null) return null; const R=SA_RULES[DD.prod[dIns].ins]; if(!R) return {none:true};
+  const a=+$('#dAge').value||40, ann=(+$('#dP').value||0)*12, r=R.f(a,dOpt.sex,ann,dOpt.type)||{};
+  const warn=[]; if(R.age&&(a<R.age[0]||a>R.age[1])) warn.push(`投保年齡為 ${R.age[0]}～${R.age[1]} 歲`);
+  if(R.minAnn&&ann<R.minAnn) warn.push(`年繳化目標保費最低 ${R.minAnn.toLocaleString()} 元（每月 ${(R.minAnn/12).toLocaleString()} 元）`);
+  if(R.minMon&&ann/12<R.minMon) warn.push(`月繳目標保費最低 ${R.minMon.toLocaleString()} 元`);
+  return {...r,R,warn};
+}
+function saApply(auto){
+  const box=$('#dSaRule'); if(!box) return; const x=saRange(); if(!x){box.innerHTML='';return;}
+  if(x.none){box.innerHTML='<span class="muted">這家的保額上下限沒有查到公開資料，請以保險公司建議書系統為準。</span>';return;}
+  const W=v=>v>=1e8?(+(v/1e8).toFixed(2))+' 億':Math.round(v/1e4).toLocaleString()+' 萬';
+  const lo=x.min!=null?Math.ceil(x.min/1e4):null, hi=x.max!=null?Math.floor(x.max/1e4):null, cur=+$('#dSa').value||0;
+  let msg='';
+  if(auto&&lo!=null&&(cur<lo||(hi!=null&&cur>hi)||x.min===x.max)){ $('#dSa').value=lo; $$('#dSaQ button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v==lo)); msg='已自動帶入最低保額。'; }
+  else if(auto&&lo==null&&hi!=null&&cur>hi){ $('#dSa').value=hi; msg='已調整為最高保額。'; }
+  const v=+$('#dSa').value||0, bad=(lo!=null&&v<lo)||(hi!=null&&v>hi);
+  const rng=lo!=null&&hi!=null?(lo===hi?`${W(x.min)}（${x.how}）`:`${W(x.min)}～${W(x.max)}（${x.how}）`):x.how?`${x.how}${hi!=null?`，此條件最高約 ${W(x.max)}`:''}`:'';
+  box.innerHTML=(rng?`<b>可投保保額：</b>${rng}　`:'')+(msg?`<span class="ok">${msg}</span>`:'')+(bad?`<span class="bad">目前保額超出範圍。</span>`:'')
+   +(x.warn.length?`<br><span class="bad">注意：${x.warn.join('；')}</span>`:'')
+   +`<br><span class="muted">${esc(x.R.note)}・<a href="${x.R.src}" target="_blank" rel="noopener">來源</a>・實際以保險公司核保為準</span>`;
+}
+
 function dcaInit(){
   if(DD) return; DD=JSON.parse(document.getElementById('ddata').textContent);
   $('#dIns').innerHTML=DD.prod.map((p,i)=>{const k=DD.ins.indexOf(p.ins); const cnt=Object.values(DD.funds).filter(f=>f.cd[k]!=null&&!(f.d||f.y)).length;
@@ -1810,19 +1856,20 @@ function dcaInit(){
   $('#dSaQ').innerHTML=[50,100,200,300].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===100}">${v} 萬</button>`).join('');
   $('#dYQ').innerHTML=[5,10,15,20,30].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===20}">${v} 年</button>`).join('');
   const qb=(id,cb)=>$(id).addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $$(id+' button').forEach(x=>x.setAttribute('aria-pressed',x===b)); cb(b.dataset.v);});
-  qb('#dPQ',v=>{$('#dP').value=v; dRun();}); qb('#dSaQ',v=>{$('#dSa').value=v; dRun();});
+  qb('#dPQ',v=>{$('#dP').value=v; saApply(true); dRun();}); qb('#dSaQ',v=>{$('#dSa').value=v; saApply(false); dRun();});
   qb('#dYQ',v=>{$('#dY').value=v; dRun();});
-  qb('#dSex',v=>{dOpt.sex=v; dRun();}); qb('#dType',v=>{dOpt.type=v; dRun();}); qb('#dDiv',v=>{dOpt.div=v; dRun();});
+  qb('#dSex',v=>{dOpt.sex=v; saApply(true); dRun();}); qb('#dType',v=>{dOpt.type=v; saApply(true); dRun();}); qb('#dDiv',v=>{dOpt.div=v; dRun();});
   qb('#dSort',v=>{dOpt.sort=v; dList();});
   $('#dRate').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; dOpt.rate=b.dataset.v; dRun();});
   $('#dRC').addEventListener('input',e=>{dOpt.custom=+e.target.value; dOpt.rate='custom'; dRun();});
+  ['dP','dAge'].forEach(id=>$('#'+id).addEventListener('change',()=>{saApply(true); dRun();})); $('#dSa').addEventListener('input',()=>saApply(false));
   ['dP','dE','dAge','dSa'].forEach(id=>$('#'+id).addEventListener('input',dRun));
   $('#dY').addEventListener('input',()=>{$$('#dYQ button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===$('#dY').value)); dRun();});
   $('#dSearch').addEventListener('input',dList);
   $('#dFunds').addEventListener('click',e=>{const b=e.target.closest('.fi'); if(!b)return; $$('.fi').forEach(x=>x.setAttribute('aria-pressed',x===b)); dFund=b.dataset.id; dOpt.rate='auto'; $('#dMain').hidden=false; dRun(); $('#dMain').scrollIntoView({behavior:'smooth',block:'start'});});
 }
 function dSelIns(i,scroll=true){
-  dIns=i; dProd=JSON.parse(JSON.stringify(DD.prod[i])); $('#dFundCard').hidden=false; dFund=null; $('#dMain').hidden=true; dList(); dAdv();
+  dIns=i; dProd=JSON.parse(JSON.stringify(DD.prod[i])); $('#dFundCard').hidden=false; dFund=null; $('#dMain').hidden=true; dList(); dAdv(); saApply(true);
   if(scroll) $('#dFundCard').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function dList(){
@@ -2223,13 +2270,13 @@ const GL=[
  ['解約金','保單','現在解約實際拿得回來的錢','帳戶價值扣掉解約費用（和保單借款）後的金額。','帳戶 100 萬、解約費用 5%：解約金 95 萬。','',['帳戶價值','解約費用'],'dca'],
  ['帳戶價值','保單','保單裡投資部位現在值多少','所有投資標的單位數 × 淨值，加上貨幣帳戶等。每天隨淨值變動。','持有 10 萬單位、淨值 10.5 元：帳戶價值 105 萬。','',['解約金','淨值'],'dca'],
  ['高保費優惠','保單','保費夠多就免收部分費用','累積所繳保費（扣掉提領）達門檻，例如 300 萬，當月免收保單管理費。','','大額客戶記得提醒這項優惠。',['保單管理費'],'loan'],
- ['宣告利率','保單','利變型保單每月公布的計息利率','利率變動型保單依保險公司每月公布的宣告利率累積，會隨市場調整，不是保證。','本站印鈔機專案的六年期保單，以年化 3.2% 估算。','',['印鈔機專案'],'grow'],
+ ['宣告利率','保單','利變型保單每月公布的計息利率','利率變動型保單依保險公司每月公布的宣告利率累積，會隨市場調整，不是保證。','本站印鈔機專案的六年期保單利率預設為 0%，可自行填入。','',['印鈔機專案'],'grow'],
  ['本息平均攤還','房貸','每月繳一樣的金額','每月月付固定，前期繳的大多是利息，後期大多是本金。預算好安排，總利息比本金平均略多。','1000 萬、30 年、2.3%：每月約 38,480 元。','',['本金平均攤還','寬限期'],'loan'],
  ['本金平均攤還','房貸','每月還一樣的本金，月付逐月遞減','每月本金固定，利息隨餘額減少，所以月付一開始高、之後越來越少。總利息比本息平均少。','1000 萬、30 年、2.3%：第一期約 46,944 元，最後一期約 27,831 元。','',['本息平均攤還'],'loan'],
  ['寬限期','房貸','前幾年只繳利息、不還本金','寬限期內月付較低，但本金沒減少，寬限期後月付會變高，總利息也較多。','1000 萬、2.3%：寬限期每月只繳約 19,167 元利息。','',['本息平均攤還'],'loan'],
  ['損益兩平報酬率','房貸','至少要賺多少才不會虧','本站試算中，含息總報酬至少要達到這個數字，房貸繳完時才不會虧（已含房貸利息）。','損益兩平 3.3%：年化總報酬低於 3.3% 就會虧。','比較時看這個數字和標的過往績效差多少。',['壓力測試'],'loan'],
  ['壓力測試','房貸','假設發生壞事時的結果','本站假設「第 2 年市場大跌 25%」和「第 3 年起房貸利率 +1%」，看最後結果會差多少。','','規劃時請客戶保留足夠預備金。',['損益兩平報酬率'],'loan'],
- ['印鈔機專案','本站用語','配息撥一部分進六年期保單，到期回填本金','每月配息分兩份：一份花用，一份繳進六年期保單；六年到期整筆回填本金，月配息升級，一輪一輪往上疊。','1000 萬、配息 8%、撥 30%：18 年後本金約 1,556 萬，月配息約 10.4 萬。','',['宣告利率','配息率'],'grow']
+ ['印鈔機專案','本站用語','配息撥一部分進六年期保單，到期回填本金','每月配息分兩份：一份花用，一份繳進六年期保單；六年到期整筆回填本金，月配息升級，一輪一輪往上疊。','1000 萬、配息 8%、撥 30%、六年期利率 0%：18 年後本金約 1,497 萬，月配息約 10 萬。','',['宣告利率','配息率'],'grow']
 ];
 const GLC=['全部','報酬與績效','基金基本','風險','保單','房貸','本站用語'];
 const TABN={why:'01 為什麼要被動收入',pick:'02 挑選標的',calc:'03 配息試算',grow:'04 資產滾大',dca:'05 定期定額模擬',find:'06 基金搜尋',loan:'07 房貸與資金規劃'};
