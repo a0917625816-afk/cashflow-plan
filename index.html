@@ -906,7 +906,7 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
   <div style="display:flex;flex-direction:column;gap:10px">
     <span class="eyebrow">07 房貸與資金規劃</span>
     <h2>房貸怎麼繳、一筆資金怎麼放，二、三十年後差多少？</h2>
-    <p class="lead">輸入房貸條件，再選一張躉繳投資型保單與月配息標的，逐月推算：每月房貸、每月配息、兩者差額，以及房貸繳完時帳戶還剩多少。</p>
+    <p class="lead">輸入房貸條件，再自己填入資金的年化配息率，逐月推算：每月房貸、每月配息、兩者差額，以及房貸繳完時本金還剩多少。</p>
   </div>
   <div class="kindtabs" id="mMode" role="tablist" aria-label="試算情境"></div>
   <div class="calc">
@@ -918,12 +918,10 @@ nav.tabs .tbar .tarr:active{transform:translateY(2px);box-shadow:none}nav.tabs .
       <div class="ctrl"><label for="mG">寬限期（只繳利息）</label><div class="quick" id="mG"></div></div>
       <div class="ctrl"><span class="lab" style="font-size:14px;color:var(--muted)">還款方式</span><div class="quick" id="mPay"><button type="button" data-v="eq" aria-pressed="true">本息平均攤還</button><button type="button" data-v="pr">本金平均攤還</button></div></div>
       <div id="mInvBox" style="display:flex;flex-direction:column;gap:16px">
-      <h3 style="margin:8px 0 0" id="mInvH">② 資金放入保單</h3>
-      <div class="ctrl"><label for="mI">放入保單的金額（萬元）</label><input type="number" id="mI" min="0" step="10" value="1000"><label class="chk" style="margin-top:6px"><input type="checkbox" id="mSame" checked> 與房貸金額相同</label></div>
-      <div class="ctrl"><label for="mIns">保險公司（躉繳投資型）</label><select id="mIns"></select></div>
-      <div class="ctrl"><label for="mF">月配息標的</label><select id="mF"></select></div>
-      <div class="ctrl"><span style="font-size:14px;color:var(--muted)">年化總報酬假設（含息）</span><div class="quick" id="mRate"></div><input type="range" id="mRC" min="0" max="15" step="0.5" value="6" aria-label="自訂年化報酬" hidden></div>
-      <div class="ctrl"><label for="mYld">每年配息率（%）</label><input type="number" id="mYld" min="0" max="15" step="0.1" value="6"><span class="note" style="margin:0">預設帶入標的目前配息率，可自行修改。</span></div>
+      <h3 style="margin:8px 0 0" id="mInvH">② 資金與配息</h3>
+      <div class="ctrl"><label for="mI">投入的金額（萬元）</label><input type="number" id="mI" min="0" step="10" value="1000"><label class="chk" style="margin-top:6px"><input type="checkbox" id="mSame" checked> 與房貸金額相同</label></div>
+      <div class="ctrl"><label for="mYld">年化配息率（%）</label><span class="val" id="mYldV"></span><input type="range" id="mYldR" min="2" max="15" step="0.5" value="8" aria-label="年化配息率拉桿"><input type="number" id="mYld" min="0" max="20" step="0.1" value="8" aria-label="年化配息率自填"><div class="quick" id="mYQ2"></div></div>
+      <div class="ctrl"><label for="mNav">本金（淨值）每年變化</label><span class="val" id="mNavV"></span><input type="range" id="mNav" min="-4" max="4" step="0.5" value="0"><span class="note" style="margin:0">配息若有部分來自本金，淨值可能逐年下滑；保守試算可設為負值。</span></div>
       </div>
     </div>
     <div class="result" id="mOut"></div>
@@ -1952,7 +1950,7 @@ function loanSched(L,r,yrs,grace,pay,bump){ /* 回傳每月 {pay,int,prin,bal} *
 function mFront(prod,amt){ let r=0; prod.front.forEach(([th,v])=>{ if(amt>=th) r=v; }); return r; }
 /* 躉繳保單逐月：AV 以年化總報酬成長，每月依配息率配出現金 */
 function mInvest(prod,I,ret,yld,months,shock){
-  const fr=mFront(prod,I), rm=Math.pow(1+ret,1/12)-1, ym=yld/12; let AV=I*(1-fr/100), cash=0;
+  const fr=mFront(prod,I), ym=yld/12, rm=ym+Math.pow(1+(ret-yld),1/12)-1; let AV=I*(1-fr/100), cash=0;
   const T={front:I*fr/100,admin:0,acct:0}, pts=[];
   for(let t=0;t<months;t++){
     const py=Math.floor(t/12);
@@ -1982,33 +1980,32 @@ function mCompare(o,ret,shock,bump){
 }
 function mInit(){
   if(mReady) return; mReady=true; if(!DD) DD=JSON.parse(document.getElementById('ddata').textContent);
-  $('#mMode').innerHTML=[['c','單純房貸試算','每月繳多少、總利息多少'],['a','房貸＋配息現金流','房貸照繳，資金放保單領月配息'],['b','提前還款 vs 保留資金','手上一筆錢：拿去還房貸，還是留著配息']].map(([v,l,t])=>`<button type="button" role="tab" data-v="${v}" aria-selected="${v===mOpt.mode}"><b>${l}</b><em>${t}</em></button>`).join('');
+  $('#mMode').innerHTML=[['c','單純房貸試算','每月繳多少、總利息多少'],['a','房貸＋配息現金流','房貸照繳，資金每月領配息'],['b','提前還款 vs 保留資金','手上一筆錢：拿去還房貸，還是留著配息']].map(([v,l,t])=>`<button type="button" role="tab" data-v="${v}" aria-selected="${v===mOpt.mode}"><b>${l}</b><em>${t}</em></button>`).join('');
   $('#mMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; mOpt.mode=b.dataset.v; $$('#mMode button').forEach(x=>x.setAttribute('aria-selected',x===b)); mModeUI(); mRun();});
   $('#mLQ').innerHTML=[500,800,1000,1500,2000].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===1000}">${v} 萬</button>`).join('');
   $('#mYQ').innerHTML=[20,30,40].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===30}">${v} 年</button>`).join('');
   $('#mG').innerHTML=[0,1,2,3,5].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===0}">${v?v+' 年':'無'}</button>`).join('');
-  $('#mIns').innerHTML=MP.map((p,i)=>`<option value="${i}">${esc(SHORTN(p.ins))}・${esc(p.p)}</option>`).join('');
   const qb=(id,cb)=>$(id).addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $$(id+' button').forEach(x=>x.setAttribute('aria-pressed',x===b)); cb(b.dataset.v);});
   qb('#mLQ',v=>{$('#mL').value=v; if($('#mSame').checked) $('#mI').value=v; mRun();});
   qb('#mYQ',v=>{$('#mY').value=v; mRun();}); qb('#mG',v=>{mOpt.grace=+v; mRun();}); qb('#mPay',v=>{mOpt.pay=v; mRun();});
-  $('#mRate').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; mOpt.rate=b.dataset.v; mRun();});
-  $('#mRC').addEventListener('input',e=>{mOpt.custom=+e.target.value; mOpt.rate='custom'; mRun();});
   $('#mR').addEventListener('input',()=>{$('#mRN').value=$('#mR').value; mRun();});
   $('#mRN').addEventListener('input',()=>{$('#mR').value=$('#mRN').value; mRun();});
   $('#mY').addEventListener('input',()=>{$$('#mYQ button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===$('#mY').value)); mRun();});
   $('#mL').addEventListener('input',()=>{ if($('#mSame').checked) $('#mI').value=$('#mL').value; $$('#mLQ button').forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===$('#mL').value)); mRun();});
   $('#mI').addEventListener('input',()=>{$('#mSame').checked=false; mRun();});
   $('#mSame').addEventListener('change',()=>{ if($('#mSame').checked) $('#mI').value=$('#mL').value; mRun();});
-  $('#mIns').addEventListener('change',()=>{mOpt.ins=+$('#mIns').value; mFunds(); mRun();});
-  $('#mF').addEventListener('change',()=>{mOpt.fund=$('#mF').value; mOpt.rate='auto'; const f=DD.funds[mOpt.fund]; if(f&&f.y) $('#mYld').value=f.y.toFixed(1); mRun();});
-  $('#mYld').addEventListener('input',mRun);
-  mFunds(); mModeUI(); mRun();
+  $('#mYQ2').innerHTML=[6,7,8,9,10].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
+  $('#mYQ2').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $('#mYld').value=b.dataset.v; $('#mYldR').value=b.dataset.v; mRun();});
+  $('#mYldR').addEventListener('input',()=>{$('#mYld').value=$('#mYldR').value; mRun();});
+  $('#mNav').addEventListener('input',mRun);
+  $('#mYld').addEventListener('input',()=>{$('#mYldR').value=$('#mYld').value; mRun();});
+  mModeUI(); mRun();
 }
 function mModeUI(){
   const b=mOpt.mode==='b'; $('#mInvBox').hidden=mOpt.mode==='c';
   $('#mBalW label').textContent=b?'目前房貸餘額（萬元）':'房貸金額（萬元）';
-  $('#mInvH').textContent=b?'② 手上這筆資金':'② 資金放入保單';
-  $('#mI').previousElementSibling.textContent=b?'手上可運用的資金（萬元）':'放入保單的金額（萬元）';
+  $('#mInvH').textContent=b?'② 手上這筆資金':'② 資金與配息';
+  $('#mI').previousElementSibling.textContent=b?'手上可運用的資金（萬元）':'投入的金額（萬元）';
   $('#mSame').parentElement.hidden=b; if(b){$('#mSame').checked=false; if(+$('#mI').value>=+$('#mL').value) $('#mI').value=Math.round(+$('#mL').value/3/10)*10||100;}
   $('#mY').previousElementSibling.previousElementSibling.textContent=b?'剩餘年期':'房貸年期';
 }
@@ -2021,28 +2018,18 @@ function mFunds(){
 function mRun(){
   if(!mReady) return;
   if(mOpt.mode==='c') return mLoanOnly();
-  if(!mOpt.fund) return;
-  const f=DD.funds[mOpt.fund], prod=MP[mOpt.ins], yrs=Math.min(40,Math.max(5,Math.round(+$('#mY').value||30)));
+  const prod={front:[[0,0]],admin:0,acct:[0],sur:[0]}, yrs=Math.min(40,Math.max(5,Math.round(+$('#mY').value||30)));
   const o={L:Math.max(0,+$('#mL').value||0)*10000,r:Math.max(0,+$('#mRN').value||0)/100,yrs,grace:Math.min(mOpt.grace,yrs-1),pay:mOpt.pay,I:Math.max(0,+$('#mI').value||0)*10000,prod,yld:Math.max(0,+$('#mYld').value||0)/100};
   $('#mRV').textContent=(o.r*100).toFixed(2).replace(/0$/,'')+'%'; $('#mYV').textContent=yrs+' 年';
-  const hr=dHist(f)/100, band=(f.sd||8)/100*1.28/Math.sqrt(yrs), opt=Math.min(0.15,hr+band);
-  const R=[['hist',`依過往績效 ${pct(hr*100)}`,hr],['opt',`樂觀情境 ${pct(opt*100)}`,opt],['c4','保守 4%',0.04],['t10','假設 10%',0.10],['custom',`自訂 ${mOpt.custom}%`,mOpt.custom/100]];
-  if(mOpt.rate==='auto'||!R.find(x=>x[0]===mOpt.rate)) mOpt.rate='hist';
-  const ret=R.find(x=>x[0]===mOpt.rate)[2];
-  $('#mRate').innerHTML=R.map(([v,l])=>`<button type="button" data-v="${v}" aria-pressed="${v===mOpt.rate}">${l}</button>`).join(''); $('#mRC').hidden=mOpt.rate!=='custom';
+  const nav=(+$('#mNav').value||0)/100, ret=o.yld+nav;
+  $('#mYldV').textContent=(o.yld*100).toFixed(1)+'%'; $('#mNavV').textContent=(nav>0?'+':'')+(nav*100).toFixed(1)+'%／年';
+  $$('#mYQ2 button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===+(o.yld*100).toFixed(1)));
   if(!o.L||!o.I){$('#mOut').innerHTML='<p class="muted">請輸入房貸金額與資金金額。</p>';return;}
-  const warnEM=f.em?`<div class="emwarn"><b>⚠ 新興市場警語</b>${esc(EMWARN.split('：')[1])}</div>`:'';
-  const hi10=mOpt.rate==='t10'||ret>0.1?`<div class="warn"><b>要注意：</b>年化 10% 以上是偏樂觀的假設，需要長期維持股票型的高報酬才做得到，過去多數月配息標的長期含息報酬落在 3～7%。請搭配「依過往績效」與「保守 4%」一起看。</div>`:'';
+  const warnEM='';
+  const hi10=o.yld>0.1?`<div class="warn"><b>要注意：</b>配息率 10% 以上，配息大多有一部分來自本金，建議把「本金每年變化」設為負值一起看。</div>`:'';
   const be=(fn)=>{let lo=-0.1,hi=0.3; for(let i=0;i<60;i++){const m=(lo+hi)/2; if(fn(m)<0) lo=m; else hi=m;} return (lo+hi)/2;};
-  const sc=[['保守',Math.max(-0.05,hr-band)],['依過往績效',hr],['樂觀',opt],['假設 10%',0.10]];
-  const prodBox=`<div class="card"><h3>這張躉繳保單的費用</h3><table class="t rules" style="margin-top:6px">
-     <tr><td>商品</td><td>${esc(SHORTN(prod.ins))}・${esc(prod.p)}${prod.v!=='—'?`（${esc(prod.v)} 版）`:''}</td></tr>
-     <tr><td>保費費用</td><td>${prod.front.length>1?prod.front.map(([th,v],i)=>`${i?wan(th)+' 以上':'未達 '+wan(prod.front[1][0])} ${v}%`).join('、'):prod.front[0][1]?prod.front[0][1]+'%':'無'}　→ 這筆 ${wan(o.I)} 適用 ${mFront(prod,o.I)}%</td></tr>
-     <tr><td>保單管理費</td><td>${prod.admin?`每月 ${prod.admin} 元${prod.waive?`（累計保費達 ${wan(prod.waive)} 免收）`:''}${prod.ay?`（前 ${prod.ay} 年）`:''}`:'無'}</td></tr>
-     <tr><td>帳戶管理費</td><td>${prod.acct.some(x=>x)?prod.acct.map((v,i)=>`第${i+1}年 ${v}%`).join('、')+'（每月，依帳戶價值）':'無'}</td></tr>
-     <tr><td>解約費用</td><td>${prod.sur.some(x=>x)?prod.sur.map((v,i)=>`第${i+1}年 ${v}%`).join('、'):'無'}</td></tr></table>
-     ${prod.note?`<p class="note" style="margin-top:8px">${esc(prod.note)}</p>`:''}
-     <p class="note" style="margin-top:6px">資料來源：<a href="${esc(prod.src)}" target="_blank" rel="noopener">商品說明書／條款</a>。各公司費率與販售版本可能已更新，實際以保單條款為準。變額年金在累積期間沒有壽險保險成本；標的費用已反映在淨值中。下拉的標的為該公司投資型商品可連結的配息標的，實際可連結清單依各商品為準。</p></div>`;
+  const sc=[['淨值每年 −2%',o.yld-0.02],['淨值每年 −1%',o.yld-0.01],['淨值不變',o.yld],['淨值每年 +1%',o.yld+0.01]];
+  const prodBox='';
   if(mOpt.mode==='a'){
     const r=mCalc(o,ret), sh=mCalc(o,ret,0.25), bu=mCalc(o,ret,0,0.01), brk=be(x=>mCalc(o,x).net);
     const scR=sc.map(([l,rr])=>[l,rr,mCalc(o,rr)]);
@@ -2058,16 +2045,16 @@ function mRun(){
        <div class="card"><span>第一年每月配息（${(o.yld*100).toFixed(1)}%）</span><div class="big jade">${money(r.V.pts[0].div)}<span class="unit">元</span></div><span>${o.yrs} 年累計領 ${wan(r.cumDiv)}</span></div>
        <div class="card"><span>每月差額（配息－房貸）</span><div class="big" style="color:${gap<=0?'var(--jade)':'var(--red)'}">${gap<=0?'+':'−'}${money(Math.abs(gap))}<span class="unit">元</span></div><span>${gap>0?'第一年每月需自己補':'第一年配息足以繳房貸，每月多出'}</span><span>${o.yrs} 年合計：自己補 ${wan(r.outPocket)}・配息多出 ${wan(r.extra)}</span></div>
      </div>
-     <div class="card hi" style="border-width:2px"><h3>${o.yrs} 年後房貸繳完時（年化 ${pct(ret*100)}）</h3>
+     <div class="card hi" style="border-width:2px"><h3>${o.yrs} 年後房貸繳完時（配息率 ${pct(o.yld*100)}、淨值每年 ${pct(nav*100)}）</h3>
        <div class="res3" style="margin-top:6px">
-         <div><span class="muted">保單帳戶還有</span><div class="big jade">${wan(r.av)}</div><span class="muted small">${r.av>=o.I?'本金 '+wan(o.I)+' 還在':'比放入時少 '+wan(o.I-r.av)}</span></div>
+         <div><span class="muted">本金（帳戶）還有</span><div class="big jade">${wan(r.av)}</div><span class="muted small">${r.av>=o.I?'本金 '+wan(o.I)+' 還在':'比放入時少 '+wan(o.I-r.av)}</span></div>
          <div><span class="muted">期間累計配息</span><div class="big">${wan(r.cumDiv)}</div><span class="muted small">房貸本息共繳 ${wan(r.cumPay)}</span></div>
          <div><span class="muted">整體淨結果</span><div class="big" style="color:${gc}">${r.net>=0?'+':'−'}${wan(Math.abs(r.net))}</div><span class="muted small">帳戶＋配息－房貸本息</span></div>
        </div>
-       <p class="note" style="margin-top:10px">損益兩平：年化總報酬至少要 <b>${pct(brk*100)}</b>，房貸繳完時才不會虧（含保單費用與房貸利息）。</p></div>
+       <p class="note" style="margin-top:10px">損益兩平：含息總報酬至少要年化 <b>${pct(brk*100)}</b>（以目前配息率，等於淨值每年最多可以變化 ${pct((brk-o.yld)*100)}），房貸繳完時才不會虧（已含房貸利息）。</p></div>
      ${hi10}
-     <div class="card"><h3>四種報酬假設比較</h3><div class="scen" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${scR.map(([l,rr,s])=>`<div class="${l==='樂觀'||l==='假設 10%'?'up':l==='保守'?'dn':''}"><span>${l}・年化 ${pct(rr*100)}</span><b>${s.net>=0?'+':'−'}${wan(Math.abs(s.net))}</b><em>帳戶剩 ${wan(s.av)}・配息 ${wan(s.cumDiv)}</em></div>`).join('')}</div>
-       <p class="note" style="margin-top:8px">「淨結果」＝房貸繳完時的帳戶價值＋累計配息－房貸本息總額。樂觀與保守為依波動推估的八成機率區間上下緣。</p></div>
+     <div class="card"><h3>淨值變化不同時的結果</h3><div class="scen" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${scR.map(([l,rr,s])=>`<div class="${l.includes('+')?'up':l.includes('−2')?'dn':''}"><span>${l}</span><b>${s.net>=0?'+':'−'}${wan(Math.abs(s.net))}</b><em>帳戶剩 ${wan(s.av)}・配息 ${wan(s.cumDiv)}</em></div>`).join('')}</div>
+       <p class="note" style="margin-top:8px">「淨結果」＝房貸繳完時的帳戶價值＋累計配息－房貸本息總額。配息率固定為 ${pct(o.yld*100)}，只改變淨值每年的變化。</p></div>
      <div class="card"><h3>壓力測試</h3><table class="t rules" style="margin-top:6px">
        <tr><td>正常情況</td><td>淨結果 ${r.net>=0?'+':'−'}${wan(Math.abs(r.net))}</td></tr>
        <tr><td>第 2 年市場大跌 25%</td><td>淨結果 <b style="color:${sh.net>=0?'var(--jade)':'var(--red)'}">${sh.net>=0?'+':'−'}${wan(Math.abs(sh.net))}</b>；配息會跟著帳戶縮水，第 2 年起每月約 ${money(sh.V.pts[13].div)} 元</td></tr>
@@ -2075,30 +2062,30 @@ function mRun(){
        <p class="note" style="margin-top:8px">房貸是固定要繳的支出，配息則會隨市場與基金公司決定調整，跌價時配息與帳戶會同時減少。規劃時請保留足夠的生活預備金。</p></div>
      <div class="card"><h3>走勢</h3><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="房貸與帳戶走勢">${[0,.25,.5,.75,1].map(t=>mx*t).map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${y(t)+4}" text-anchor="end">${Math.round(t/10000).toLocaleString()}萬</text>`).join('')}${ln(z=>z.bal,'var(--red)',2,'5 4')}${ln(z=>z.pay,'var(--muted)',1.5,'3 4')}${ln(z=>z.av,'var(--navy)',2)}${ln(z=>z.val,'var(--jade)',3)}${yl}</svg>
        <div class="legend" style="margin-top:6px"><span><i style="background:var(--jade)"></i>帳戶＋累計配息</span><span><i style="background:var(--navy)"></i>保單帳戶價值</span><span><i style="background:var(--muted)"></i>累計繳房貸</span><span><i style="background:var(--red)"></i>房貸餘額</span></div></div>
-     <div class="card"><h3>逐年明細</h3><div class="tw" style="max-height:420px;overflow-y:auto"><table class="t"><tr><th>第幾年</th><th>每月房貸</th><th>每月配息</th><th>房貸餘額</th><th>帳戶價值</th><th>解約金</th><th>累計配息</th><th>累計房貸本息</th></tr>
-       ${r.rows.map(z=>`<tr><td>${z.y}</td><td>${money(z.pay)}</td><td>${money(z.div)}</td><td>${wan(z.bal)}</td><td>${wan(z.av)}</td><td>${wan(z.csv)}</td><td>${wan(z.cumDiv)}</td><td>${wan(z.cumPay)}</td></tr>`).join('')}</table></div></div>
+     <div class="card"><h3>逐年明細</h3><div class="tw" style="max-height:420px;overflow-y:auto"><table class="t"><tr><th>第幾年</th><th>每月房貸</th><th>每月配息</th><th>房貸餘額</th><th>本金（帳戶）</th><th>累計配息</th><th>累計房貸本息</th></tr>
+       ${r.rows.map(z=>`<tr><td>${z.y}</td><td>${money(z.pay)}</td><td>${money(z.div)}</td><td>${wan(z.bal)}</td><td>${wan(z.av)}</td><td>${wan(z.cumDiv)}</td><td>${wan(z.cumPay)}</td></tr>`).join('')}</table></div></div>
      ${prodBox}
-     <p class="note">試算方式：房貸依${o.pay==='eq'?'本息平均':'本金平均'}攤還逐月計算${o.grace?`，前 ${o.grace} 年只繳利息`:''}；保單以躉繳一次投入，扣保費費用後，每月扣管理費，帳戶以固定年化總報酬成長，並依配息率每月配出現金（配息率高於總報酬時，帳戶會逐漸縮小）。未計匯率、稅負、提領與轉換費用，也未計配息再投入或用於他處的收益。這是試算，不代表未來實際報酬。</p>`;
+     <p class="note">試算方式：房貸依${o.pay==='eq'?'本息平均':'本金平均'}攤還逐月計算${o.grace?`，前 ${o.grace} 年只繳利息`:''}；資金一次投入，依自填的年化配息率每月配出現金，本金依設定的淨值變化增減。未扣保單費用，未計匯率、稅負、提領與轉換費用，也未計配息再投入或用於他處的收益。這是試算，不代表未來實際報酬。</p>`;
   } else {
     const c=mCompare(o,ret), sh=mCompare(o,ret,0.25), bu=mCompare(o,ret,0,0.01), brk=be(x=>mCompare(o,x).diff);
     const scR=sc.map(([l,rr])=>[l,rr,mCompare(o,rr)]), gc=c.diff>=0?'var(--jade)':'var(--red)';
     $('#mOut').innerHTML=`${warnEM}
      <div class="res3">
        <div class="card"><span>A．拿 ${wan(o.I)} 提前還款</span><div class="big">${money(c.payPart)}<span class="unit">元/月</span></div><span>每月房貸少 ${money(c.payFull-c.payPart)} 元・共省利息 ${wan(c.intSave)}</span></div>
-       <div class="card"><span>B．保留資金放保單</span><div class="big jade">${money(c.firstDiv)}<span class="unit">元/月</span></div><span>第一年每月配息・房貸維持每月 ${money(c.payFull)} 元</span></div>
-       <div class="card hi"><span>${o.yrs} 年後 B 比 A 多</span><div class="big" style="color:${gc}">${c.diff>=0?'+':'−'}${wan(Math.abs(c.diff))}</div><span>損益兩平報酬率 ${pct(brk*100)}</span></div>
+       <div class="card"><span>B．保留資金領配息</span><div class="big jade">${money(c.firstDiv)}<span class="unit">元/月</span></div><span>第一年每月配息・房貸維持每月 ${money(c.payFull)} 元</span></div>
+       <div class="card hi"><span>${o.yrs} 年後 B 比 A 多</span><div class="big" style="color:${gc}">${c.diff>=0?'+':'−'}${wan(Math.abs(c.diff))}</div><span>損益兩平：含息年化 ${pct(brk*100)}</span></div>
      </div>
-     <div class="card"><h3>${o.yrs} 年後怎麼比（年化 ${pct(ret*100)}）</h3><table class="t rules" style="margin-top:6px">
+     <div class="card"><h3>${o.yrs} 年後怎麼比（配息率 ${pct(o.yld*100)}、淨值每年 ${pct(nav*100)}）</h3><table class="t rules" style="margin-top:6px">
        <tr><td>A 提前還款</td><td>這 ${o.yrs} 年房貸總共少繳 ${wan(c.saved)}（其中利息 ${wan(c.intSave)}），但 ${wan(o.I)} 已經變成房子的一部分，不能隨時動用。</td></tr>
-       <tr><td>B 保留資金</td><td>帳戶還有 ${wan(c.av)}，期間累計配息 ${wan(c.div)}，合計 ${wan(c.keep)}；資金保有流動性，但要承擔市場波動。</td></tr>
+       <tr><td>B 保留資金</td><td>本金（帳戶）還有 ${wan(c.av)}，期間累計配息 ${wan(c.div)}，合計 ${wan(c.keep)}；資金保有流動性，但要承擔市場波動。</td></tr>
        <tr><td>差額</td><td><b style="color:${gc}">B ${c.diff>=0?'多':'少'} ${wan(Math.abs(c.diff))}</b>（＝ B 的帳戶＋配息 － A 少繳的房貸）</td></tr></table></div>
      ${hi10}
-     <div class="card"><h3>四種報酬假設：B 比 A 多（少）多少</h3><div class="scen" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${scR.map(([l,rr,s])=>`<div class="${l==='樂觀'||l==='假設 10%'?'up':l==='保守'?'dn':''}"><span>${l}・年化 ${pct(rr*100)}</span><b>${s.diff>=0?'+':'−'}${wan(Math.abs(s.diff))}</b><em>帳戶剩 ${wan(s.av)}・配息 ${wan(s.div)}</em></div>`).join('')}</div></div>
+     <div class="card"><h3>淨值變化不同時：B 比 A 多（少）多少</h3><div class="scen" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${scR.map(([l,rr,s])=>`<div class="${l.includes('+')?'up':l.includes('−2')?'dn':''}"><span>${l}</span><b>${s.diff>=0?'+':'−'}${wan(Math.abs(s.diff))}</b><em>帳戶剩 ${wan(s.av)}・配息 ${wan(s.div)}</em></div>`).join('')}</div></div>
      <div class="card"><h3>壓力測試</h3><table class="t rules" style="margin-top:6px">
        <tr><td>第 2 年市場大跌 25%</td><td>B 比 A <b style="color:${sh.diff>=0?'var(--jade)':'var(--red)'}">${sh.diff>=0?'多':'少'} ${wan(Math.abs(sh.diff))}</b></td></tr>
        <tr><td>第 3 年起房貸利率 +1%</td><td>B 比 A <b style="color:${bu.diff>=0?'var(--jade)':'var(--red)'}">${bu.diff>=0?'多':'少'} ${wan(Math.abs(bu.diff))}</b>（利率越高，提前還款越划算）</td></tr></table></div>
      ${prodBox}
-     <p class="note">試算方式：A 為把資金一次還掉部分本金、年期不變、每月房貸降低；B 為資金躉繳放入保單、房貸照原條件繳。比較 ${o.yrs} 年後 B 的帳戶價值＋累計配息，與 A 期間少繳的房貸總額（未計少繳金額另行運用的收益）。未計匯率、稅負與提領費用。這是試算，不代表未來實際報酬。</p>`;
+     <p class="note">試算方式：A 為把資金一次還掉部分本金、年期不變、每月房貸降低；B 為資金保留、依自填配息率每月領配息，房貸照原條件繳。比較 ${o.yrs} 年後 B 的帳戶價值＋累計配息，與 A 期間少繳的房貸總額（未計少繳金額另行運用的收益）。未扣保單費用，未計匯率、稅負與提領費用。這是試算，不代表未來實際報酬。</p>`;
   }
 }
 
@@ -2166,7 +2153,7 @@ function showIns(name){
      <tr><td>保險成本</td><td>無（變額年金累積期間不收）</td></tr>
      <tr><td>解約費用</td><td>${yrsTxt(m.sur)}</td></tr></table>
      ${m.note?`<p class="note" style="margin-top:8px">${esc(m.note)}</p>`:''}<p class="note" style="margin-top:6px"><a href="${esc(m.src)}" target="_blank" rel="noopener">商品說明書／條款</a></p>
-     <div class="sharerow"><button type="button" class="sbtn gold" id="shLoan">用這家試算房貸與資金規劃</button></div></div>`; }
+     </div>`; }
   if(!p&&!m) h+=`<div class="card"><p class="muted">本站尚未收錄這家公司的投資型保單費用。</p></div>`;
   h+=`<p class="note">基金本身的經理費、保管費已反映在淨值中，不另外扣。各公司費率可能調整，以最新商品說明書為準。</p>`;
   const sh=document.createElement('div'); sh.className='sheet'; sh.setAttribute('role','dialog'); sh.setAttribute('aria-modal','true'); sh.innerHTML=`<div>${h}</div>`;
@@ -2230,7 +2217,7 @@ const GL=[
  ['本息平均攤還','房貸','每月繳一樣的金額','每月月付固定，前期繳的大多是利息，後期大多是本金。預算好安排，總利息比本金平均略多。','1000 萬、30 年、2.3%：每月約 38,480 元。','',['本金平均攤還','寬限期'],'loan'],
  ['本金平均攤還','房貸','每月還一樣的本金，月付逐月遞減','每月本金固定，利息隨餘額減少，所以月付一開始高、之後越來越少。總利息比本息平均少。','1000 萬、30 年、2.3%：第一期約 46,944 元，最後一期約 27,831 元。','',['本息平均攤還'],'loan'],
  ['寬限期','房貸','前幾年只繳利息、不還本金','寬限期內月付較低，但本金沒減少，寬限期後月付會變高，總利息也較多。','1000 萬、2.3%：寬限期每月只繳約 19,167 元利息。','',['本息平均攤還'],'loan'],
- ['損益兩平報酬率','房貸','至少要賺多少才不會虧','本站試算中，投資報酬率至少要達到這個數字，房貸繳完時才不會虧（已含保單費用與房貸利息）。','損益兩平 3.3%：年化總報酬低於 3.3% 就會虧。','比較時看這個數字和標的過往績效差多少。',['壓力測試'],'loan'],
+ ['損益兩平報酬率','房貸','至少要賺多少才不會虧','本站試算中，含息總報酬至少要達到這個數字，房貸繳完時才不會虧（已含房貸利息）。','損益兩平 3.3%：年化總報酬低於 3.3% 就會虧。','比較時看這個數字和標的過往績效差多少。',['壓力測試'],'loan'],
  ['壓力測試','房貸','假設發生壞事時的結果','本站假設「第 2 年市場大跌 25%」和「第 3 年起房貸利率 +1%」，看最後結果會差多少。','','規劃時請客戶保留足夠預備金。',['損益兩平報酬率'],'loan'],
  ['印鈔機專案','本站用語','配息撥一部分進六年期保單，到期回填本金','每月配息分兩份：一份花用，一份繳進六年期保單；六年到期整筆回填本金，月配息升級，一輪一輪往上疊。','1000 萬、配息 8%、撥 30%：18 年後本金約 1,556 萬，月配息約 10.4 萬。','',['宣告利率','配息率'],'grow']
 ];
