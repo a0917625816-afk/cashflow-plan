@@ -688,6 +688,21 @@ details.fold>.fbody{padding:0 20px 18px}
 
 .lppol{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:6px 8px;align-items:center;font-size:14px}
 .lppol input{font:inherit;width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+
+.lphero{display:grid;grid-template-columns:1fr 150px;gap:18px;align-items:center;border-radius:22px;padding:26px 28px;color:#fff;background:radial-gradient(120% 140% at 100% 0%,#f0a64b 0,#d4622e 45%,#8a2f1c 100%);box-shadow:0 18px 40px -20px rgba(138,47,28,.7)}
+.lphero .lpk{display:inline-block;font-size:13px;font-weight:700;letter-spacing:3px;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 12px}
+.lphero h3{font:900 clamp(32px,5.4vw,52px)/1.1 var(--display);margin:10px 0 8px;color:#fff;letter-spacing:2px;text-shadow:0 3px 0 rgba(0,0,0,.18)}
+.lphero .lps{margin:0 0 12px;font-size:clamp(15px,1.9vw,18px);line-height:1.6;color:#fff6ea}
+.lptags{display:flex;flex-wrap:wrap;gap:8px}.lptags span{background:#fff;color:#8a2f1c;font-weight:800;font-size:14px;border-radius:999px;padding:6px 14px}
+.lpico{width:150px;height:auto}
+@media (max-width:620px){.lphero{grid-template-columns:1fr;padding:22px 18px}.lpico{display:none}}
+#lpWrap .calc>.card:first-child h3{color:#b4532a}
+#lpWrap .res3 .card.hi{border-color:#e39a5a;background:linear-gradient(180deg,#fff5ea,#fff)}
+#lpWrap .big.jade{color:#c4572f}
+#mMode button[data-v="d"]{border-color:#e7a46b;background:linear-gradient(180deg,#fff6ec,#fff)}
+#mMode button[data-v="d"] b{color:#b4532a}
+#mMode button[data-v="d"][aria-selected="true"]{background:linear-gradient(135deg,#d4622e,#8a2f1c);border-color:#8a2f1c;box-shadow:0 4px 0 #6d2414}
+#mMode button[data-v="d"][aria-selected="true"] b,#mMode button[data-v="d"][aria-selected="true"] em{color:#fff}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -1093,18 +1108,27 @@ details.fold>.fbody{padding:0 20px 18px}
     <div class="result" id="mOut"></div>
   </div>
   <div id="lpWrap" hidden style="display:flex;flex-direction:column;gap:22px">
-    <div class="card"><span class="eyebrow">借力還房計畫</span><h3 style="font:900 clamp(20px,2.8vw,26px)/1.35 var(--display);margin:6px 0 8px">借出來的錢分兩邊：一邊領配息繳房貸，一邊放穩定型穩穩長大、扛風險，時間到一次還清</h3>
-      <p class="muted" style="margin:0">配息那一份每月領錢繳房貸；穩定型那一份放著長大。看在第幾年把穩定型拿出來一次繳清房貸，不用動到配息本金，之後每月配息全部是自己的。</p></div>
+    <div class="lphero"><div class="lpt"><span class="lpk">07・房貸新玩法</span><h3>借力還房計畫</h3>
+      <p class="lps">借出來的錢切兩份：一份領配息幫你繳房貸，一份放穩定型扛風險，時間到一次還清。</p>
+      <div class="lptags"><span>① 配息繳房貸</span><span>② 穩定型慢慢長大</span><span>③ 交叉那年一次還清</span></div></div>
+      <svg viewBox="0 0 160 140" class="lpico" aria-hidden="true"><path d="M20 70 80 22l60 48" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="36" y="66" width="88" height="62" rx="6" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="6"/><rect x="68" y="92" width="24" height="36" rx="3" fill="#fff"/><circle cx="128" cy="34" r="20" fill="#ffd27a"/><text x="128" y="41" text-anchor="middle" font-size="20" font-weight="900" fill="#8a3b1d">$</text></svg></div>
     <div class="calc">
       <div class="card" style="display:flex;flex-direction:column;gap:16px">
         <h3 style="margin:0">① 貸款條件</h3>
         <div class="ctrl"><label for="lpL">可貸金額（萬元）</label><input type="number" id="lpL" min="0" step="10" value="1300"></div>
         <div class="ctrl"><label for="lpY">貸款年期</label><span class="val" id="lpYV"></span><input type="range" id="lpY" min="5" max="40" step="1" value="25"></div>
         <div class="ctrl"><label for="lpR">房貸年利率（%）</label><input type="number" id="lpR" min="0" max="10" step="0.01" value="2.6"><span class="note" id="lpPayN"></span></div>
-        <h3 style="margin:8px 0 0">② 先撥出去的錢</h3>
-        <div class="ctrl"><label for="lpOld">償還原本的房貸（萬元）</label><input type="number" id="lpOld" min="0" step="10" value="0"></div>
+        <h3 style="margin:8px 0 0">② 目前的房貸（自己填）</h3>
+        <div class="ctrl"><div class="quick" id="lpOH"><button type="button" data-v="none" aria-pressed="true">目前沒有房貸</button><button type="button" data-v="pay">用新貸款還掉</button><button type="button" data-v="keep">保留照繳</button></div></div>
+        <div id="lpOldW" hidden style="display:flex;flex-direction:column;gap:14px">
+          <div class="ctrl"><label for="lpOB">目前房貸餘額（萬元）</label><input type="number" id="lpOB" min="0" step="10" value="200"></div>
+          <div class="ctrl lpkeep"><label for="lpOR">目前房貸利率（%）</label><input type="number" id="lpOR" min="0" max="10" step="0.01" value="2.2"></div>
+          <div class="ctrl lpkeep"><label for="lpOY">剩餘年期（年）</label><input type="number" id="lpOY" min="1" max="40" step="1" value="10"><span class="note" id="lpOPN"></span></div>
+        </div>
+        <h3 style="margin:8px 0 0">③ 其他先撥出去的錢</h3>
+
         <div class="ctrl"><label for="lpOth">其他用途（萬元，例如借給家人）</label><input type="number" id="lpOth" min="0" step="10" value="100"></div>
-        <h3 style="margin:8px 0 0">③ 剩下的錢怎麼分</h3>
+        <h3 style="margin:8px 0 0">④ 剩下的錢怎麼分</h3>
         <div class="ctrl"><label for="lpSp">放月配息的比例</label><span class="val" id="lpSpV"></span><input type="range" id="lpSp" min="0" max="100" step="5" value="60"><div class="quick" id="lpSpQ"></div></div>
         <div class="ctrl"><label for="lpYld">月配息年化配息率（%）</label><input type="number" id="lpYld" min="0" max="20" step="0.1" value="10"><div class="quick" id="lpYldQ"></div></div>
         <div class="ctrl"><span style="font-size:14px;color:var(--muted)">穩定型（穩定型）怎麼算</span><div class="quick" id="lpGM"><button type="button" data-v="pol" aria-pressed="true">填建議書數字</button><button type="button" data-v="rate">用年化報酬估</button></div></div>
@@ -2336,7 +2360,10 @@ function mCompare(o,ret,shock,bump){
 function lpCalc(o){
   const n=o.Y*12, i=o.r/12, pay=i?o.L*i/(1-Math.pow(1+i,-n)):o.L/n;
   const bal=k=>i?o.L*Math.pow(1+i,k)-pay*(Math.pow(1+i,k)-1)/i:o.L-pay*k;
-  const net=Math.max(0,o.L-o.old-o.oth), D0=net*o.sp, S0=net-D0;
+  const old=o.oh==='pay'?o.ob:0, keep=o.oh==='keep'&&o.ob>0, on=o.oy*12, oi=o.or/12, opay=keep?(oi?o.ob*oi/(1-Math.pow(1+oi,-on)):o.ob/on):0;
+  const obal=k=>!keep||k>=on?0:(oi?o.ob*Math.pow(1+oi,k)-opay*(Math.pow(1+oi,k)-1)/oi:o.ob-opay*k);
+  const opayAt=t=>keep&&t<o.oy?opay:0;
+  const net=Math.max(0,o.L-old-o.oth), D0=net*o.sp, S0=net-D0;
   const Dv=t=>D0*Math.pow(1+o.nav,t);
   let Sv=t=>S0*Math.pow(1+o.g,t);
   if(o.pol&&o.pol.length){ const P=[[0,100],...o.pol].sort((a,b)=>a[0]-b[0]);
@@ -2346,31 +2373,32 @@ function lpCalc(o){
   const rows=[];
   for(let y=1;y<=o.Y;y++){
     let pocket=0;
-    for(let t=0;t<y;t++) pocket+=12*(Dv(t)*o.yld/12-pay);
-    const B=Math.max(0,bal(y*12)), S=Sv(y), short=Math.max(0,B-S), left=Math.max(0,S-B), D=Dv(y)-short;
+    for(let t=0;t<y;t++) pocket+=12*(Dv(t)*o.yld/12-pay-opayAt(t));
+    const nb=Math.max(0,bal(y*12)), ob=Math.max(0,obal(y*12)), B=nb+ob, S=Sv(y), short=Math.max(0,B-S), left=Math.max(0,S-B), D=Dv(y)-short;
     pocket+=left; let after=0; for(let t=y;t<o.Y;t++) after+=Math.max(0,D)*Math.pow(1+o.nav,t-y)*o.yld;
     const endD=Math.max(0,D)*Math.pow(1+o.nav,o.Y-y), wealth=endD+pocket+after;
-    rows.push({y,B,S,short,left,D,mDiv:Math.max(0,D)*o.yld/12,paid:pay*12*y,intPaid:pay*12*y-(o.L-B),wealth,pocket:pocket});
+    rows.push({y,B,nb,ob,S,short,left,D,mDiv:Math.max(0,D)*o.yld/12,paid:pay*12*y,intPaid:pay*12*y-(o.L-B),wealth,pocket:pocket});
   }
-  return {pay,net,D0,S0,rows,first:rows.find(r=>r.S>=r.B), best:rows.reduce((a,b)=>b.wealth>a.wealth?b:a)};
+  return {pay,opay,keep,old,net,D0,S0,rows,first:rows.find(r=>r.S>=r.B), best:rows.reduce((a,b)=>b.wealth>a.wealth?b:a)};
 }
-let lpOpt={gm:'pol'};
+let lpOpt={gm:'pol',oh:'none'};
 function lpRun(){
-  const o={L:(+$('#lpL').value||0)*1e4,Y:Math.max(5,+$('#lpY').value||25),r:(+$('#lpR').value||0)/100,old:(+$('#lpOld').value||0)*1e4,oth:(+$('#lpOth').value||0)*1e4,sp:+$('#lpSp').value/100,yld:(+$('#lpYld').value||0)/100,g:(+$('#lpG').value||0)/100,nav:+$('#lpNav').value/100, pol:lpOpt.gm==='pol'?[...document.querySelectorAll('#lpPol .r')].map(r=>[+r.querySelector('.yy').value,+r.querySelector('.vv').value]).filter(p=>p[0]>0&&p[1]>0):null};
+  const o={L:(+$('#lpL').value||0)*1e4,Y:Math.max(5,+$('#lpY').value||25),r:(+$('#lpR').value||0)/100,oh:lpOpt.oh,ob:(+$('#lpOB').value||0)*1e4,or:(+$('#lpOR').value||0)/100,oy:Math.max(1,+$('#lpOY').value||10),oth:(+$('#lpOth').value||0)*1e4,sp:+$('#lpSp').value/100,yld:(+$('#lpYld').value||0)/100,g:(+$('#lpG').value||0)/100,nav:+$('#lpNav').value/100, pol:lpOpt.gm==='pol'?[...document.querySelectorAll('#lpPol .r')].map(r=>[+r.querySelector('.yy').value,+r.querySelector('.vv').value]).filter(p=>p[0]>0&&p[1]>0):null};
   $('#lpPolW').hidden=lpOpt.gm!=='pol'; $('#lpGW').hidden=lpOpt.gm==='pol'; $$('#lpGM button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===lpOpt.gm));
   $('#lpYV').textContent=o.Y+' 年'; $('#lpSpV').textContent=`配息 ${Math.round(o.sp*100)}%・穩定型 ${Math.round((1-o.sp)*100)}%`; $('#lpNavV').textContent=(o.nav>0?'+':'')+(o.nav*100).toFixed(1)+'%／年';
   $$('#lpSpQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===Math.round(o.sp*100))); $$('#lpYldQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===o.yld*100));
   if(!o.L){$('#lpOut').innerHTML='<p class="muted">請輸入可貸金額。</p>';return;}
-  const C=lpCalc(o), m0=C.D0*o.yld/12, gap=m0-C.pay, F=C.first, Bst=C.best;
-  $('#lpPayN').textContent=`每月房貸約 ${money(C.pay)} 元（本息平均攤還）`;
-  const W=720,H=250,Lp=64,Rp=14,T=14,B=28, N=o.Y, mx=Math.max(o.L,...C.rows.map(r=>r.S))*1.05;
+  $('#lpOldW').hidden=o.oh==='none'; $$('#lpOldW .lpkeep').forEach(x=>x.hidden=o.oh!=='keep'); $$('#lpOH button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===o.oh));
+  const C=lpCalc(o), m0=C.D0*o.yld/12, gap=m0-C.pay-C.opay, F=C.first, Bst=C.best;
+  $('#lpPayN').textContent=`每月新房貸約 ${money(C.pay)} 元（本息平均攤還）`; $('#lpOPN').textContent=C.keep?`目前房貸每月約 ${money(C.opay)} 元`:'';
+  const W=720,H=250,Lp=64,Rp=14,T=14,B=28, N=o.Y, B0=o.L+(C.keep?o.ob:0), mx=Math.max(B0,...C.rows.map(r=>r.S))*1.05;
   const x=t=>Lp+(W-Lp-Rp)*t/N, yv=v=>T+(H-T-B)*(1-v/mx);
-  const pB=`M${x(0)},${yv(o.L)}`+C.rows.map(r=>`L${x(r.y).toFixed(1)},${yv(r.B).toFixed(1)}`).join(''), pS=`M${x(0)},${yv(C.S0)}`+C.rows.map(r=>`L${x(r.y).toFixed(1)},${yv(r.S).toFixed(1)}`).join('');
+  const pB=`M${x(0)},${yv(B0)}`+C.rows.map(r=>`L${x(r.y).toFixed(1)},${yv(r.B).toFixed(1)}`).join(''), pS=`M${x(0)},${yv(C.S0)}`+C.rows.map(r=>`L${x(r.y).toFixed(1)},${yv(r.S).toFixed(1)}`).join('');
   const pick=[...new Set([F&&F.y,Bst.y,Math.min(N,7),Math.min(N,10)].filter(Boolean))].sort((a,b)=>a-b);
   $('#lpOut').innerHTML=`
    <div class="res3">
-     <div class="card"><span>實際拿去運用</span><div class="big">${wan(C.net)}</div><span>月配息 ${wan(C.D0)}・穩定型 ${wan(C.S0)}</span></div>
-     <div class="card ${gap>=0?'hi':''}"><span>每月配息 − 每月房貸</span><div class="big ${gap>=0?'jade':''}" style="${gap<0?'color:var(--red)':''}">${gap>=0?'+':'−'}${money(Math.abs(gap))}<span class="unit">元</span></div><span>配息約 ${money(m0)}，房貸 ${money(C.pay)}</span></div>
+     <div class="card"><span>實際拿去運用</span><div class="big">${wan(C.net)}</div><span>月配息 ${wan(C.D0)}・穩定型 ${wan(C.S0)}${C.old?`（已先還舊房貸 ${wan(C.old)}）`:''}</span></div>
+     <div class="card ${gap>=0?'hi':''}"><span>每月配息 − 每月房貸</span><div class="big ${gap>=0?'jade':''}" style="${gap<0?'color:var(--red)':''}">${gap>=0?'+':'−'}${money(Math.abs(gap))}<span class="unit">元</span></div><span>配息約 ${money(m0)}，房貸 ${money(C.pay+C.opay)}${C.keep?`（新 ${money(C.pay)}＋舊 ${money(C.opay)}）`:''}</span></div>
      <div class="card"><span>建議一次繳清的年份</span><div class="big jade">${F?`第 ${F.y} 年`:'—'}</div><span>${F?`穩定型 ${wan(F.S)} ≥ 剩餘房貸 ${wan(F.B)}`:'穩定型追不上剩餘房貸，建議繳到期'}</span></div>
    </div>
    <div class="card"><h3>我的建議</h3>
@@ -2382,15 +2410,15 @@ function lpRun(){
        ${F?`<line x1="${x(F.y)}" x2="${x(F.y)}" y1="${T}" y2="${H-B}" stroke="var(--gold)" stroke-width="2" stroke-dasharray="4 4"/><text x="${x(F.y)+6}" y="${T+14}" style="fill:var(--gold-deep);font-weight:700">第 ${F.y} 年交叉</text>`:''}
        <path d="${pB}" fill="none" stroke="var(--red)" stroke-width="3"/><path d="${pS}" fill="none" stroke="var(--jade)" stroke-width="3"/>
        ${C.rows.filter(r=>r.y%5===0||r.y===N).map(r=>`<text x="${x(r.y)}" y="${H-8}" text-anchor="middle">${r.y}年</text>`).join('')}</svg>
-     <div class="legend" style="margin-top:6px"><span><i style="background:var(--red)"></i>剩餘房貸</span><span><i style="background:var(--jade)"></i>穩定型價值</span></div></div>
+     <div class="legend" style="margin-top:6px"><span><i style="background:var(--red)"></i>剩餘房貸${C.keep?'（新＋舊）':''}</span><span><i style="background:var(--jade)"></i>穩定型價值</span></div></div>
    <div class="card"><h3>幾個還清時間點比較</h3><div class="rounds">${pick.map(y=>{const r=C.rows[y-1]; return `<div${F&&y===F.y?' style="border-color:var(--gold);background:var(--gold-soft)"':''}><b class="h">第 ${y} 年繳清${F&&y===F.y?'・建議':''}</b>
-       <span>剩餘房貸 ${wan(r.B)}</span><span>穩定型拿回 ${wan(r.S)}</span>
+       <span>剩餘房貸 ${wan(r.B)}${C.keep&&r.ob>0?`（含舊房貸 ${wan(r.ob)}）`:''}</span><span>穩定型拿回 ${wan(r.S)}</span>
        <span>${r.short>0?`<b style="color:var(--red)">要從配息本金補 ${wan(r.short)}</b>`:`不用動配息本金，還多 ${wan(r.left)}`}</span>
        <span class="up">之後配息本金 ${wan(Math.max(0,r.D))}，每月約 ${money(r.mDiv)} 元</span></div>`;}).join('')}</div></div>
    <details class="card fold" id="lpTbl"><summary><h3>每一年繳清的完整比較</h3></summary><div class="fbody"><div class="tw" style="max-height:440px;overflow-y:auto"><table class="t"><tr><th>第幾年繳清</th><th>剩餘房貸</th><th>穩定型價值</th><th>要補（從配息本金）</th><th>之後配息本金</th><th>之後每月配息</th><th>第 ${N} 年總資產</th></tr>
      ${C.rows.map(r=>`<tr${F&&r.y===F.y?' style="background:var(--gold-soft);font-weight:700"':''}><td>${r.y}</td><td>${wan(r.B)}</td><td>${wan(r.S)}</td><td>${r.short>0?wan(r.short):'—'}</td><td>${wan(Math.max(0,r.D))}</td><td>${money(r.mDiv)}</td><td>${wan(r.wealth)}</td></tr>`).join('')}</table></div>
      <p class="note" style="margin-top:6px">總資產＝第 ${N} 年時的配息本金＋還清前每月「配息減房貸」的累積＋還清時多出的錢＋還清後領到的配息（皆不計利息）。</p></div></details>
-   ${(()=>{const so={...o,yld:o.yld*0.7,nav:Math.min(o.nav,-0.03)}, X=lpCalc(so), f2=X.rows.find(r=>r.y===(F?F.y:N)), mg=X.D0*so.yld/12-X.pay, out=Array.from({length:(F?F.y:N)},(_,t)=>Math.max(0,X.pay-X.D0*Math.pow(1+so.nav,t)*so.yld/12)*12).reduce((a,b)=>a+b,0);
+   ${(()=>{const so={...o,yld:o.yld*0.7,nav:Math.min(o.nav,-0.03)}, X=lpCalc(so), f2=X.rows.find(r=>r.y===(F?F.y:N)), mg=X.D0*so.yld/12-X.pay-X.opay, out=Array.from({length:(F?F.y:N)},(_,t)=>Math.max(0,X.pay+(X.keep&&t<so.oy?X.opay:0)-X.D0*Math.pow(1+so.nav,t)*so.yld/12)*12).reduce((a,b)=>a+b,0);
      return `<div class="card"><h3>壓力測試：市場不好時，穩定型怎麼扛</h3><p class="muted small" style="margin:0 0 10px">假設配息被調降三成、配息本金每年縮水 3%。</p>
      <div class="rounds"><div><b class="h">每月現金流</b><span>配息剩約 ${money(X.D0*so.yld/12)} 元</span><span>${mg>=0?`繳完房貸還多 ${money(mg)} 元`:`<b style="color:var(--red)">一開始每月要自己補 ${money(-mg)} 元</b>`}</span>${out>0?`<span class="muted small">本金逐年縮水，${F?F.y:N} 年共約要補 ${wan(out)}</span>`:''}</div>
        <div><b class="h">第 ${F?F.y:N} 年還清</b><span>穩定型 ${wan(f2.S)} vs 剩餘房貸 ${wan(f2.B)}</span><span class="up">${f2.short>0?`還差 ${wan(f2.short)}`:'穩定型照樣能一次還清'}</span><span class="muted small">穩定型不受股市漲跌影響，這就是它扛風險的地方</span></div>
@@ -2401,12 +2429,13 @@ function lpRun(){
 (function(){
   $('#lpPol').innerHTML=[[7,117.98],[10,131.42],[14,150],[20,'']].map(([y,v])=>`<span class="r" style="display:contents"><span>第</span><input class="yy" type="number" min="1" max="40" value="${y}" aria-label="年度"><span>年</span><input class="vv" type="number" min="0" step="0.1" value="${v}" placeholder="萬" aria-label="解約金加累積分紅（萬）"></span>`).join('');
   $('#lpPol').addEventListener('input',lpRun);
+  $('#lpOH').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){lpOpt.oh=b.dataset.v; lpRun();}});
   $('#lpGM').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){lpOpt.gm=b.dataset.v; lpRun();}});
   $('#lpSpQ').innerHTML=[50,60,70].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
   $('#lpYldQ').innerHTML=[6,8,10,13.5].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
   $('#lpSpQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){$('#lpSp').value=b.dataset.v; lpRun();}});
   $('#lpYldQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){$('#lpYld').value=b.dataset.v; lpRun();}});
-  ['lpL','lpY','lpR','lpOld','lpOth','lpSp','lpYld','lpG','lpNav'].forEach(id=>$('#'+id).addEventListener('input',lpRun));
+  ['lpL','lpY','lpR','lpOB','lpOR','lpOY','lpOth','lpSp','lpYld','lpG','lpNav'].forEach(id=>$('#'+id).addEventListener('input',lpRun));
 })();
 function mInit(){
   if(mReady) return; mReady=true; if(!DD) DD=JSON.parse(document.getElementById('ddata').textContent);
