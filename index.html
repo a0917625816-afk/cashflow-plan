@@ -644,10 +644,10 @@ details.fold>.fbody{padding:0 20px 18px}
 .hpicwrap{max-width:440px;margin:0 auto}
 .hpic{position:relative;container-type:inline-size;width:100%;aspect-ratio:941/1672;border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
 .hpic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.hb{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.15;padding:1cqw;color:#1f3a30;font-family:var(--display)}
-.hb span{font-size:2.7cqw;font-weight:800;color:#8a6a2f}
-.hb b{font-size:3.6cqw;font-weight:900;white-space:nowrap}
-.hb em{font-style:normal;font-size:2.5cqw;font-weight:700;color:#24594c}
+.hb{position:absolute;overflow:hidden;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.15;padding:1cqw;color:#1f3a30;font-family:var(--display)}
+.hb span{white-space:nowrap;display:block;font-size:2.7cqw;font-weight:800;color:#8a6a2f}
+.hb b{display:block;font-size:3.6cqw;font-weight:900;white-space:nowrap}
+.hb em{white-space:nowrap;display:block;font-style:normal;font-size:2.5cqw;font-weight:700;color:#24594c}
 .hb.r{color:#8e2a3c}.hb.r span{color:#b4475a}.hb.r em{color:#b4475a}
 .hstage{position:fixed;inset:0;z-index:9999;background:#111;display:flex;flex-direction:column}
 .hstage[hidden]{display:none}
@@ -656,7 +656,8 @@ details.fold>.fbody{padding:0 20px 18px}
 .hsbar .quick button[aria-pressed="true"]{background:var(--gold);color:#1b1b1b}
 .hsbar .x{font:inherit;font-size:15px;background:none;border:1px solid #555;color:#eee;border-radius:999px;padding:6px 16px;cursor:pointer}
 .hsbody{flex:1;min-height:0;display:flex;justify-content:center;align-items:center;padding:8px}
-.hsbody .hpic{height:100%;width:auto;max-width:100%;border-radius:8px}
+.hsbody .hpic{width:min(100%,calc((100vh - 80px)*941/1672));width:min(100%,calc((100dvh - 80px)*941/1672));height:auto;border-radius:8px}
+.hpic img{object-fit:fill}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -1638,6 +1639,14 @@ function hStageDraw(){ const st=$('#hStage'); if(!st) return;
   st.innerHTML=`<div class="hsbar"><div class="quick"><button type="button" data-v="f" aria-pressed="${hSex==='f'}">女生版</button><button type="button" data-v="m" aria-pressed="${hSex==='m'}">男生版</button></div><button type="button" class="x" aria-label="關閉">✕ 關閉</button></div><div class="hsbody">${hPicHTML(hSex)}</div>`; }
 function hStageClose(){ const st=$('#hStage'); st.hidden=true; document.body.style.overflow=''; try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} }
 document.addEventListener('click',e=>{ const b=e.target.closest('#hSexQ button'); if(b){ hSex=b.dataset.v; henRun(); } if(e.target.closest('#hFull')) hStageOpen(); });
+
+function hFit(root){ (root||document).querySelectorAll('.hpic').forEach(pic=>{ const w=pic.clientWidth; if(!w) return;
+  pic.querySelectorAll('.hb').forEach(hb=>{ let k=1; const set=()=>{ hb.style.padding=(w*0.008)+'px'; hb.querySelector('span').style.fontSize=(w*0.027*k)+'px'; hb.querySelector('b').style.fontSize=(w*0.036*k)+'px'; hb.querySelector('em').style.fontSize=(w*0.025*k)+'px'; };
+    set(); const over=()=>{ const iw=hb.clientWidth-2*w*0.008; let th=0; for(const c of hb.children){ const r=c.getBoundingClientRect(); th+=r.height; if(c.scrollWidth>iw+1||r.width>iw+1) return true; } return th>hb.clientHeight+1; }; let g=0; while(over()&&g<25){ k*=0.92; set(); g++; } }); }); }
+window.addEventListener('resize',()=>hFit());
+new MutationObserver(()=>{ if(document.querySelector('.hpic')) requestAnimationFrame(()=>hFit()); }).observe(document.body,{childList:true,subtree:true});
+document.addEventListener('load',e=>{ if(e.target.closest&&e.target.closest('.hpic')) hFit(); },true);
+document.addEventListener('fullscreenchange',()=>setTimeout(()=>hFit(),120));
 let hInfoOpen=false;
 function henInfo(S,M,age,N,y,sv){
   const W=v=>wan(v).replace(' ',''), endAge=S.R[S.R.length-1].a1, mDiv=S.P*y/12;
