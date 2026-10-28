@@ -718,6 +718,10 @@ details.fold>.fbody{padding:0 20px 18px}
 #p-loan .result b,#p-loan .rounds b.h{color:#b4532a}
 #p-loan .result p b{background:linear-gradient(transparent 60%,#ffe2c2 60%);padding:0 2px}
 #p-loan .ctrl>label,#p-loan .ctrl>span:first-child{font-weight:700;color:#5a3a26}
+.pdfbtn{display:inline-flex;align-items:center;gap:8px;font:700 15px var(--body,inherit);cursor:pointer;border-radius:999px;padding:9px 18px;border:1px solid #8a2f1c;color:#fff;background:linear-gradient(135deg,#d4622e,#8a2f1c);box-shadow:0 3px 0 #6d2414;margin-top:4px}
+.pdfbtn svg{width:18px;height:18px}
+.pdfbtn:active{transform:translateY(3px);box-shadow:none}
+@media print{.pdfbtn{display:none!important}}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -2783,6 +2787,9 @@ function foldCards(root,re){ if(!root) return; [...root.children].forEach(c=>{ i
   const open=()=>{ $('#pdfM').hidden=false; setTimeout(()=>$('#pdfName').focus(),50); };
   const close=()=>{ $('#pdfM').hidden=true; };
   $('#dkPdf2').addEventListener('click',open); $('#pdfX').addEventListener('click',close);
+  document.querySelectorAll('main>section.page').forEach(sec=>{ const hd=sec.querySelector(':scope>div:first-child'); if(!hd||hd.querySelector('.pdfbtn')) return;
+    hd.insertAdjacentHTML('beforeend','<div><button type="button" class="pdfbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14l3 3 3-3"/></svg>產出這頁 PDF 給客戶</button></div>'); });
+  document.addEventListener('click',e=>{ if(e.target.closest('.pdfbtn')) open(); });
   $('#pdfM').addEventListener('click',e=>{ if(e.target.id==='pdfM') close(); });
   $('#pdfGo').addEventListener('click',()=>{
     const tab=cur(), sec=$('#p-'+tab), name=$('#pdfName').value.trim(), d=new Date(), ds=`${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
