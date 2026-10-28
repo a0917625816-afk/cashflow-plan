@@ -603,6 +603,42 @@ details.fold>.fbody{padding:0 20px 18px}
 .hvs .a{background:var(--jade-soft);border-color:color-mix(in srgb,var(--jade) 40%,var(--line))}
 .hvs .b{background:var(--red-soft)}
 .hvs b{font:900 24px var(--display)}
+
+/* 金雞母 甲乙示意圖 */
+.hinfo>summary h3{font-size:17px}
+.hg{--hp:#fbeef1;--hg:#a9c8b6;--hr:#c4442f;background:var(--hp);border-radius:18px;padding:22px 16px 18px;color:#2a2a2a;font-family:inherit}
+.hg b{color:inherit}
+.hg-top{text-align:center;font:700 clamp(15px,2.2vw,19px)/1.7 var(--display);color:#8a6a2f;letter-spacing:2px}
+.hg-top b{color:#b5762f;font-size:1.15em}
+.hg-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin:16px 0 8px}
+.hg-vs>div{display:flex;align-items:center;gap:8px;padding:10px 14px;font-weight:700;font-size:15px}
+.hg-vs .a{background:var(--hg);border-radius:12px 0 0 12px;justify-content:flex-start;color:#1f3a30}
+.hg-vs .b{background:var(--hr);color:#fff;border-radius:0 12px 12px 0;justify-content:flex-end}
+.hg-vs b{font:900 clamp(18px,3vw,26px) var(--display);margin:0 6px}
+.hg-vs .av{font-size:28px}
+.hg-vs i{font-style:normal;font:900 20px var(--display);background:#f3dc9a;color:#2a2a2a;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;margin:0 -10px;z-index:1;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.hg-row{display:grid;grid-template-columns:1fr 92px 1fr;gap:10px;align-items:center;padding:14px 0;border-bottom:2px dotted #c9b5ba}
+.hg-row.start{border-bottom-style:solid;border-color:#2a2a2a}
+.hg-age span{display:grid;place-items:center;background:#f0c2a8;border-radius:16px;padding:14px 4px;font:900 clamp(16px,2.4vw,22px) var(--display);color:#2a2a2a}
+.hg-row:nth-of-type(odd) .hg-age span{background:#ddd0c4}
+.hg-l{text-align:right}.hg-r{text-align:center}
+.hg-calc{display:flex;flex-direction:column;gap:2px;font:700 16px var(--display);text-align:center}
+.hg-t{margin:0 0 6px;font-size:13.5px;line-height:1.5;color:#444}
+.hg-t b{font-size:15px;color:#24594c;white-space:nowrap}
+.hg-bank{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.hg-bank .ic{font-size:34px;line-height:1}.hg-bank .ic.s{font-size:24px}
+.hg-bank b{font:900 clamp(16px,2.4vw,22px) var(--display);color:#24594c}
+.hg-bank .arr{color:#4b5d9a;font-size:20px}
+.hg-bank em{font-style:normal;font-weight:700;color:#c4442f;font-size:14px}
+.hg-wal{display:flex;flex-direction:column;align-items:center;gap:2px}
+.hg-wal .ic{font-size:36px}.hg-wal b{font:700 clamp(14px,2vw,18px) var(--display);color:#555}
+.hg-end{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.hg-end>div{border-radius:16px;padding:16px;text-align:center;display:flex;flex-direction:column;gap:4px}
+.hg-end .a{background:#e3efe7}.hg-end .b{background:#f6ddd6}
+.hg-end p{margin:0;font-size:15px}.hg-end p b{font:900 1.25em var(--display);color:#24594c}.hg-end .b p b{color:#c4442f}
+.hg-end .big{font-size:34px}.hg-end .sm{font-size:12.5px;color:#666}
+.hg-note{margin:12px 0 0;font-size:12px;color:#777;text-align:center}
+@media (max-width:560px){.hg{padding:16px 10px}.hg-row{grid-template-columns:1fr 58px 0.75fr;gap:6px}.hg-bank{flex-direction:column;gap:0}.hg-bank .arr{transform:rotate(90deg);font-size:16px}.hg-l{text-align:center}.hg-bank .ic{font-size:24px}.hg-vs .av{display:none}.hg-vs>div{padding:8px;font-size:12px}.hg-vs b{font-size:16px;margin:0 2px}.hg-vs i{width:42px;height:42px;font-size:15px}.hg-calc{font-size:13px}.hg-t{font-size:12px}.hg-end{grid-template-columns:1fr}.hg-age span{padding:10px 2px;font-size:15px}.hg-wal .ic{font-size:28px}.hg-wal b{font-size:13px}}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -1550,12 +1586,35 @@ function henSim(M,age,N,y,sv,nav,rn){
     P=Q+saved; spent+=sp; R.push({a0:a,a1:a+N,P0,P1:P,egg:saved,spend:sp,div0:P0*y/12,div1:P*y/12}); a+=N; }
   return {R,P,spent,cost:M*12*N};
 }
+
+let hInfoOpen=false;
+function henInfo(S,M,age,N,y,sv){
+  const W=v=>wan(v).replace(' ',''), endAge=S.R[S.R.length-1].a1, mDiv=S.P*y/12;
+  const row=(ageTxt,L,R,cls='')=>`<div class="hg-row ${cls}"><div class="hg-l">${L}</div><div class="hg-age"><span>${ageTxt}</span></div><div class="hg-r">${R}</div></div>`;
+  const wallet=(t)=>`<div class="hg-wal"><span class="ic">👛</span><b>${t}</b></div>`;
+  let h=`<div class="hg">
+   <div class="hg-top">假設兩人薪水一樣<br>每月都有 <b>${money(M)}</b> 元可以運用<br>一個選擇延遲享受・一個選擇即時享受</div>
+   <div class="hg-vs"><div class="a"><span class="av">🧑‍💼</span>甲<b>延遲享受</b></div><i>VS</i><div class="b"><b>即時享受</b>乙<span class="av">🙋‍♀️</span></div></div>
+   ${row(age+' 歲',`<div class="hg-calc"><span>每月先存 ${money(M)} 元</span><span>剩下的再花</span></div>`,`<div class="hg-calc r"><span>每月 ${money(M)} 元</span><span>全部花掉</span></div>`,'start')}`;
+  S.R.forEach((r,i)=>{
+    const L= r.first
+      ? `<p class="hg-t">${N} 年存下 <b>${W(r.P1)}</b><br>（只有這段從薪水拿錢）</p><div class="hg-bank"><span class="ic">🏦</span><b>${W(r.P1)}</b><span class="arr">➜</span><span class="ic s">🥚</span><em>每年配息 ${W(r.P1*y)}</em></div>`
+      : `<p class="hg-t">配息${sv<1?`存 ${Math.round(sv*100)}%`:'全部存起來'}，${N} 年 +${W(r.egg)}<br>${W(r.P0)} + ${W(r.egg)} = <b>${W(r.P1)}</b></p><div class="hg-bank"><span class="ic">🏦</span><b>${W(r.P1)}</b><span class="arr">➜</span><span class="ic s">🥚</span><em>每年配息 ${W(r.P1*y)}</em></div>`;
+    const R= i===S.R.length-1 ? wallet('還是一樣月光') : wallet(i===0?'一樣花費・月光':'做一樣的事');
+    h+=row(r.a1+' 歲',L,R);
+  });
+  h+=`<div class="hg-end"><div class="a"><span class="big">🥳💰</span><p>結局到了 <b>${endAge} 歲</b></p><p>甲每月多了約 <b>${money(mDiv)}</b> 元可以花</p><p>本金 <b>${W(S.P)}</b></p><p class="sm">成本只有 ${age}～${age+N} 歲每月 ${money(M)} 元，共 ${W(S.cost)}</p></div>
+     <div class="b"><span class="big">😫💸</span><p>乙每個月一樣</p><p>本金 <b>0</b></p><p>被動收入 <b>0</b></p></div></div>
+   <p class="hg-note">示意試算：配息率 ${(y*100).toFixed(1)}%，存回的配息不計利息${S.nav?'':''}；配息非保證、可能來自本金，未扣保單費用與稅負，實際依市場變動。</p></div>`;
+  return h;
+}
+document.addEventListener('toggle',e=>{ if(e.target&&e.target.id==='hInfo') hInfoOpen=e.target.open; },true);
 function henRun(){
   const M=Math.max(0,+$('#hM').value||0), age=Math.min(70,Math.max(18,+$('#hAge').value||25)), N=hOpt.cyc, y=+$('#hY').value/100, sv=+$('#hS').value/100, nav=+$('#hNav').value/100, rn=hOpt.rn;
   $('#hYV').textContent=(y*100).toFixed(1)+'%'; $('#hSV').textContent=`存回 ${Math.round(sv*100)}%・花用 ${Math.round((1-sv)*100)}%`; $('#hNavV').textContent=(nav>0?'+':'')+(nav*100).toFixed(1)+'%／年';
   $$('#hCyc button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===N)); $$('#hRnd button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===rn));
   $$('#hYQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===Math.round(y*100*10)/10)); $$('#hMQ button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===$('#hM').value));
-  $('#hRnd').innerHTML=[1,2,3,4].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===rn}">${v} 輪・到 ${age+N*(v+1)} 歲</button>`).join('');
+  $('#hRnd').innerHTML=[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===rn}">${v} 輪・到 ${age+N*(v+1)} 歲</button>`).join('');
   if(!M){$('#hOut').innerHTML='<p class="muted">請輸入每月存入金額。</p>';return;}
   const S=henSim(M,age,N,y,sv,nav,rn), last=S.R[S.R.length-1], endAge=last.a1, mDiv=S.P*y/12;
   const W=720,H=250,Lp=64,Rp=14,T=18,B=30, bars=S.R.map(r=>[r.a1,r.P1]), mx=Math.max(...bars.map(b=>b[1]))*1.12, bw=(W-Lp-Rp)/bars.length*0.56;
@@ -1573,9 +1632,7 @@ function henRun(){
    <div class="card"><h3>本金一階一階往上</h3>
      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="各年齡本金">${[0,.5,1].map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${by(mx*t)}" y2="${by(mx*t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${by(mx*t)+4}" text-anchor="end">${Math.round(mx*t/10000).toLocaleString()}萬</text>`).join('')}
      ${bars.map(([a,v],i)=>`<rect x="${(bx(i)-bw/2).toFixed(1)}" y="${by(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(H-B-by(v)).toFixed(1)}" rx="6" fill="${i===bars.length-1?'var(--gold)':'var(--jade)'}" opacity="${0.55+0.45*(i+1)/bars.length}"/><text x="${bx(i)}" y="${(by(v)-6).toFixed(1)}" text-anchor="middle" style="font-weight:700">${wan(v)}</text><text x="${bx(i)}" y="${H-10}" text-anchor="middle">${a} 歲</text>`).join('')}</svg></div>
-   <div class="card"><h3>甲 vs 乙：同樣薪水，${endAge} 歲差多少</h3>
-     <div class="hvs"><div class="a"><span>甲・延遲享受（金雞母計畫）</span><b>本金 ${wan(S.P)}</b><span>每月多約 ${money(mDiv)} 元可以花</span><span class="muted small">只在 ${age}～${age+N} 歲每月少花 ${money(M)} 元</span></div>
-       <div class="b"><span>乙・即時享受（月光）</span><b>本金 0</b><span>每月被動收入 0 元</span><span class="muted small">同樣的 ${money(M)} 元每月都花掉了</span></div></div></div>
+   <details class="card fold hinfo" id="hInfo"${hInfoOpen?" open":""}><summary><h3>甲 vs 乙 示意圖（數字跟著上面的設定變動）</h3></summary><div class="fbody">${henInfo(S,M,age,N,y,sv)}</div></details>
    <p class="note">試算方式：第一個週期每月存入、不計利息；之後本金依年化配息率配息，存回的配息不計利息，滿一個週期後整筆加回本金。${nav?`本金每年 ${pct(nav*100)} 變化。`:'假設本金（淨值）不變。'}未扣保單費用、稅負與匯率；配息率與淨值都會變動，配息非保證、可能來自本金，這是示意試算，不代表未來實際結果。</p>`;
 }
 (function(){
