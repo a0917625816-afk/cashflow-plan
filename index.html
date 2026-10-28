@@ -703,6 +703,8 @@ details.fold>.fbody{padding:0 20px 18px}
 #mMode button[data-v="d"] b{color:#b4532a}
 #mMode button[data-v="d"][aria-selected="true"]{background:linear-gradient(135deg,#d4622e,#8a2f1c);border-color:#8a2f1c;box-shadow:0 4px 0 #6d2414}
 #mMode button[data-v="d"][aria-selected="true"] b,#mMode button[data-v="d"][aria-selected="true"] em{color:#fff}
+.lpold{border:1px dashed #e39a5a;background:#fff7ef;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.7;color:#5a3a26}
+.lpold b{color:#b4532a}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -1118,12 +1120,16 @@ details.fold>.fbody{padding:0 20px 18px}
         <div class="ctrl"><label for="lpL">可貸金額（萬元）</label><input type="number" id="lpL" min="0" step="10" value="1300"></div>
         <div class="ctrl"><label for="lpY">貸款年期</label><span class="val" id="lpYV"></span><input type="range" id="lpY" min="5" max="40" step="1" value="25"></div>
         <div class="ctrl"><label for="lpR">房貸年利率（%）</label><input type="number" id="lpR" min="0" max="10" step="0.01" value="2.6"><span class="note" id="lpPayN"></span></div>
-        <h3 style="margin:8px 0 0">② 目前的房貸（自己填）</h3>
-        <div class="ctrl"><div class="quick" id="lpOH"><button type="button" data-v="none" aria-pressed="true">目前沒有房貸</button><button type="button" data-v="pay">用新貸款還掉</button><button type="button" data-v="keep">保留照繳</button></div></div>
+        <h3 style="margin:8px 0 0">② 舊有房貸內容</h3>
+        <div class="ctrl"><div class="quick" id="lpOH"><button type="button" data-v="none" aria-pressed="true">沒有舊房貸</button><button type="button" data-v="pay">用新貸款還掉</button><button type="button" data-v="keep">保留照繳</button></div></div>
         <div id="lpOldW" hidden style="display:flex;flex-direction:column;gap:14px">
-          <div class="ctrl"><label for="lpOB">目前房貸餘額（萬元）</label><input type="number" id="lpOB" min="0" step="10" value="200"></div>
-          <div class="ctrl lpkeep"><label for="lpOR">目前房貸利率（%）</label><input type="number" id="lpOR" min="0" max="10" step="0.01" value="2.2"></div>
-          <div class="ctrl lpkeep"><label for="lpOY">剩餘年期（年）</label><input type="number" id="lpOY" min="1" max="40" step="1" value="10"><span class="note" id="lpOPN"></span></div>
+          <div class="ctrl"><label for="lpOA">當初貸款金額（萬元）</label><input type="number" id="lpOA" min="0" step="10" value="800"></div>
+          <div class="ctrl"><label for="lpOT">當初貸款年期（年）</label><input type="number" id="lpOT" min="1" max="40" step="1" value="20"></div>
+          <div class="ctrl"><label for="lpOE">已經繳了幾年</label><input type="number" id="lpOE" min="0" max="40" step="0.5" value="10"></div>
+          <div class="ctrl"><span style="font-size:14px;color:var(--muted)">以下二選一填寫，另一個系統會推算</span><div class="quick" id="lpOK"><button type="button" data-v="rate" aria-pressed="true">我知道利率</button><button type="button" data-v="paid">我知道已還本金</button></div></div>
+          <div class="ctrl" id="lpORW"><label for="lpOR">目前房貸利率（%）</label><input type="number" id="lpOR" min="0" max="10" step="0.01" value="2.2"></div>
+          <div class="ctrl" id="lpOPW" hidden><label for="lpOP">目前已還本金（萬元）</label><input type="number" id="lpOP" min="0" step="1" value="350"><span class="note">可看銀行對帳單或網銀的「已償還本金」。</span></div>
+          <div class="lpold" id="lpOInfo"></div>
         </div>
         <h3 style="margin:8px 0 0">③ 其他先撥出去的錢</h3>
 
@@ -2360,7 +2366,7 @@ function mCompare(o,ret,shock,bump){
 function lpCalc(o){
   const n=o.Y*12, i=o.r/12, pay=i?o.L*i/(1-Math.pow(1+i,-n)):o.L/n;
   const bal=k=>i?o.L*Math.pow(1+i,k)-pay*(Math.pow(1+i,k)-1)/i:o.L-pay*k;
-  const old=o.oh==='pay'?o.ob:0, keep=o.oh==='keep'&&o.ob>0, on=o.oy*12, oi=o.or/12, opay=keep?(oi?o.ob*oi/(1-Math.pow(1+oi,-on)):o.ob/on):0;
+  const old=o.oh==='pay'?o.ob:0, keep=o.oh==='keep'&&o.ob>0, on=Math.round(o.oy*12), oi=o.or/12, opay=keep?(oi?o.ob*oi/(1-Math.pow(1+oi,-on)):o.ob/on):0;
   const obal=k=>!keep||k>=on?0:(oi?o.ob*Math.pow(1+oi,k)-opay*(Math.pow(1+oi,k)-1)/oi:o.ob-opay*k);
   const opayAt=t=>keep&&t<o.oy?opay:0;
   const net=Math.max(0,o.L-old-o.oth), D0=net*o.sp, S0=net-D0;
@@ -2381,16 +2387,32 @@ function lpCalc(o){
   }
   return {pay,opay,keep,old,net,D0,S0,rows,first:rows.find(r=>r.S>=r.B), best:rows.reduce((a,b)=>b.wealth>a.wealth?b:a)};
 }
-let lpOpt={gm:'pol',oh:'none'};
+let lpOpt={gm:'pol',oh:'none',ok:'rate'};
+/* 舊房貸：由原貸金額、年期、已繳年數，加上「利率」或「已還本金」其一，推算剩餘餘額 */
+function lpOld(){
+  const A=(+$('#lpOA').value||0)*1e4, T=Math.max(1,+$('#lpOT').value||20), E=Math.min(T,Math.max(0,+$('#lpOE').value||0)), n=T*12, k=Math.round(E*12);
+  const bal=r=>{const i=r/12; if(!i) return A-A/n*k; const p=A*i/(1-Math.pow(1+i,-n)); return A*Math.pow(1+i,k)-p*(Math.pow(1+i,k)-1)/i;};
+  const pmt=r=>{const i=r/12; return i?A*i/(1-Math.pow(1+i,-n)):A/n;};
+  let r, note='';
+  if(lpOpt.ok==='rate'){ r=Math.max(0,+$('#lpOR').value||0)/100; }
+  else { const paid=Math.max(0,+$('#lpOP').value||0)*1e4, target=A-paid; let lo=0,hi=0.15;
+    if(target<=bal(0)) { r=0; if(paid<A) note='依已還本金推算利率接近 0%，請確認年期與已繳年數。'; }
+    else if(target>=bal(hi)) { r=hi; note='已還本金偏少，推算利率超過 15%，請確認數字。'; }
+    else { for(let t=0;t<60;t++){ const m=(lo+hi)/2; (bal(m)<target)?lo=m:hi=m; } r=(lo+hi)/2; } }
+  const paidIn=Math.max(0,+$('#lpOP').value||0)*1e4; if(lpOpt.ok==='paid'&&paidIn>=A) note='已還本金大於或等於當初貸款金額，舊房貸視為已繳清。';
+  const B=lpOpt.ok==='paid'?Math.max(0,A-paidIn):Math.max(0,bal(r)), oy=Math.max(0.5,T-E), mp=B>0?pmt(r):0;
+  return {ob:B,or:r,oy,oA:A,oPaid:A-B,oPay:mp,oNote:note};
+}
 function lpRun(){
-  const o={L:(+$('#lpL').value||0)*1e4,Y:Math.max(5,+$('#lpY').value||25),r:(+$('#lpR').value||0)/100,oh:lpOpt.oh,ob:(+$('#lpOB').value||0)*1e4,or:(+$('#lpOR').value||0)/100,oy:Math.max(1,+$('#lpOY').value||10),oth:(+$('#lpOth').value||0)*1e4,sp:+$('#lpSp').value/100,yld:(+$('#lpYld').value||0)/100,g:(+$('#lpG').value||0)/100,nav:+$('#lpNav').value/100, pol:lpOpt.gm==='pol'?[...document.querySelectorAll('#lpPol .r')].map(r=>[+r.querySelector('.yy').value,+r.querySelector('.vv').value]).filter(p=>p[0]>0&&p[1]>0):null};
+  const o={L:(+$('#lpL').value||0)*1e4,Y:Math.max(5,+$('#lpY').value||25),r:(+$('#lpR').value||0)/100,oh:lpOpt.oh,...lpOld(),oth:(+$('#lpOth').value||0)*1e4,sp:+$('#lpSp').value/100,yld:(+$('#lpYld').value||0)/100,g:(+$('#lpG').value||0)/100,nav:+$('#lpNav').value/100, pol:lpOpt.gm==='pol'?[...document.querySelectorAll('#lpPol .r')].map(r=>[+r.querySelector('.yy').value,+r.querySelector('.vv').value]).filter(p=>p[0]>0&&p[1]>0):null};
   $('#lpPolW').hidden=lpOpt.gm!=='pol'; $('#lpGW').hidden=lpOpt.gm==='pol'; $$('#lpGM button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===lpOpt.gm));
   $('#lpYV').textContent=o.Y+' 年'; $('#lpSpV').textContent=`配息 ${Math.round(o.sp*100)}%・穩定型 ${Math.round((1-o.sp)*100)}%`; $('#lpNavV').textContent=(o.nav>0?'+':'')+(o.nav*100).toFixed(1)+'%／年';
   $$('#lpSpQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===Math.round(o.sp*100))); $$('#lpYldQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===o.yld*100));
   if(!o.L){$('#lpOut').innerHTML='<p class="muted">請輸入可貸金額。</p>';return;}
-  $('#lpOldW').hidden=o.oh==='none'; $$('#lpOldW .lpkeep').forEach(x=>x.hidden=o.oh!=='keep'); $$('#lpOH button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===o.oh));
+  $('#lpOldW').hidden=o.oh==='none'; $('#lpORW').hidden=lpOpt.ok!=='rate'; $('#lpOPW').hidden=lpOpt.ok!=='paid'; $$('#lpOK button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===lpOpt.ok));
+  $('#lpOInfo').innerHTML=`剩餘房貸餘額 <b>${wan(o.ob)}</b><br>${lpOpt.ok==='rate'?`已還本金約 <b>${wan(o.oPaid)}</b>`:`推算利率約 <b>${(o.or*100).toFixed(2)}%</b>`}・每月房貸約 <b>${money(o.oPay)}</b> 元<br>還剩 <b>${o.oy} 年</b>${o.oNote?`<br><span style="color:var(--red)">${o.oNote}</span>`:''}`; $$('#lpOH button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===o.oh));
   const C=lpCalc(o), m0=C.D0*o.yld/12, gap=m0-C.pay-C.opay, F=C.first, Bst=C.best;
-  $('#lpPayN').textContent=`每月新房貸約 ${money(C.pay)} 元（本息平均攤還）`; $('#lpOPN').textContent=C.keep?`目前房貸每月約 ${money(C.opay)} 元`:'';
+  $('#lpPayN').textContent=`每月新房貸約 ${money(C.pay)} 元（本息平均攤還）`; 
   const W=720,H=250,Lp=64,Rp=14,T=14,B=28, N=o.Y, B0=o.L+(C.keep?o.ob:0), mx=Math.max(B0,...C.rows.map(r=>r.S))*1.05;
   const x=t=>Lp+(W-Lp-Rp)*t/N, yv=v=>T+(H-T-B)*(1-v/mx);
   const pB=`M${x(0)},${yv(B0)}`+C.rows.map(r=>`L${x(r.y).toFixed(1)},${yv(r.B).toFixed(1)}`).join(''), pS=`M${x(0)},${yv(C.S0)}`+C.rows.map(r=>`L${x(r.y).toFixed(1)},${yv(r.S).toFixed(1)}`).join('');
@@ -2430,12 +2452,13 @@ function lpRun(){
   $('#lpPol').innerHTML=[[7,117.98],[10,131.42],[14,150],[20,'']].map(([y,v])=>`<span class="r" style="display:contents"><span>第</span><input class="yy" type="number" min="1" max="40" value="${y}" aria-label="年度"><span>年</span><input class="vv" type="number" min="0" step="0.1" value="${v}" placeholder="萬" aria-label="解約金加累積分紅（萬）"></span>`).join('');
   $('#lpPol').addEventListener('input',lpRun);
   $('#lpOH').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){lpOpt.oh=b.dataset.v; lpRun();}});
+  $('#lpOK').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){lpOpt.ok=b.dataset.v; lpRun();}});
   $('#lpGM').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){lpOpt.gm=b.dataset.v; lpRun();}});
   $('#lpSpQ').innerHTML=[50,60,70].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
   $('#lpYldQ').innerHTML=[6,8,10,13.5].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
   $('#lpSpQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){$('#lpSp').value=b.dataset.v; lpRun();}});
   $('#lpYldQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){$('#lpYld').value=b.dataset.v; lpRun();}});
-  ['lpL','lpY','lpR','lpOB','lpOR','lpOY','lpOth','lpSp','lpYld','lpG','lpNav'].forEach(id=>$('#'+id).addEventListener('input',lpRun));
+  ['lpL','lpY','lpR','lpOA','lpOT','lpOE','lpOR','lpOP','lpOth','lpSp','lpYld','lpG','lpNav'].forEach(id=>$('#'+id).addEventListener('input',lpRun));
 })();
 function mInit(){
   if(mReady) return; mReady=true; if(!DD) DD=JSON.parse(document.getElementById('ddata').textContent);
