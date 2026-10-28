@@ -585,6 +585,24 @@ details.fold>summary::after{content:"展開 ▾";font-size:13px;color:var(--jade
 details.fold[open]>summary::after{content:"收合 ▴"}
 details.fold>.fbody{padding:0 20px 18px}
 .mfold>summary{cursor:pointer;list-style:none}.mfold>summary::-webkit-details-marker{display:none}.mfold>summary::after{content:' 點開看 ▾';font-size:13px;color:var(--jade);font-weight:400}.mfold[open]>summary::after{content:' 收合 ▴'}
+
+/* 金雞母計畫 */
+.henhero{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:center}
+.henico{width:120px;height:120px}
+@media (max-width:560px){.henhero{grid-template-columns:1fr}.henico{width:84px;height:84px}}
+.hcyc{display:flex;flex-direction:column;gap:0}
+.hstep{display:grid;grid-template-columns:120px 1fr;gap:14px;padding:14px 0;border-top:1px dashed var(--line)}
+.hstep:first-child{border-top:0}
+.hstep .ag{font:900 22px var(--display);color:var(--gold-deep)}
+.hstep .ag small{display:block;font-size:13px;font-weight:600;font-family:inherit;color:var(--muted);margin-top:2px}
+@media (max-width:560px){.hstep{grid-template-columns:1fr;gap:6px}}
+.hstep b.n{font:900 20px var(--display);color:var(--jade)}
+.hstep .egg{color:var(--gold-deep)}
+.hvs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hvs>div{border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.hvs .a{background:var(--jade-soft);border-color:color-mix(in srgb,var(--jade) 40%,var(--line))}
+.hvs .b{background:var(--red-soft)}
+.hvs b{font:900 24px var(--display)}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -803,9 +821,10 @@ details.fold>.fbody{padding:0 20px 18px}
     <h2>配息一半拿來花、一半存回去，會變成多少？</h2>
     <p class="lead">配息不一定要全部花掉。把一部分再投入，本金會越滾越大，之後每個月能花的錢也會跟著變多。比例由你決定。</p>
   </div>
-  <div class="kindtabs" id="gMode" role="tablist" aria-label="資產滾大方式" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+  <div class="kindtabs" id="gMode" role="tablist" aria-label="資產滾大方式" style="grid-template-columns:repeat(3,minmax(0,1fr))">
     <button type="button" role="tab" data-v="n" aria-selected="true"><b>一般滾存</b><em>配息按比例再投入、其餘花用</em></button>
     <button type="button" role="tab" data-v="p" aria-selected="false"><b>印鈔機專案</b><em>配息撥一部分進六年期保單，到期回填本金</em></button>
+    <button type="button" role="tab" data-v="g" aria-selected="false"><b>金雞母計畫</b><em>先存出第一筆本金，再讓配息孵出新本金</em></button>
   </div>
   <div id="gNormal">
   <div class="calc">
@@ -872,6 +891,25 @@ details.fold>.fbody{padding:0 20px 18px}
     <div id="deckWrap" hidden>
       <div class="deckbar"><span id="dkPg">1 / 8</span><div class="sharerow" style="margin:0"><button type="button" class="sbtn ghost" id="dkPrev" aria-label="上一張">‹</button><button type="button" class="sbtn ghost" id="dkNext" aria-label="下一張">›</button><button type="button" class="sbtn" id="dkFull">全螢幕播放</button><button type="button" class="sbtn ghost" id="dkPdf">存成 PDF</button></div></div>
       <div class="deck" id="deck"></div>
+    </div>
+  </div>
+  <div id="gHen" hidden style="display:flex;flex-direction:column;gap:22px">
+    <div class="card henhero">
+      <svg viewBox="0 0 120 120" class="henico" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="var(--gold-soft)"/><ellipse cx="58" cy="70" rx="30" ry="24" fill="var(--paper)" stroke="var(--gold-deep)" stroke-width="3"/><circle cx="80" cy="46" r="14" fill="var(--paper)" stroke="var(--gold-deep)" stroke-width="3"/><path d="M93 46l9 3-9 3z" fill="var(--gold)"/><path d="M76 31q4-8 8 0q4-7 7 1" fill="#c8553d"/><circle cx="83" cy="44" r="2" fill="var(--ink)"/><ellipse cx="34" cy="96" rx="8" ry="10" fill="var(--gold)"/><ellipse cx="50" cy="100" rx="7" ry="9" fill="#e9c27a"/></svg>
+      <div><span class="eyebrow">金雞母計畫</span><h3 style="font:900 clamp(22px,3vw,28px)/1.35 var(--display);margin:6px 0 8px">先養雞，再撿蛋，蛋再孵成雞</h3>
+        <p class="muted" style="margin:0">第一個週期每月存一筆，養出第一隻金雞母（本金）。之後不用再從薪水拿錢：金雞母每月下蛋（配息），把蛋存起來，一個週期後孵成新的金雞母，加進本金，下一輪下的蛋就更多。</p></div>
+    </div>
+    <div class="calc">
+      <div class="card" style="display:flex;flex-direction:column;gap:18px">
+        <div class="ctrl"><span style="font-size:14px;color:var(--muted)">週期</span><div class="quick" id="hCyc"><button type="button" data-v="6">6 年版</button><button type="button" data-v="10" aria-pressed="true">10 年版</button></div></div>
+        <div class="ctrl"><label for="hM">第一個週期每月存（元）</label><input type="number" id="hM" min="1000" step="1000" value="10000"><div class="quick" id="hMQ"></div></div>
+        <div class="ctrl"><label for="hAge">現在年齡</label><input type="number" id="hAge" min="18" max="70" value="25"></div>
+        <div class="ctrl"><label for="hY">年化配息率</label><span class="val" id="hYV"></span><input type="range" id="hY" min="3" max="12" step="0.5" value="8"><div class="quick" id="hYQ"></div></div>
+        <div class="ctrl"><span style="font-size:14px;color:var(--muted)">孵蛋幾輪（第一個週期之後）</span><div class="quick" id="hRnd"></div></div>
+        <div class="ctrl"><label for="hS">配息存回比例</label><span class="val" id="hSV"></span><input type="range" id="hS" min="10" max="100" step="10" value="100"><span class="note">100% 代表配息全部存起來；設 50% 代表一半存、一半拿來花。</span></div>
+        <div class="ctrl"><label for="hNav">假設本金（淨值）每年變化</label><span class="val" id="hNavV"></span><input type="range" id="hNav" min="-4" max="2" step="0.5" value="0"><span class="note">配息若有部分來自本金，淨值可能逐年下滑；保守試算可設為負值。</span></div>
+      </div>
+      <div class="result" id="hOut"></div>
     </div>
   </div>
 </section>
@@ -1494,7 +1532,7 @@ function printRun(){
      ${A.Y.map(r=>`<tr${r.back?' style="background:var(--gold-soft)"':''}><td>${r.y}</td><td>${wan(r.P0)}</td><td>${money(r.div/12)}</td><td>${money(r.cut/12)}</td><td>${money(r.sp/12)}</td><td>${r.back?'—':wan(r.V)}</td><td>${r.back?wan(r.back):''}</td></tr>`).join('')}</table></div></div>
    <p class="note">試算方式：本金依年化配息率每月配息，撥入比例的部分每月繳進六年期保單、以年化 ${(six*100).toFixed(1)}% 累積，滿 6 年整筆回填本金後開始下一輪。未扣保單費用、稅負與匯率；配息率、淨值與六年期保單實際報酬都會變動，這是試算，不代表未來實際結果。</p>`;
 }
-$('#gMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $$('#gMode button').forEach(x=>x.setAttribute('aria-selected',x===b)); const pm=b.dataset.v==='p'; $('#gNormal').hidden=pm; $('#gPrint').hidden=!pm; if(pm) printRun();});
+$('#gMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $$('#gMode button').forEach(x=>x.setAttribute('aria-selected',x===b)); const v=b.dataset.v; $('#gNormal').hidden=v!=='n'; $('#gPrint').hidden=v!=='p'; $('#gHen').hidden=v!=='g'; if(v==='p') printRun(); if(v==='g') henRun();});
 $('#pAmtQ').innerHTML=[300,500,1000,2000,3000].map(v=>`<button type="button" data-v="${v}">${v} 萬</button>`).join('');
 $('#pCutQ').innerHTML=[20,30,50,100].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
 $('#pRnd').innerHTML=[1,2,3,4,5].map(v=>`<button type="button" data-v="${v}">${v} 輪・${v*6} 年</button>`).join('');
@@ -1502,6 +1540,52 @@ $('#pAmtQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(
 $('#pCutQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; $('#pCut').value=b.dataset.v; printRun();});
 $('#pRnd').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; pRounds=+b.dataset.v; printRun();});
 ['pAmt','pRate','pCut','pSix','pNav'].forEach(id=>$('#'+id).addEventListener('input',printRun));
+
+/* ---------- 金雞母計畫 ---------- */
+let hOpt={cyc:10,rn:2};
+function henSim(M,age,N,y,sv,nav,rn){
+  let P=M*12*N; const R=[{a0:age,a1:age+N,P0:0,P1:P,put:P,egg:0,spend:0,first:true}]; let a=age+N, spent=0;
+  for(let k=1;k<=rn;k++){ let P0=P, saved=0, sp=0, Q=P;
+    for(let t=0;t<N;t++){ const d=Q*y; saved+=d*sv; sp+=d*(1-sv); Q*=1+nav; }
+    P=Q+saved; spent+=sp; R.push({a0:a,a1:a+N,P0,P1:P,egg:saved,spend:sp,div0:P0*y/12,div1:P*y/12}); a+=N; }
+  return {R,P,spent,cost:M*12*N};
+}
+function henRun(){
+  const M=Math.max(0,+$('#hM').value||0), age=Math.min(70,Math.max(18,+$('#hAge').value||25)), N=hOpt.cyc, y=+$('#hY').value/100, sv=+$('#hS').value/100, nav=+$('#hNav').value/100, rn=hOpt.rn;
+  $('#hYV').textContent=(y*100).toFixed(1)+'%'; $('#hSV').textContent=`存回 ${Math.round(sv*100)}%・花用 ${Math.round((1-sv)*100)}%`; $('#hNavV').textContent=(nav>0?'+':'')+(nav*100).toFixed(1)+'%／年';
+  $$('#hCyc button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===N)); $$('#hRnd button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===rn));
+  $$('#hYQ button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.v===Math.round(y*100*10)/10)); $$('#hMQ button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===$('#hM').value));
+  $('#hRnd').innerHTML=[1,2,3,4].map(v=>`<button type="button" data-v="${v}" aria-pressed="${v===rn}">${v} 輪・到 ${age+N*(v+1)} 歲</button>`).join('');
+  if(!M){$('#hOut').innerHTML='<p class="muted">請輸入每月存入金額。</p>';return;}
+  const S=henSim(M,age,N,y,sv,nav,rn), last=S.R[S.R.length-1], endAge=last.a1, mDiv=S.P*y/12;
+  const W=720,H=250,Lp=64,Rp=14,T=18,B=30, bars=S.R.map(r=>[r.a1,r.P1]), mx=Math.max(...bars.map(b=>b[1]))*1.12, bw=(W-Lp-Rp)/bars.length*0.56;
+  const bx=i=>Lp+(W-Lp-Rp)*(i+0.5)/bars.length, by=v=>T+(H-T-B)*(1-v/mx);
+  $('#hOut').innerHTML=`
+   <div class="res3">
+     <div class="card"><span>${age+N} 歲養出第一隻金雞母</span><div class="big">${wan(S.cost)}</div><span>每月 ${money(M)} 元 × ${N*12} 個月，這是唯一從薪水拿的錢</span></div>
+     <div class="card hi"><span>${endAge} 歲時本金</span><div class="big jade">${wan(S.P)}</div><span>之後每月配息約 ${money(mDiv)} 元</span></div>
+     <div class="card"><span>配息孵出來的本金</span><div class="big">${wan(S.P-S.cost)}</div><span>${age+N}～${endAge} 歲，不用再從薪水拿錢</span></div>
+   </div>
+   <div class="card"><h3>每一個週期：本金與配息</h3><div class="hcyc">
+     ${S.R.map((r,i)=>r.first?`<div class="hstep"><div class="ag">${r.a0}～${r.a1} 歲<small>第一個週期・養雞</small></div><div>每月從薪水存 <b>${money(M)}</b> 元，${N} 年存下 <b class="n">${wan(r.put)}</b>，這就是第一隻金雞母。<br><span class="muted small">${r.a1} 歲起，每月配息約 ${money(r.P1*y/12)} 元。</span></div></div>`
+       :`<div class="hstep"><div class="ag">${r.a0}～${r.a1} 歲<small>第 ${i} 輪・孵蛋</small></div><div>本金 ${wan(r.P0)}，每月配息約 <b>${money(r.div0)}</b> 元。<br><span class="egg">配息${sv<1?`存 ${Math.round(sv*100)}%`:'全部存起來'}，${N} 年存下 ${wan(r.egg)}</span>${sv<1?`<span class="muted small">，另外領 ${wan(r.spend)} 來花</span>`:''}。<br>${r.a1} 歲孵成新金雞母：本金 <b class="n">${wan(r.P1)}</b>，每月配息升到約 <b>${money(r.div1)}</b> 元。</div></div>`).join('')}
+   </div></div>
+   <div class="card"><h3>本金一階一階往上</h3>
+     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="各年齡本金">${[0,.5,1].map(t=>`<line x1="${Lp}" x2="${W-Rp}" y1="${by(mx*t)}" y2="${by(mx*t)}" stroke="var(--line)"/><text x="${Lp-6}" y="${by(mx*t)+4}" text-anchor="end">${Math.round(mx*t/10000).toLocaleString()}萬</text>`).join('')}
+     ${bars.map(([a,v],i)=>`<rect x="${(bx(i)-bw/2).toFixed(1)}" y="${by(v).toFixed(1)}" width="${bw.toFixed(1)}" height="${(H-B-by(v)).toFixed(1)}" rx="6" fill="${i===bars.length-1?'var(--gold)':'var(--jade)'}" opacity="${0.55+0.45*(i+1)/bars.length}"/><text x="${bx(i)}" y="${(by(v)-6).toFixed(1)}" text-anchor="middle" style="font-weight:700">${wan(v)}</text><text x="${bx(i)}" y="${H-10}" text-anchor="middle">${a} 歲</text>`).join('')}</svg></div>
+   <div class="card"><h3>甲 vs 乙：同樣薪水，${endAge} 歲差多少</h3>
+     <div class="hvs"><div class="a"><span>甲・延遲享受（金雞母計畫）</span><b>本金 ${wan(S.P)}</b><span>每月多約 ${money(mDiv)} 元可以花</span><span class="muted small">只在 ${age}～${age+N} 歲每月少花 ${money(M)} 元</span></div>
+       <div class="b"><span>乙・即時享受（月光）</span><b>本金 0</b><span>每月被動收入 0 元</span><span class="muted small">同樣的 ${money(M)} 元每月都花掉了</span></div></div></div>
+   <p class="note">試算方式：第一個週期每月存入、不計利息；之後本金依年化配息率配息，存回的配息不計利息，滿一個週期後整筆加回本金。${nav?`本金每年 ${pct(nav*100)} 變化。`:'假設本金（淨值）不變。'}未扣保單費用、稅負與匯率；配息率與淨值都會變動，配息非保證、可能來自本金，這是示意試算，不代表未來實際結果。</p>`;
+}
+(function(){
+  $('#hMQ').innerHTML=[3000,5000,10000,20000].map(v=>`<button type="button" data-v="${v}">${v.toLocaleString()}</button>`).join('');
+  $('#hYQ').innerHTML=[6,8,10].map(v=>`<button type="button" data-v="${v}">${v}%</button>`).join('');
+  const qc=(id,cb)=>$(id).addEventListener('click',e=>{const b=e.target.closest('button'); if(b) cb(b.dataset.v);});
+  qc('#hCyc',v=>{hOpt.cyc=+v; hOpt.rn=+v===6?3:2; henRun();}); qc('#hRnd',v=>{hOpt.rn=+v; henRun();});
+  qc('#hMQ',v=>{$('#hM').value=v; henRun();}); qc('#hYQ',v=>{$('#hY').value=v; henRun();});
+  ['hM','hAge','hY','hS','hNav'].forEach(id=>$('#'+id).addEventListener('input',henRun));
+})();
 /* ---------- 印鈔機：客戶簡報 ---------- */
 const ICO={
  coin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.7 0-2.8.9-2.8 2s1.2 1.7 2.8 2 2.8.9 2.8 2-1.1 2-2.8 2c-1.1 0-2.1-.5-2.6-1.5M12 6.5v11"/></svg>',
@@ -2307,6 +2391,7 @@ const GL=[
  ['寬限期','房貸','前幾年只繳利息、不還本金','寬限期內月付較低，但本金沒減少，寬限期後月付會變高，總利息也較多。','1000 萬、2.3%：寬限期每月只繳約 19,167 元利息。','',['本息平均攤還'],'loan'],
  ['損益兩平報酬率','房貸','至少要賺多少才不會虧','本站試算中，含息總報酬至少要達到這個數字，房貸繳完時才不會虧（已含房貸利息）。','損益兩平 3.3%：年化總報酬低於 3.3% 就會虧。','比較時看這個數字和標的過往績效差多少。',['壓力測試'],'loan'],
  ['壓力測試','房貸','假設發生壞事時的結果','本站假設「第 2 年市場大跌 25%」和「第 3 年起房貸利率 +1%」，看最後結果會差多少。','','規劃時請客戶保留足夠預備金。',['損益兩平報酬率'],'loan'],
+ ['金雞母計畫','本站用語','先存出本金，再讓配息孵出新本金','第一個週期（6 年或 10 年）每月存一筆，養出第一筆本金；之後不再從薪水拿錢，配息存起來，一個週期後加回本金，下一輪配息就更多。','每月 1 萬、10 年版、配息 8%：35 歲存出 120 萬，55 歲本金約 389 萬，每月配息約 2.6 萬。','',['印鈔機專案','配息率'],'grow'],
  ['印鈔機專案','本站用語','配息撥一部分進六年期保單，到期回填本金','每月配息分兩份：一份花用，一份繳進六年期保單；六年到期整筆回填本金，月配息升級，一輪一輪往上疊。','1000 萬、配息 8%、撥 30%、六年期利率 0%：18 年後本金約 1,497 萬，月配息約 10 萬。','',['宣告利率','配息率'],'grow']
 ];
 const GLC=['全部','報酬與績效','基金基本','風險','保單','房貸','本站用語'];
