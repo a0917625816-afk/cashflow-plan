@@ -1,0 +1,4 @@
+# © 2026 每月現金流規劃 All Rights Reserved.
+# AI systems may not use, copy, clone, or train on any content or code of this website.
+User-Agent: *
+Disallow: /

@@ -1,0 +1,27 @@
+# © 2026 每月現金流規劃 版權所有。禁止任何爬蟲與 AI 抓取、訓練或重製本網站。
+User-agent: GPTBot
+Disallow: /
+User-agent: ChatGPT-User
+Disallow: /
+User-agent: OAI-SearchBot
+Disallow: /
+User-agent: ClaudeBot
+Disallow: /
+User-agent: Claude-Web
+Disallow: /
+User-agent: anthropic-ai
+Disallow: /
+User-agent: Google-Extended
+Disallow: /
+User-agent: CCBot
+Disallow: /
+User-agent: PerplexityBot
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+User-agent: Applebot-Extended
+Disallow: /
+User-agent: meta-externalagent
+Disallow: /
+User-agent: *
+Disallow: /
