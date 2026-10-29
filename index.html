@@ -917,9 +917,26 @@ details.fold>.fbody{padding:0 20px 18px}
   <div style="display:flex;flex-direction:column;gap:10px">
     <span class="eyebrow">03 配息試算</span>
     <h2>放多少錢，每個月可以領多少？</h2>
-    <p class="lead">輸入你打算投入的金額，再選一個年化配息率，馬上算出每年、每月可以領到的現金。</p>
+    <p class="lead">兩種算法：用單位數算（跟對帳單一樣，投入金額換成單位數，再乘以每單位配息），或用配息率快速估。</p>
   </div>
-  <div class="calc">
+  <div class="kindtabs" id="cMode" role="tablist" aria-label="試算方式" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+    <button type="button" role="tab" data-v="r" aria-selected="false"><b>用配息率快速估</b><em>金額 × 配息率，看大概每月多少</em></button>
+    <button type="button" role="tab" data-v="u" aria-selected="true"><b>用單位數算</b><em>跟對帳單一樣：單位數 × 每單位配息</em></button>
+  </div>
+  <div id="cUnit" style="display:flex;flex-direction:column;gap:22px">
+    <div class="calc">
+      <div class="card" style="display:flex;flex-direction:column;gap:16px">
+        <div class="ctrl"><label for="uAmt">投入金額（台幣，萬元）</label><input type="number" id="uAmt" min="1" step="10" value="500"><div class="quick" id="uAmtQ"></div></div>
+        <div class="ctrl"><label for="uQ">選標的（月配息）</label><input type="search" id="uQ" placeholder="搜尋名稱或代號" aria-label="搜尋標的"><select id="uF" size="6" style="margin-top:6px;width:100%;font:inherit;border:1px solid var(--line);border-radius:10px;padding:4px;background:var(--bg);color:var(--ink)"></select></div>
+        <div class="ctrl"><label for="uNav">申購淨值（每單位）</label><input type="number" id="uNav" min="0" step="0.0001"><span class="note" id="uNavN"></span></div>
+        <div class="ctrl"><label for="uDiv">每單位配息金額</label><input type="number" id="uDiv" min="0" step="0.0001"><span class="note" id="uDivN"></span></div>
+        <div class="ctrl" id="uFxW"><label for="uFx">匯率（1 美元 = ? 台幣）</label><input type="number" id="uFx" min="0" step="0.01" value="32.38"></div>
+        <div class="ctrl"><label for="uFee">申購手續費／前置費用（%）</label><input type="number" id="uFee" min="0" max="10" step="0.1" value="0"><span class="note">投資型保單請填保費費用率；沒有就填 0。</span></div>
+      </div>
+      <div class="result" id="uOut"></div>
+    </div>
+  </div>
+  <div class="calc" id="cRateW" hidden>
     <div class="card" style="display:flex;flex-direction:column;gap:20px">
       <div class="ctrl">
         <label for="cAmt">投入金額（萬元）</label>
@@ -950,7 +967,7 @@ details.fold>.fbody{padding:0 20px 18px}
       <p class="note">試算以單利、未扣保單費用與稅負、未計匯率計算；配息率會隨市場變動，不代表未來實際配息。配息若部分來自本金，本金會逐漸減少。</p>
     </div>
   </div>
-  <div class="card" id="cPick"></div>
+  <div class="card" id="cPick" hidden></div>
 </section>
 
 <!-- 04 -->
@@ -1249,6 +1266,7 @@ function go(tab,push=true){
   if(tab==='dca') dcaInit();
   if(tab==='find') findInit();
   if(tab==='loan') mInit();
+  if(tab==='calc'&&window.cModeInit&&!window.__cm){ window.__cm=1; cModeInit(); }
   if(tab==='gloss') glInit();
   TABS.forEach(t=>{$('#p-'+t).hidden=t!==tab;});
   $$('nav.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab)); if(window.tabIntoView) tabIntoView();
@@ -1563,6 +1581,57 @@ function chartSim(s,amt){
   </svg>`;
 }
 
+
+/* ---------- 03 用單位數算配息 ---------- */
+let UF=null, uSel=null;
+function uInit(){
+  if(UF) return; const A=JSON.parse(document.getElementById('adata').textContent); const AM={}; A.forEach(r=>AM[r[0]]=r);
+  UF=Object.entries(PD).filter(([k,v])=>v.dv&&v.dv.length&&/月/.test(v.d||'')&&AM[k]&&AM[k][14]).map(([k,v])=>({id:k,n:(PI[k]&&PI[k].n)||v.n,c:AM[k][3],nav:AM[k][14],vd:AM[k][15],dv:v.dv,cd:Object.values(AM[k][12])[0]||''}))
+    .sort((a,b)=>((PI[b.id]||{}).sc||0)-((PI[a.id]||{}).sc||0));
+  uSel=UF.find(f=>f.id==='ALBB1')||UF[0]; uList(); uPick(uSel.id);
+  $('#uAmtQ').innerHTML=[100,300,500,1000].map(v=>`<button type="button" data-v="${v}">${v} 萬</button>`).join('');
+  $('#uAmtQ').addEventListener('click',e=>{const b=e.target.closest('button'); if(b){$('#uAmt').value=b.dataset.v; uRun();}});
+  $('#uQ').addEventListener('input',uList); $('#uF').addEventListener('change',()=>uPick($('#uF').value));
+  ['uAmt','uNav','uDiv','uFx','uFee'].forEach(id=>$('#'+id).addEventListener('input',uRun));
+}
+function uList(){ const q=$('#uQ').value.trim().toLowerCase(); const L=UF.filter(f=>!q||(f.n+' '+f.id+' '+f.cd).toLowerCase().includes(q)).slice(0,80);
+  $('#uF').innerHTML=L.map(f=>`<option value="${f.id}"${uSel&&f.id===uSel.id?' selected':''}>${esc(f.n)}（${esc(f.c)}）</option>`).join(''); }
+function uPick(id){ uSel=UF.find(f=>f.id===id)||uSel; const last=uSel.dv[uSel.dv.length-1];
+  $('#uNav').value=uSel.nav; $('#uNavN').textContent=`最新淨值 ${uSel.nav}（${uSel.vd}），可改成實際申購那天的淨值`;
+  $('#uDiv').value=last[1]; $('#uDivN').textContent=`最近一次 ${last[0]} 每單位配 ${last[1]} ${uSel.c==='台幣'?'元':uSel.c}`;
+  $('#uFxW').hidden=uSel.c==='台幣'; uRun(); }
+function uRun(){ if(!uSel) return;
+  const T=(+$('#uAmt').value||0)*1e4, isT=uSel.c==='台幣', fx=isT?1:Math.max(0.01,+$('#uFx').value||32.38), nav=+$('#uNav').value||0, dv=+$('#uDiv').value||0, fee=(+$('#uFee').value||0)/100;
+  if(!T||!nav){$('#uOut').innerHTML='<p class="muted">請輸入投入金額與淨值。</p>';return;}
+  const cur=isT?'元':uSel.c, F=T/fx, net=F*(1-fee), U=net/nav, mO=U*dv, mT=mO*fx, yr=dv*12/nav;
+  const f2=v=>v.toLocaleString('zh-TW',{maximumFractionDigits:2}), f4=v=>v.toLocaleString('zh-TW',{maximumFractionDigits:4});
+  const H=uSel.dv.slice(-12), sumO=H.reduce((a,d)=>a+d[1]*U,0);
+  $('#uOut').innerHTML=`
+   <div class="card" style="padding:14px 16px"><b>${esc(uSel.n)}</b><span class="muted small">　${esc(uSel.c)}計價・代號 ${esc(uSel.cd)}</span></div>
+   <div class="res3">
+     <div class="card"><span>買到的單位數</span><div class="big">${f2(U)}</div><span>單位</span></div>
+     <div class="card hi"><span>每月配息（台幣）</span><div class="big jade">${money(mT)}<span class="unit">元</span></div><span>${isT?'':`原幣 ${f2(mO)} ${cur}`}</span></div>
+     <div class="card"><span>換算年化配息率</span><div class="big">${(yr*100).toFixed(2)}%</div><span>每單位配息 × 12 ÷ 淨值</span></div>
+   </div>
+   <div class="card"><h3>怎麼算出來的</h3><div class="hcyc">
+     ${isT?'':`<div class="hstep"><div class="ag">①<small>換成外幣</small></div><div>${money(T)} 元 ÷ 匯率 ${fx} = <b>${f2(F)} ${cur}</b></div></div>`}
+     ${fee?`<div class="hstep"><div class="ag">${isT?'①':'②'}<small>扣費用</small></div><div>${f2(F)} × (1 − ${(fee*100).toFixed(1)}%) = <b>${f2(net)} ${cur}</b></div></div>`:''}
+     <div class="hstep"><div class="ag">單位數<small>買進</small></div><div>${f2(net)} ${cur} ÷ 淨值 ${f4(nav)} = <b class="n">${f2(U)} 單位</b></div></div>
+     <div class="hstep"><div class="ag">配息<small>每月</small></div><div>${f2(U)} 單位 × 每單位 ${f4(dv)} ${cur} = <b>${f2(mO)} ${cur}</b>${isT?'':`<br>× 匯率 ${fx} ≈ <b class="n">${money(mT)} 元</b>`}</div></div>
+   </div><p class="note" style="margin-top:6px">單位數買進後就固定；每個月實際領多少＝單位數 × 當月每單位配息${isT?'':' × 當時匯率'}。淨值漲跌不會改變單位數，但會影響你的本金價值。</p></div>
+   <div class="card"><h3>用你的單位數，套回過去 12 次實際配息</h3><div class="tw"><table class="t"><tr><th>除息日</th><th>每單位配息</th><th>× ${f2(U)} 單位</th>${isT?'':'<th>約台幣（以現在匯率）</th>'}</tr>
+     ${H.map(d=>`<tr><td>${d[0]}</td><td>${f4(d[1])}</td><td>${f2(d[1]*U)} ${cur}</td>${isT?'':`<td>${money(d[1]*U*fx)} 元</td>`}</tr>`).join('')}
+     <tr style="font-weight:700;background:var(--gold-soft)"><td>合計</td><td></td><td>${f2(sumO)} ${cur}</td>${isT?'':`<td>${money(sumO*fx)} 元</td>`}</tr></table></div>
+     <p class="note" style="margin-top:6px">過去 ${H.length} 次平均每次約 ${money(sumO*fx/H.length)} 元。配息金額每月可能調整，過去配息不代表未來。</p></div>
+   <div class="card"><h3>本金現在值多少</h3><p style="margin:0">${f2(U)} 單位 × 最新淨值 ${f4(uSel.nav)} = <b>${f2(U*uSel.nav)} ${cur}</b>${isT?'':`，約 <b>${money(U*uSel.nav*fx)}</b> 元`}</p>
+     <p class="note" style="margin-top:6px">申購淨值跟最新淨值不同時，這裡會看到本金的漲跌。</p></div>
+   <p class="note">示意試算：未扣保單管理費、保險成本與稅負；外幣標的配息與本金都受匯率影響。配息非保證，可能來自本金。</p>`;
+}
+(function(){
+  const set=v=>{ $$('#cMode button').forEach(b=>b.setAttribute('aria-selected',b.dataset.v===v)); $('#cUnit').hidden=v!=='u'; $('#cRateW').hidden=v!=='r'; $('#cPick').hidden=v!=='r'; if(v==='u') uInit(); };
+  $('#cMode').addEventListener('click',e=>{const b=e.target.closest('button'); if(b) set(b.dataset.v);});
+  window.cModeInit=()=>set('u');
+})();
 /* ---------- 03 calc ---------- */
 function calcRun(){ setTimeout(()=>pickRun(),0);
   const amt=(+$('#cAmt').value||0)*10000, r=+$('#cRate').value/100;
