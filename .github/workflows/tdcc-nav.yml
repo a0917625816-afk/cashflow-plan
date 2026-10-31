@@ -1,0 +1,44 @@
+# 每天自動下載集保結算所「開放資料」：境外基金淨值、配息資訊、基本資料
+# 授權：政府資料開放授權條款第 1 版（資料來源：臺灣集中保管結算所）
+name: 累積境外基金開放資料
+on:
+  schedule:
+    - cron: '17 13 * * *'   # 台灣時間每天 21:17
+    - cron: '43 1 * * *'    # 台灣時間每天 09:43（補抓）
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: tdcc-nav
+  cancel-in-progress: false
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 下載開放資料
+        run: |
+          set -u
+          D=$(TZ=Asia/Taipei date +%Y-%m-%d)
+          mkdir -p data/tdcc/raw/$D
+          for ID in 3-4 3-5 3-2; do
+            for i in 1 2 3; do
+              if curl -sS -L --max-time 120 -A "Mozilla/5.0 (cashflow-plan open-data archiver)" \
+                   -o "data/tdcc/raw/$D/$ID.tmp" "https://opendata.tdcc.com.tw/getOD.ashx?id=$ID"; then
+                if [ -s "data/tdcc/raw/$D/$ID.tmp" ]; then mv "data/tdcc/raw/$D/$ID.tmp" "data/tdcc/raw/$D/$ID.csv"; break; fi
+              fi
+              sleep 20
+            done
+            rm -f "data/tdcc/raw/$D/$ID.tmp"
+          done
+          ls -la data/tdcc/raw/$D || true
+      - name: 合併成歷史資料
+        run: python3 .github/scripts/tdcc_merge.py
+      - name: 存檔
+        run: |
+          git config user.name "a0917625816-afk"
+          git config user.email "a0917625816@gmail.com"
+          git add data/tdcc
+          git diff --cached --quiet && echo "沒有新資料" && exit 0
+          git commit -m "開放資料：境外基金淨值與配息 $(TZ=Asia/Taipei date +%Y-%m-%d)"
+          git push
