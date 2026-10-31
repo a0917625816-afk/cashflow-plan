@@ -758,6 +758,26 @@ details.fold>.fbody{padding:0 20px 18px}
   .pdfwait{position:fixed;inset:0;z-index:10000;background:rgba(255,255,255,.92);display:grid;place-items:center;font:700 18px var(--display);color:#8a2f1c}
 footer .cpy{display:block;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
 footer .cpy b{color:var(--ink)}
+
+/* 借力還房 簡報 */
+.lpview{position:relative;border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.lpsl{position:relative;width:100%;aspect-ratio:16/9;background:#2a1a12}
+.lpsl img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill}
+.lpb{position:absolute;box-sizing:border-box;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;line-height:1.25;color:#3a2414;font-family:var(--display);gap:.15em}
+.lpb span{display:block;font-weight:800;color:#b4532a;white-space:nowrap}
+.lpb b{display:block;font-weight:900;color:#2b1a10}
+.lpb em{display:block;font-style:normal;font-weight:700;color:#7a5236}
+.lpnav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;border:0;background:rgba(0,0,0,.38);color:#fff;font-size:28px;line-height:1;cursor:pointer;display:grid;place-items:center}
+.lpnav.p{left:10px}.lpnav.n{right:10px}
+.lpbar{display:flex;align-items:center;gap:12px;margin-top:10px;font-weight:700;color:var(--muted)}
+.lpdots{display:flex;flex-wrap:wrap;gap:6px}
+.lpdots button{width:12px;height:12px;border-radius:50%;border:0;background:var(--line);cursor:pointer;padding:0}
+.lpdots button[aria-current="true"]{background:#d4622e;width:26px;border-radius:6px}
+.lpsbody{position:relative}
+.lprot{display:none;color:#f3c58a;font-size:13px}
+@media (orientation:portrait) and (max-width:700px){.lprot{display:inline}.lpnav{width:34px;height:34px;font-size:22px;background:rgba(0,0,0,.25)}}
+.lpsbody .lpsl{width:min(100%,calc((100vh - 80px)*16/9));width:min(100%,calc((100dvh - 80px)*16/9));border-radius:8px;overflow:hidden}
+body.printpage .lpdeckc,body.pdfcap .lpdeckc{display:none!important}
 </style>
 
 <header class="mast gut"><div class="in">
@@ -1215,6 +1235,12 @@ footer .cpy b{color:var(--ink)}
         <div class="ctrl"><label for="lpNav">壓力測試：配息本金每年變化</label><span class="val" id="lpNavV"></span><input type="range" id="lpNav" min="-5" max="2" step="0.5" value="0"><span class="note">高配息標的常見本金逐年下滑，可設負值看最壞情況。</span></div>
       </div>
       <div class="result" id="lpOut"></div>
+    </div>
+    <div class="card lpdeckc" id="lpDeckC">
+      <div class="stephd"><h3>借力還房計畫・客戶簡報（18 頁）</h3><button type="button" class="sbtn gold" id="lpFull">全螢幕播放</button></div>
+      <p class="muted small" style="margin:6px 0 10px">每一頁的數字都跟著上面的試算條件變動。可以用左右鍵、滑動或下方按鈕換頁。</p>
+      <div class="sharerow" style="margin:0 0 10px"><input type="text" id="lpCli" maxlength="12" placeholder="客戶稱呼（可不填），例如：王先生" aria-label="客戶稱呼"></div>
+      <div class="lpdeck" id="lpDeck"></div>
     </div>
   </div>
 </section>
@@ -2485,6 +2511,90 @@ function mCompare(o,ret,shock,bump){
   return {V,saved,intSave:intFull-intPart,keep:last.av+last.cash,av:last.av,div:last.cash,diff:last.av+last.cash-saved,payFull:full[Math.min(o.grace*12,full.length-1)].pay,payPart:part[Math.min(o.grace*12,part.length-1)].pay,firstDiv:V.pts[0].div};
 }
 
+
+/* ---------- 借力還房計畫：客戶簡報 ---------- */
+const LPS=[
+ [[2.76,5.93,52.86,21.48]],
+ [[3.71,5.84,31.94,18.6],[63.94,5.95,32.42,17.53],[3.95,28.59,26.79,16.26],[67.58,31.88,28.77,17.32]],
+ [[2.63,5.53,53.11,19.77],[46.35,74.39,51.14,18.07]],
+ [[2.81,5.95,37.68,16.9],[71.11,12.11,25.78,16.68],[57.95,75.77,38.94,16.47]],
+ [[2.75,5.84,52.81,21.47],[50.0,73.65,46.77,18.6]],
+ [[48.98,5.95,47.79,18.6]],
+ [[2.87,5.74,52.69,21.25]],
+ [[2.93,5.21,50.12,20.83],[64.65,5.63,33.07,20.09],[53.35,76.3,44.38,17.22]],
+ [[2.69,6.27,37.74,17.64],[59.57,6.27,37.8,17.64]],
+ [[2.75,17.43,32.6,11.05],[69.2,21.25,28.23,11.58],[33.67,76.41,32.66,11.69]],
+ [[2.87,7.01,34.21,14.77],[59.39,7.86,37.5,15.83],[54.13,78.11,43.12,14.56]],
+ [[23.44,17.22,16.21,13.5],[42.22,12.11,21.35,13.6],[71.59,5.53,25.36,13.28]],
+ [[3.11,6.48,35.53,19.66],[62.56,7.65,33.85,18.28],[56.64,69.18,38.52,17.85]],
+ [[2.63,6.7,50.12,14.77],[53.05,75.66,44.14,16.37]],
+ [[2.51,4.68,28.59,13.39],[35.71,4.68,28.59,13.39],[68.72,4.68,28.59,13.39]],
+ [[2.75,5.74,33.43,14.13],[69.98,4.68,27.45,16.9],[27.75,84.06,44.32,12.22]],
+ [[43.9,5.21,53.29,18.07]],
+ [[2.81,6.06,39.41,18.49],[57.0,6.06,40.19,18.49]]
+];
+let lpPg=0;
+function lpTexts(){
+  const X=window.lpLast; if(!X) return null; const {o,C}=X, R=C.rows, N=o.Y, F=C.first||R[R.length-1], W=v=>wan(v).replace(' ',''), cli=($('#lpCli')&&$('#lpCli').value.trim())||'';
+  const hasOld=o.oh!=='none'&&o.ob>0, curBal=hasOld?o.ob:o.L, curYrs=hasOld?o.oy:N, curPay=hasOld?o.oPay:C.pay, curTot=curPay*curYrs*12, curInt=Math.max(0,curTot-curBal);
+  const m0=C.D0*o.yld/12, totPay=C.pay+C.opay, gap=m0-totPay, at=y=>R[Math.min(N,Math.max(1,y))-1];
+  const so={...o,yld:o.yld*0.7,nav:Math.min(o.nav,-0.03)}, Xs=lpCalc(so), fs=Xs.rows[F.y-1], mg=Xs.D0*so.yld/12-Xs.pay-Xs.opay;
+  const out=Array.from({length:F.y},(_,t)=>Math.max(0,Xs.pay+(Xs.keep&&t<so.oy?Xs.opay:0)-Xs.D0*Math.pow(1+so.nav,t)*so.yld/12)*12).reduce((a,b)=>a+b,0);
+  const yrs3=[...new Set([Math.min(7,F.y-1)||1,Math.min(10,F.y-1)||1,F.y])].sort((a,b)=>a-b); while(yrs3.length<3) yrs3.unshift(Math.max(1,yrs3[0]-3));
+  const trees=[Math.max(1,Math.round(F.y/3)),Math.max(2,Math.round(F.y*2/3)),F.y];
+  const st2=o.oh==='pay'?['第二步・處理舊房貸',`用新貸款還掉 ${W(o.ob)}`,'只剩一筆房貸，管理更單純']:o.oh==='keep'?['第二步・舊房貸保留照繳',`每月 ${money(C.opay)} 元`,`還剩 ${o.oy} 年，配息一起扛`]:['第二步・先撥出去的錢','目前沒有舊房貸','借出來的錢可以全部運用'];
+  return [
+   [[cli?cli+'的專屬規劃':'專屬規劃','借力還房計畫','讓房子借給你的錢，自己去繳房貸']],
+   [['❓','房價漲了，跟我有什麼關係？',''],['❓',`房貸還要繳 ${Math.round(curYrs)} 年？`,''],['❓','能不能快點繳完？',''],['❓','退休了還在繳房貸怎麼辦？','']],
+   [['銀行評估你可以貸',W(o.L),'房子增值了，價值都鎖在牆裡'],['但你手上能動用的現金','≈ 0 元','房子是資產，卻沒有替你產生現金流']],
+   [['每個月房貸',`${money(curPay)} 元`,hasOld?'目前的房貸':'一般房貸試算'],['還要繳',`${Math.round(curYrs)} 年`,''],['剩下總共要繳',W(curTot),`其中利息約 ${W(curInt)}`]],
+   [['剩餘房貸',W(curBal),'這座山要靠自己爬'],['靠每月存 2 萬',`要 ${Math.ceil(curBal/240000)} 年才存得到`,'想提早還清，談何容易']],
+   [['','錢都鎖在房子裡','想陪家人出遊、想幫孩子，卻被房貸綁住']],
+   [['換個想法','讓房子借給你的錢，自己去繳房貸','房子不只是負擔，也可以是資源']],
+   [['第一步・向銀行借出來',`可貸 ${W(o.L)}`,`年期 ${N} 年・利率 ${(o.r*100).toFixed(2)}%`],['新的每月房貸',`${money(C.pay)} 元`,''],['這筆錢不是拿去花','而是讓它替你工作','接下來切成兩份']],
+   [st2,['實際拿去運用',W(C.net),o.oth?`已先撥出其他用途 ${W(o.oth)}`:'']],
+   [['月配息',`${W(C.D0)}（${Math.round(o.sp*100)}%）`,'負責每月現金流'],['穩定型',`${W(C.S0)}（${Math.round((1-o.sp)*100)}%）`,'負責扛風險、慢慢長大'],['第三步・切成兩份','一份領錢・一份守護','']],
+   [['每月配息',`${money(m0)} 元`,`配息率 ${(o.yld*100).toFixed(1)}%`],['每月房貸',`${money(totPay)} 元`,C.keep?`新 ${money(C.pay)}＋舊 ${money(C.opay)}`:''],[gap>=0?'配息繳完房貸還多':'每月要自己補',`${money(Math.abs(gap))} 元`,'配息幫你繳房貸']],
+   trees.map((y,i)=>[`第 ${y} 年`,`穩定型 ${W(at(y).S)}`,i===2?'慢慢長大':'']),
+   [['剩餘房貸',W(F.B),'一路往下'],['穩定型',W(F.S),'一路往上'],['兩條線交叉',C.first?`第 ${F.y} 年一次還清`:`繳到第 ${N} 年`,C.first?'時間到，一次還清':'穩定型追不上，建議繳到期']],
+   [[`第 ${F.y} 年還清`,F.short>0?`要補 ${W(F.short)}`:'配息本金一毛不動',F.short>0?'':`還多 ${W(F.left)}`],['之後每月配息',`${money(F.mDiv)} 元`,'全部是自己的']],
+   yrs3.map(y=>{const r=at(y); return [`第 ${y} 年還清${y===F.y&&C.first?'・建議':''}`,r.short>0?`要挖本金 ${W(r.short)}`:'不用挖本金',`之後每月 ${money(r.mDiv)} 元`];}),
+   [['市場下雨時','配息降三成・本金每年 −3%',''],[mg<0?'每月可能要自己補':'每月現金流',mg<0?`${money(-mg)} 元`:'仍然夠繳',out>0?`${F.y} 年共約 ${W(out)}`:''],['穩定型就是你的傘',fs&&fs.short<=0?`第 ${F.y} 年照樣能一次還清`:`第 ${F.y} 年仍差 ${W(fs?fs.short:0)}`,'穩定型不受股市漲跌影響']],
+   [['你要先知道的事','配息非保證，可能來自本金','外幣有匯率風險・房貸利率會變動・貸款資金須如實告知']],
+   [['','房子不只是負擔','也可以是你的現金流'],['規劃顧問',ADV.name||'歡迎與我聯繫',ADV.phone||'']]
+  ];
+}
+function lpSlide(i,T){ const B=LPS[i], t=T[i]||[]; return `<div class="lpsl"><img src="lp/s${String(i+1).padStart(2,'0')}.jpg" alt="借力還房計畫第 ${i+1} 頁插圖" loading="${i<2?'eager':'lazy'}">${B.map((b,j)=>{const x=t[j]||['','',''];return `<div class="lpb" style="left:${b[0]}%;top:${b[1]}%;width:${b[2]}%;height:${b[3]}%">${x[0]?`<span>${esc(x[0])}</span>`:''}<b>${esc(x[1])}</b>${x[2]?`<em>${esc(x[2])}</em>`:''}</div>`;}).join('')}</div>`; }
+function lpFit(root){ (root||document).querySelectorAll('.lpsl').forEach(sl=>{ const w=sl.clientWidth; if(!w) return;
+  sl.querySelectorAll('.lpb').forEach(bx=>{ let k=1; const sp=bx.querySelector('span'), b=bx.querySelector('b'), em=bx.querySelector('em');
+    const set=()=>{ bx.style.padding=`${w*0.006}px ${w*0.012}px`; if(sp) sp.style.fontSize=(w*0.017*k)+'px'; b.style.fontSize=(w*0.03*k)+'px'; if(em) em.style.fontSize=(w*0.015*k)+'px'; };
+    const over=()=>bx.scrollHeight>bx.clientHeight+1||[...bx.children].some(c=>c.scrollWidth>bx.clientWidth-w*0.024+1);
+    set(); let g=0; while(over()&&g<30){ k*=0.93; set(); g++; } }); }); }
+function lpDeckDraw(){ const box=$('#lpDeck'); if(!box) return; const T=lpTexts(); if(!T) return;
+  const html=`<div class="lpview">${lpSlide(lpPg,T)}<button type="button" class="lpnav p" aria-label="上一頁">‹</button><button type="button" class="lpnav n" aria-label="下一頁">›</button></div>
+    <div class="lpbar"><span>${lpPg+1} / ${LPS.length}</span><div class="lpdots">${LPS.map((_,i)=>`<button type="button" data-i="${i}" aria-label="第 ${i+1} 頁"${i===lpPg?' aria-current="true"':''}></button>`).join('')}</div></div>`;
+  box.innerHTML=html; const st=$('#lpStage'); if(st&&!st.hidden) st.querySelector('.lpsbody').innerHTML=lpSlide(lpPg,T)+`<button type="button" class="lpnav p" aria-label="上一頁">‹</button><button type="button" class="lpnav n" aria-label="下一頁">›</button>`;
+  requestAnimationFrame(()=>lpFit()); }
+function lpGo(d){ lpPg=Math.min(LPS.length-1,Math.max(0,d)); lpDeckDraw(); if($('#lpStage')&&!$('#lpStage').hidden) $('#lpStage .lppg').textContent=`${lpPg+1} / ${LPS.length}`; }
+(function(){
+  document.addEventListener('click',e=>{ const n=e.target.closest('.lpnav'); if(n){ lpGo(lpPg+(n.classList.contains('n')?1:-1)); return; }
+    const d=e.target.closest('.lpdots button'); if(d){ lpGo(+d.dataset.i); return; }
+    if(e.target.closest('#lpFull')) lpStageOpen(); if(e.target.closest('#lpStage .x')) lpStageClose(); });
+  document.addEventListener('keydown',e=>{ const st=$('#lpStage'); const on=st&&!st.hidden; if(!on&&$('#lpWrap').hidden) return; if(!on&&!['ArrowRight','ArrowLeft'].includes(e.key)) return;
+    if(e.target.matches&&e.target.matches('input,textarea')) return;
+    if(e.key==='ArrowRight'){lpGo(lpPg+1);e.preventDefault();} if(e.key==='ArrowLeft'){lpGo(lpPg-1);e.preventDefault();} if(e.key==='Escape'&&on) lpStageClose(); });
+  let sx=null; document.addEventListener('touchstart',e=>{ if(e.target.closest('.lpview,#lpStage')) sx=e.touches[0].clientX; },{passive:true});
+  document.addEventListener('touchend',e=>{ if(sx==null) return; const dx=e.changedTouches[0].clientX-sx; sx=null; if(Math.abs(dx)>50) lpGo(lpPg+(dx<0?1:-1)); },{passive:true});
+  $('#lpCli').addEventListener('input',lpDeckDraw);
+  window.addEventListener('resize',()=>lpFit());
+  document.addEventListener('load',e=>{ if(e.target.closest&&e.target.closest('.lpsl')) lpFit(); },true);
+  document.addEventListener('fullscreenchange',()=>setTimeout(()=>lpFit(),150));
+})();
+function lpStageOpen(){ let st=$('#lpStage'); if(!st){ st=document.createElement('div'); st.id='lpStage'; st.className='hstage';
+  st.innerHTML='<div class="hsbar"><span class="lppg" style="color:#eee;font-weight:700"></span><span class="lprot">手機請橫放觀看，畫面更大</span><button type="button" class="x" aria-label="關閉">✕ 關閉</button></div><div class="hsbody lpsbody"></div>'; document.body.appendChild(st); }
+  st.hidden=false; document.body.style.overflow='hidden'; st.querySelector('.lppg').textContent=`${lpPg+1} / ${LPS.length}`; lpDeckDraw();
+  try{ if(st.requestFullscreen) st.requestFullscreen().catch(()=>{}); }catch(e){} }
+function lpStageClose(){ const st=$('#lpStage'); if(!st) return; st.hidden=true; document.body.style.overflow=''; try{ if(document.fullscreenElement) document.exitFullscreen(); }catch(e){} lpDeckDraw(); }
 /* ---------- 07 增貸配息・還款時機 ---------- */
 function lpCalc(o){
   const n=o.Y*12, i=o.r/12, pay=i?o.L*i/(1-Math.pow(1+i,-n)):o.L/n;
@@ -2538,7 +2648,7 @@ function lpRun(){
   if(!o.L){$('#lpOut').innerHTML='<p class="muted">請輸入可貸金額。</p>';return;}
   $('#lpOldW').hidden=o.oh==='none'; $('#lpORW').hidden=lpOpt.ok!=='rate'; $('#lpOPW').hidden=lpOpt.ok!=='paid'; $('#lpOMW').hidden=lpOpt.ok!=='pay'; $$('#lpOK button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===lpOpt.ok));
   $('#lpOInfo').innerHTML=`剩餘房貸餘額 <b>${wan(o.ob)}</b><br>${lpOpt.ok!=='paid'?`已還本金約 <b>${wan(o.oPaid)}</b>・`:''}${lpOpt.ok!=='rate'?`推算利率約 <b>${(o.or*100).toFixed(2)}%</b>・`:''}每月房貸約 <b>${money(o.oPay)}</b> 元<br>還剩 <b>${o.oy} 年</b>${o.oNote?`<br><span style="color:var(--red)">${o.oNote}</span>`:''}`; $$('#lpOH button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===o.oh));
-  const C=lpCalc(o), m0=C.D0*o.yld/12, gap=m0-C.pay-C.opay, F=C.first, Bst=C.best;
+  const C=lpCalc(o), m0=C.D0*o.yld/12, gap=m0-C.pay-C.opay, F=C.first, Bst=C.best; window.lpLast={o,C}; setTimeout(lpDeckDraw,0);
   $('#lpPayN').textContent=`每月新房貸約 ${money(C.pay)} 元（本息平均攤還）`; 
   const W=720,H=250,Lp=64,Rp=14,T=14,B=28, N=o.Y, B0=o.L+(C.keep?o.ob:0), mx=Math.max(B0,...C.rows.map(r=>r.S))*1.05;
   const x=t=>Lp+(W-Lp-Rp)*t/N, yv=v=>T+(H-T-B)*(1-v/mx);
